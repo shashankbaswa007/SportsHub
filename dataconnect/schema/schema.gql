@@ -1,0 +1,55 @@
+type Match @table {
+  sport: String!
+  teamAId: String!
+  teamBId: String!
+  teamAName: String!
+  teamBName: String!
+  teamAScore: Int!
+  teamBScore: Int!
+  status: String!
+  startTime: Timestamp!
+  venue: String!
+  details: String
+  scoreDetails: JSON
+  createdAt: Timestamp!
+  lastUpdated: Timestamp!
+}
+
+type Team @table {
+  name: String!
+  sport: String!
+  logoUrl: String
+  createdAt: Timestamp!
+}
+
+type Player @table {
+  name: String!
+  teamId: String!
+  sport: String!
+  stats: JSON!
+  createdAt: Timestamp!
+}
+}
+
+type Player @table {
+  team: Team!
+  firstName: String!
+  lastName: String!
+  jerseyNumber: Int!
+  createdAt: Timestamp!
+  position: String
+  dateOfBirth: Date
+}
+
+type Match @table {
+  tournament: Tournament!
+  homeTeam: Team!
+  awayTeam: Team!
+  matchDateTime: Timestamp!
+  status: String!
+  homeTeamScore: Int!
+  awayTeamScore: Int!
+  createdAt: Timestamp!
+  location: String
+  winnerTeamId: UUID
+}

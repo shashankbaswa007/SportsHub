@@ -5,8 +5,10 @@ export type SportName =
   | 'Volleyball'
   | 'Cricket'
   | 'Throwball'
-  | 'Badminton'
-  | 'Table Tennis'
+  | 'Badminton (Singles)'
+  | 'Badminton (Doubles)'
+  | 'Table Tennis (Singles)'
+  | 'Table Tennis (Doubles)'
   | 'Kabaddi';
 
 export type MatchStatus = 'LIVE' | 'UPCOMING' | 'COMPLETED';

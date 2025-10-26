@@ -24,8 +24,10 @@ export const sports: SportName[] = [
   'Volleyball',
   'Cricket',
   'Throwball',
-  'Badminton',
-  'Table Tennis',
+  'Badminton (Singles)',
+  'Badminton (Doubles)',
+  'Table Tennis (Singles)',
+  'Table Tennis (Doubles)',
   'Kabaddi',
 ];
 
@@ -36,8 +38,12 @@ export const getStatFieldsForSport = (sport: SportName): Record<string, number> 
         case 'Cricket': return { 'Runs': 0, 'Fours': 0, 'Sixes': 0, 'Wickets': 0, 'Overs Bowled': 0, 'Balls Bowled': 0 };
         case 'Volleyball': return { 'Points': 0, 'Aces': 0, 'Blocks': 0 };
         case 'Throwball': return { 'Points': 0, 'Catches': 0 };
-        case 'Badminton': return { 'Points': 0, 'Smashes': 0 };
-        case 'Table Tennis': return { 'Points': 0, 'Aces': 0 };
+        case 'Badminton (Singles)':
+        case 'Badminton (Doubles)':
+            return { 'Points': 0, 'Smashes': 0 };
+        case 'Table Tennis (Singles)':
+        case 'Table Tennis (Doubles)':
+            return { 'Points': 0, 'Aces': 0 };
         case 'Kabaddi': return { 'Raid Points': 0, 'Tackle Points': 0, 'Total Points': 0 };
         default: return {};
     }
@@ -54,9 +60,11 @@ export const getDefaultScoreDetails = (sport: SportName) => {
         case 'Volleyball':
         case 'Throwball':
              return Array.from({ length: 3 }, (_, i) => ({ set: i + 1, teamAScore: 0, teamBScore: 0 }));
-        case 'Badminton':
+        case 'Badminton (Singles)':
+        case 'Badminton (Doubles)':
             return Array.from({ length: 3 }, (_, i) => ({ set: i + 1, teamAScore: 0, teamBScore: 0 }));
-        case 'Table Tennis':
+        case 'Table Tennis (Singles)':
+        case 'Table Tennis (Doubles)':
              return Array.from({ length: 5 }, (_, i) => ({ set: i + 1, teamAScore: 0, teamBScore: 0 }));
         default:
             return {};
@@ -198,26 +206,29 @@ export const calculatePointsTable = async (db: Firestore, sport: SportName): Pro
     });
 
     sportMatches.forEach(match => {
-        if (match.teamAId && match.teamBId && table[match.teamAId] && table[match.teamBId]) {
-            table[match.teamAId].played++;
-            table[match.teamBId].played++;
+        const teamA = match.teamAId ? table[match.teamAId] : undefined;
+        const teamB = match.teamBId ? table[match.teamBId] : undefined;
+
+        if (teamA && teamB) {
+            teamA.played++;
+            teamB.played++;
 
             const isDraw = match.teamAScore === match.teamBScore;
             const teamAWon = match.teamAScore > match.teamBScore;
 
             if (isDraw) {
-                table[match.teamAId].drawn++;
-                table[match.teamAId].points += 1;
-                table[match.teamBId].drawn++;
-                table[match.teamBId].points += 1;
+                teamA.drawn++;
+                teamA.points += 1;
+                teamB.drawn++;
+                teamB.points += 1;
             } else if (teamAWon) {
-                table[match.teamAId].won++;
-                table[match.teamAId].points += 2;
-                table[match.teamBId].lost++;
+                teamA.won++;
+                teamA.points += 2;
+                teamB.lost++;
             } else {
-                table[match.teamBId].won++;
-                table[match.teamBId].lost++;
-                table[match.teamAId].points += 0;
+                teamB.won++;
+                teamB.lost++;
+                teamA.points += 0;
             }
         }
     });
@@ -316,8 +327,15 @@ export const getOrCreateTeam = async (db: Firestore, name: string, sport: SportN
         const querySnapshot = await getDocs(q);
         
         if (!querySnapshot.empty) {
-            const teamId = querySnapshot.docs[0].id;
-            return { success: true, teamId };
+            const firstDoc = querySnapshot.docs[0];
+            if (firstDoc) {
+                const teamId = firstDoc.id;
+                return { success: true, teamId };
+            } else {
+                // Defensive fallback — should not happen because querySnapshot.empty is false,
+                // but satisfies TypeScript's possible 'undefined' check.
+                return { success: false, error: "Unexpected error: no team document found." };
+            }
         } else {
             const newTeamData = { name, sport, logoUrl: '' };
             const docRef = await addDoc(teamsRef, newTeamData);
@@ -338,20 +356,46 @@ export const createMatch = async (db: Firestore, data: {
     venue: string;
     details?: string;
 }): Promise<{ success: boolean; matchId?: string; error?: string }> => {
-     try {
+    try {
+        // Validate the existence of both teams
+        const [teamADoc, teamBDoc] = await Promise.all([
+            getDoc(doc(db, 'teams', data.teamAId)),
+            getDoc(doc(db, 'teams', data.teamBId))
+        ]);
+
+        if (!teamADoc.exists()) {
+            return { success: false, error: "Team A does not exist" };
+        }
+        if (!teamBDoc.exists()) {
+            return { success: false, error: "Team B does not exist" };
+        }
+
+        const teamA = teamADoc.data();
+        const teamB = teamBDoc.data();
+
+        // Create the match document with initialized scores
         const newMatchData = {
             ...data,
-            details: data.details || 'Newly added match',
+            details: data.details || `${teamA?.name || 'Team A'} vs ${teamB?.name || 'Team B'}`,
             teamAScore: 0,
             teamBScore: 0,
             scoreDetails: getDefaultScoreDetails(data.sport),
+            createdAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            teamAName: teamA?.name,
+            teamBName: teamB?.name,
         };
-        const docRef = await addDoc(collection(db, 'matches'), newMatchData);
-        return { success: true, matchId: docRef.id };
 
+        // Create the match document
+        const matchRef = await addDoc(collection(db, 'matches'), newMatchData);
+        
+        return { success: true, matchId: matchRef.id };
     } catch (error: any) {
         console.error("Error in createMatch (client): ", error);
-        return { success: false, error: error.message || "An error occurred while creating the match." };
+        return { 
+            success: false, 
+            error: error.message || "An error occurred while creating the match." 
+        };
     }
 };
 

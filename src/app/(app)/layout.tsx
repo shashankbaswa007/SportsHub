@@ -28,15 +28,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
     const user = localStorage.getItem('sports-hub-user');
+    const role = localStorage.getItem('sports-hub-role');
+    
     if (!user) {
       router.replace('/');
-    } else {
-        if (user === '160123771030') {
-            setIsAdmin(true);
-        }
+      return;
     }
+
+    setIsAdmin(role === 'admin');
+    setIsClient(true);
   }, [router]);
 
   const handleLogout = () => {

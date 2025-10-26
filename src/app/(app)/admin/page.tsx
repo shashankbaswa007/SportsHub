@@ -89,7 +89,7 @@ export default function AdminPage() {
         }
     }, [router, toast, firestore]);
 
-    const [editingMatch, setEditingMatch] = useState<Partial<EditableMatch> | null>(null);
+    const [editingMatch, setEditingMatch] = useState<EditableMatch | null>(null);
     const [editingPlayer, setEditingPlayer] = useState<Partial<EditablePlayer> | null>(null);
     const [addingPlayerToTeam, setAddingPlayerToTeam] = useState<string | null>(null);
     const [newPlayerName, setNewPlayerName] = useState("");
@@ -110,74 +110,139 @@ export default function AdminPage() {
     const watchTeamA = form.watch('teamAName');
     const watchTeamB = form.watch('teamBName');
 
-    const onSubmit = (values: z.infer<typeof matchSchema>) => {
-        if (!firestore) return;
+    const onSubmit = async (values: z.infer<typeof matchSchema>) => {
+        if (!firestore) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Firebase not initialized.",
+            });
+            return;
+        }
         
-        toast({
-            title: 'Creating Match...',
-            description: 'Your request is being processed in the background.',
-        });
+        try {
+            setDataLoading(true);
+            toast({
+                title: 'Creating Match...',
+                description: 'Your request is being processed...',
+            });
 
-        (async () => {
-            try {
-                const [teamAResult, teamBResult] = await Promise.all([
-                    getOrCreateTeam(firestore, values.teamAName, values.sport as SportName),
-                    getOrCreateTeam(firestore, values.teamBName, values.sport as SportName)
-                ]);
+            // Create or get teams first
+            const [teamAResult, teamBResult] = await Promise.all([
+                getOrCreateTeam(firestore, values.teamAName, values.sport as SportName),
+                getOrCreateTeam(firestore, values.teamBName, values.sport as SportName)
+            ]);
 
-                if (!teamAResult.success || !teamAResult.teamId) {
-                     toast({ variant: "destructive", title: "Error processing Team A", description: teamAResult.error });
-                     return;
-                }
-                if (!teamBResult.success || !teamBResult.teamId) {
-                    toast({ variant: "destructive", title: "Error processing Team B", description: teamBResult.error });
-                    return;
-                }
-                
-                const matchResult = await createMatch(firestore, {
-                    sport: values.sport as SportName,
-                    teamAId: teamAResult.teamId,
-                    teamBId: teamBResult.teamId,
-                    status: values.status,
-                    startTime: values.startTime,
-                    venue: values.venue,
+            if (!teamAResult.success || !teamAResult.teamId) {
+                toast({ 
+                    variant: "destructive", 
+                    title: "Error processing Team A", 
+                    description: teamAResult.error 
                 });
+                return;
+            }
+            if (!teamBResult.success || !teamBResult.teamId) {
+                toast({ 
+                    variant: "destructive", 
+                    title: "Error processing Team B", 
+                    description: teamBResult.error 
+                });
+                return;
+            }
 
-                if (matchResult.success) {
-                    toast({
-                        title: 'Match Created Successfully',
-                        description: `Match between ${values.teamAName} and ${values.teamBName} has been added.`,
-                    });
-                     form.setValue('teamAName', '');
-                     form.setValue('teamBName', '');
-                     form.setValue('venue', '');
-                     form.setValue('startTime', new Date().toISOString().substring(0, 16));
-                } else {
-                     toast({ variant: "destructive", title: "Error Creating Match", description: matchResult.error });
-                }
-            } catch (error: any) {
-                console.error("Error during background match creation: ", error);
-                const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            // Create the match with the team IDs
+            const matchResult = await createMatch(firestore, {
+                sport: values.sport as SportName,
+                teamAId: teamAResult.teamId,
+                teamBId: teamBResult.teamId,
+                status: values.status,
+                startTime: values.startTime,
+                venue: values.venue,
+                details: `${values.teamAName} vs ${values.teamBName}`
+            });
+
+            if (matchResult.success) {
                 toast({
-                    variant: "destructive",
-                    title: "Error Creating Match",
-                    description: errorMessage,
+                    title: 'Match Created Successfully',
+                    description: `Match between ${values.teamAName} and ${values.teamBName} has been added.`,
+                });
+                
+                // Reset form
+                form.reset({
+                    sport: '',
+                    teamAName: '',
+                    teamBName: '',
+                    status: 'UPCOMING',
+                    startTime: new Date().toISOString().substring(0, 16),
+                    venue: '',
+                });
+            } else {
+                toast({ 
+                    variant: "destructive", 
+                    title: "Error Creating Match", 
+                    description: matchResult.error 
                 });
             }
-        })();
+        } catch (error: any) {
+            console.error("Error during match creation: ", error);
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            toast({
+                variant: "destructive",
+                title: "Error Creating Match",
+                description: errorMessage,
+            });
+        } finally {
+            setDataLoading(false);
+        }
     };
 
     const handleUpdateMatch = async () => {
-        if (!editingMatch || !editingMatch.id || !firestore) return;
-        await updateMatchData(firestore, editingMatch.id, editingMatch as Partial<Match>);
-        toast({ title: "Match Updated", description: "The match details have been saved." });
-        setEditingMatch(null);
+        if (!editingMatch || !editingMatch.id || !firestore) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Cannot update match at this time."
+            });
+            return;
+        }
+        try {
+            await updateMatchData(firestore, editingMatch.id, editingMatch as Partial<Match>);
+            toast({ 
+                title: "Match Updated", 
+                description: "The match details have been saved." 
+            });
+            setEditingMatch(null);
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to update match. Please try again."
+            });
+        }
     };
 
     const handleDeleteMatch = async (id: string) => {
-        if (!firestore) return;
-        await deleteMatchData(firestore, id);
-        toast({ title: "Match Deleted", description: "The match has been removed." });
+        if (!firestore) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Cannot delete match at this time."
+            });
+            return;
+        }
+        try {
+            await deleteMatchData(firestore, id);
+            toast({ 
+                title: "Match Deleted", 
+                description: "The match has been removed." 
+            });
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to delete match. Please try again."
+            });
+        }
     };
     
     const startEditing = (match: EditableMatch) => {
@@ -185,30 +250,88 @@ export default function AdminPage() {
     };
 
     const handlePlayerUpdate = async (playerId: string, newName: string) => {
-        if (!firestore) return;
+        if (!firestore) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Cannot update player at this time."
+            });
+            return;
+        }
         if (!newName.trim()) {
-            toast({ variant: 'destructive', title: "Invalid Name", description: "Player name cannot be empty." });
+            toast({ 
+                variant: 'destructive', 
+                title: "Invalid Name", 
+                description: "Player name cannot be empty." 
+            });
             setEditingPlayer(null);
             return;
         }
-        await updatePlayerNameData(firestore, playerId, newName);
-        toast({ title: "Player Updated", description: "Player's name has been changed." });
-        setEditingPlayer(null);
+        try {
+            await updatePlayerNameData(firestore, playerId, newName);
+            toast({ 
+                title: "Player Updated", 
+                description: "Player's name has been changed." 
+            });
+            setEditingPlayer(null);
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Failed to update player. Please try again."
+            });
+        }
     };
 
     const handleDeletePlayer = async (playerId: string) => {
-        if (!firestore) return;
-        await deletePlayerData(firestore, playerId);
-        toast({ title: "Player Removed", description: "The player has been removed from the team." });
+        if (!firestore) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Cannot delete player at this time."
+            });
+            return;
+        }
+        try {
+            await deletePlayerData(firestore, playerId);
+            toast({ 
+                title: "Player Removed", 
+                description: "The player has been removed from the team." 
+            });
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Failed to remove player. Please try again."
+            });
+        }
     };
 
     const handleDeleteTeam = async (teamId: string) => {
-        if (!firestore) return;
+        if (!firestore) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Cannot delete team at this time."
+            });
+            return;
+        }
         try {
+            setDataLoading(true);
             await deleteTeamData(firestore, teamId);
-            toast({ title: "Team Deleted", description: "The team and its players have been removed." });
+            toast({ 
+                title: "Team Deleted", 
+                description: "The team and its players have been removed." 
+            });
         } catch (error) {
-             toast({ variant: 'destructive', title: "Error", description: "Could not delete the team." });
+            console.error("Error deleting team:", error);
+            toast({ 
+                variant: 'destructive', 
+                title: "Error", 
+                description: "Could not delete the team. Please try again." 
+            });
+        } finally {
+            setDataLoading(false);
         }
     };
     
@@ -221,15 +344,41 @@ export default function AdminPage() {
     };
 
     const handleAddPlayer = async (teamId: string, sport: SportName) => {
-        if (!firestore) return;
-        if (!newPlayerName.trim()) {
-             toast({ variant: 'destructive', title: "Invalid Name", description: "Player name cannot be empty." });
-             return;
+        if (!firestore) {
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Cannot add player at this time."
+            });
+            return;
         }
-        await addPlayerToTeamData(firestore, teamId, newPlayerName, sport);
-        toast({ title: "Player Added", description: `${newPlayerName} has been added to the team.` });
-        setAddingPlayerToTeam(null);
-        setNewPlayerName("");
+        if (!newPlayerName.trim()) {
+            toast({ 
+                variant: 'destructive', 
+                title: "Invalid Name", 
+                description: "Player name cannot be empty." 
+            });
+            return;
+        }
+        try {
+            setDataLoading(true);
+            await addPlayerToTeamData(firestore, teamId, newPlayerName, sport);
+            toast({ 
+                title: "Player Added", 
+                description: `${newPlayerName} has been added to the team.` 
+            });
+            setAddingPlayerToTeam(null);
+            setNewPlayerName("");
+        } catch (error) {
+            console.error("Error adding player:", error);
+            toast({
+                variant: 'destructive',
+                title: "Error",
+                description: "Failed to add player. Please try again."
+            });
+        } finally {
+            setDataLoading(false);
+        }
     };
 
     const availableTeams = teams

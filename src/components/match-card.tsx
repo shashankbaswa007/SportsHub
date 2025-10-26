@@ -31,14 +31,16 @@ const getStatusVariant = (status: Match['status']) => {
 };
 
 const sportColors: Record<SportName, string> = {
-    Football: 'border-green-500/50 hover:border-green-500/80',
-    Basketball: 'border-orange-500/50 hover:border-orange-500/80',
-    Volleyball: 'border-yellow-500/50 hover:border-yellow-500/80',
-    Cricket: 'border-blue-500/50 hover:border-blue-500/80',
-    Throwball: 'border-purple-500/50 hover:border-purple-500/80',
-    Badminton: 'border-red-500/50 hover:border-red-500/80',
-    'Table Tennis': 'border-pink-500/50 hover:border-pink-500/80',
-    Kabaddi: 'border-amber-500/50 hover:border-amber-500/80',
+    'Football': 'border-green-500/50 hover:border-green-500/80',
+    'Basketball': 'border-orange-500/50 hover:border-orange-500/80',
+    'Volleyball': 'border-yellow-500/50 hover:border-yellow-500/80',
+    'Cricket': 'border-blue-500/50 hover:border-blue-500/80',
+    'Throwball': 'border-purple-500/50 hover:border-purple-500/80',
+    'Badminton (Singles)': 'border-red-500/50 hover:border-red-500/80',
+    'Badminton (Doubles)': 'border-red-500/50 hover:border-red-500/80',
+    'Table Tennis (Singles)': 'border-pink-500/50 hover:border-pink-500/80',
+    'Table Tennis (Doubles)': 'border-pink-500/50 hover:border-pink-500/80',
+    'Kabaddi': 'border-amber-500/50 hover:border-amber-500/80',
 };
 
 const ScoreDisplay = ({ match }: { match: Match }) => {

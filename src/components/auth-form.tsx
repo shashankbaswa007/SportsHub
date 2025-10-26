@@ -8,6 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useFirebase } from '@/firebase';
+import { FirebaseError } from 'firebase/app';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { handleFirebaseError } from '@/firebase/error-handler';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -27,11 +31,13 @@ const signupSchema = z.object({
   username: usernameSchema,
 });
 
-const ADMIN_ID = '160123771030';
+const ADMIN_ID = process.env.NEXT_PUBLIC_ADMIN_ID;
+const DEFAULT_USER_PASSWORD = process.env.NEXT_PUBLIC_DEFAULT_USER_PASSWORD;
 
 export function AuthForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { auth } = useFirebase();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
 
@@ -45,41 +51,143 @@ export function AuthForm() {
     defaultValues: { username: "" },
   });
 
-  const onLoginSubmit = (values: z.infer<typeof loginSchema>) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      const isAdmin = values.username === ADMIN_ID && values.password === ADMIN_ID;
-      const isUser = values.password === 'password123' || values.password === values.username;
+  const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
+    try {
+      setIsLoading(true);
+      const email = `${values.username}@sportshub.edu`;
+      const isAdmin = values.username === ADMIN_ID;
+      
+      try {
+        // For admin login, check if password matches admin ID
+        if (isAdmin && values.password !== ADMIN_ID) {
+          toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description: 'Invalid admin credentials.',
+          });
+          return;
+        }
 
-      if (isAdmin || isUser) {
+        await signInWithEmailAndPassword(auth, email, values.password);
+        
+        // Login successful
         toast({
           title: 'Login Successful',
           description: isAdmin ? 'Welcome, Admin!' : 'Welcome back!',
         });
+        
         localStorage.setItem('sports-hub-user', values.username);
+        localStorage.setItem('sports-hub-role', isAdmin ? 'admin' : 'user');
+        
         router.push(isAdmin ? '/admin' : '/overview');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid username or password.',
-        });
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          switch (error.code) {
+            case 'auth/invalid-credential':
+            case 'auth/wrong-password':
+              toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: 'Invalid username or password.',
+              });
+              break;
+            case 'auth/user-not-found':
+              toast({
+                variant: 'destructive',
+                title: 'Account Not Found',
+                description: 'No account found with this username. Please sign up first.',
+              });
+              break;
+            case 'auth/too-many-requests':
+              toast({
+                variant: 'destructive',
+                title: 'Too Many Attempts',
+                description: 'Too many failed login attempts. Please try again later.',
+              });
+              break;
+            default:
+              throw error;
+          }
+        } else {
+          throw error;
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'An unexpected error occurred. Please try again.',
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
-  const onSignupSubmit = (values: z.infer<typeof signupSchema>) => {
-    setIsLoading(true);
-    setTimeout(() => {
+  const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
+    try {
+      setIsLoading(true);
+      const email = `${values.username}@sportshub.edu`;
+      const password = values.username; // Using username as initial password
+
+      // Always try to create a new user first
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        
+        toast({
+          title: 'Signup Successful',
+          description: 'Your account has been created. Your initial password is your username.',
+        });
+
+        // Sign in the user immediately after creating account
+        await signInWithEmailAndPassword(auth, email, password);
+        
+        localStorage.setItem('sports-hub-user', values.username);
+        localStorage.setItem('sports-hub-role', 'user');
+        
+        router.push('/overview');
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              toast({
+                variant: 'destructive',
+                title: 'Account Already Exists',
+                description: 'This username is already registered. Please login instead.',
+              });
+              setActiveTab('login');
+              break;
+            case 'auth/invalid-email':
+              toast({
+                variant: 'destructive',
+                title: 'Invalid Username',
+                description: 'Please enter a valid 12-digit ID starting with 1601.',
+              });
+              break;
+            case 'auth/weak-password':
+              toast({
+                variant: 'destructive',
+                title: 'Weak Password',
+                description: 'The password must be at least 6 characters long.',
+              });
+              break;
+            default:
+              throw error;
+          }
+        } else {
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
       toast({
-        title: 'Signup Successful',
-        description: 'Your account has been created. Your password is your username.',
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: 'An unexpected error occurred. Please try again.',
       });
-      localStorage.setItem('sports-hub-user', values.username);
-      router.push('/overview');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
   
   const cardVariants = {

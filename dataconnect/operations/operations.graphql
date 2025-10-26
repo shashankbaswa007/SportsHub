@@ -1,0 +1,121 @@
+# Operations for Match
+query GetMatch($id: ID!) {
+  getMatch(id: $id) {
+    id
+    sport
+    teamAId
+    teamBId
+    teamAName
+    teamBName
+    teamAScore
+    teamBScore
+    status
+    startTime
+    venue
+    details
+    scoreDetails
+    createdAt
+    lastUpdated
+  }
+}
+
+query GetMatchesBySport($sport: String!) {
+  getMatchesBySport(sport: $sport) {
+    id
+    teamAName
+    teamBName
+    teamAScore
+    teamBScore
+    status
+    startTime
+    venue
+  }
+}
+
+mutation CreateMatch($input: CreateMatchInput!) {
+  createMatch(input: $input) {
+    id
+    sport
+    teamAId
+    teamBId
+    teamAName
+    teamBName
+    status
+    startTime
+    venue
+  }
+}
+
+mutation UpdateMatch($id: ID!, $input: UpdateMatchInput!) {
+  updateMatch(id: $id, input: $input) {
+    id
+    teamAScore
+    teamBScore
+    status
+    lastUpdated
+  }
+}
+
+# Operations for Team
+query GetTeam($id: ID!) {
+  getTeam(id: $id) {
+    id
+    name
+    sport
+    logoUrl
+  }
+}
+
+query GetTeamsBySport($sport: String!) {
+  getTeamsBySport(sport: $sport) {
+    id
+    name
+    logoUrl
+  }
+}
+
+mutation CreateTeam($input: CreateTeamInput!) {
+  createTeam(input: $input) {
+    id
+    name
+    sport
+    logoUrl
+  }
+}
+
+# Operations for Player
+query GetPlayer($id: ID!) {
+  getPlayer(id: $id) {
+    id
+    name
+    teamId
+    sport
+    stats
+  }
+}
+
+query GetPlayersByTeam($teamId: String!) {
+  getPlayersByTeam(teamId: $teamId) {
+    id
+    name
+    stats
+  }
+}
+
+mutation CreatePlayer($input: CreatePlayerInput!) {
+  createPlayer(input: $input) {
+    id
+    name
+    teamId
+    sport
+    stats
+  }
+}
+
+mutation UpdatePlayer($id: ID!, $input: UpdatePlayerInput!) {
+  updatePlayer(id: $id, input: $input) {
+    id
+    name
+    stats
+  }
+}
