@@ -1,0 +1,262 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the CBIT SportsHub platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's unique 12-digit username."
+        },
+        "darkMode": {
+          "type": "boolean",
+          "description": "User preference for dark mode (true) or light mode (false)."
+        }
+      },
+      "required": [
+        "id",
+        "username"
+      ]
+    },
+    "Match": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Match",
+      "type": "object",
+      "description": "Represents a sports match within the CBIT SportsHub platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the match entity."
+        },
+        "sport": {
+          "type": "string",
+          "description": "The sport the match belongs to (e.g., Football, Basketball)."
+        },
+        "teamAId": {
+          "type": "string",
+          "description": "Reference to Team A. (Relationship: Team 1:N Match)"
+        },
+        "teamBId": {
+          "type": "string",
+          "description": "Reference to Team B. (Relationship: Team 1:N Match)"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The scheduled start time of the match.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the match (e.g., LIVE, UPCOMING, COMPLETED)."
+        }
+      },
+      "required": [
+        "id",
+        "sport",
+        "teamAId",
+        "teamBId",
+        "startTime",
+        "status"
+      ]
+    },
+    "Team": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Team",
+      "type": "object",
+      "description": "Represents a sports team participating in the CBIT SportsHub.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the team entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the team."
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "URL to the team's logo image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Score": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Score",
+      "type": "object",
+      "description": "Represents the score for a team in a specific match.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the score entry."
+        },
+        "matchId": {
+          "type": "string",
+          "description": "Reference to Match. (Relationship: Match 1:N Score)"
+        },
+        "teamId": {
+          "type": "string",
+          "description": "Reference to Team. (Relationship: Team 1:N Score)"
+        },
+        "points": {
+          "type": "number",
+          "description": "The number of points scored by the team in the match."
+        }
+      },
+      "required": [
+        "id",
+        "matchId",
+        "teamId",
+        "points"
+      ]
+    },
+    "Analytic": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Analytic",
+      "type": "object",
+      "description": "Represents analytical data for the CBIT SportsHub platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the analytic entry."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp when the analytic data was recorded.",
+          "format": "date-time"
+        },
+        "metric": {
+          "type": "string",
+          "description": "The type of metric being recorded (e.g., most viewed sport, peak user time)."
+        },
+        "value": {
+          "type": "number",
+          "description": "The numerical value of the metric."
+        }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "metric",
+        "value"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership ensures only the user can access their data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/matches/{matchId}",
+        "definition": {
+          "entityName": "Match",
+          "schema": {
+            "$ref": "#/backend/entities/Match"
+          },
+          "description": "Stores match details.",
+          "params": [
+            {
+              "name": "matchId",
+              "description": "The unique identifier for the match."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/teams/{teamId}",
+        "definition": {
+          "entityName": "Team",
+          "schema": {
+            "$ref": "#/backend/entities/Team"
+          },
+          "description": "Stores team information.",
+          "params": [
+            {
+              "name": "teamId",
+              "description": "The unique identifier for the team."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/scores/{scoreId}",
+        "definition": {
+          "entityName": "Score",
+          "schema": {
+            "$ref": "#/backend/entities/Score"
+          },
+          "description": "Stores score information for each match.",
+          "params": [
+            {
+              "name": "scoreId",
+              "description": "The unique identifier for the score."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/analytics/{analyticId}",
+        "definition": {
+          "entityName": "Analytic",
+          "schema": {
+            "$ref": "#/backend/entities/Analytic"
+          },
+          "description": "Stores analytic data for the platform.",
+          "params": [
+            {
+              "name": "analyticId",
+              "description": "The unique identifier for the analytic data."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "role_admin",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Collection indicating admin roles. Existence of a document signifies admin privileges.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user with admin role."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to manage user data, matches, teams, scores, and analytics for the CBIT SportsHub platform, while prioritizing security and scalability. It adheres to the principles of Authorization Independence, Structural Segregation, Access Modeling, and Data Clarity.\n\n**Authorization Independence:**\nTo ensure authorization independence and avoid `get()` calls in security rules, authorization context is denormalized. Specifically, for collaborative data, the `members` map or equivalent role-based access control data is copied to subcollections when necessary.\n\n**Structural Segregation:**\nData with different access requirements are stored in separate collections. User-specific data is stored under `/users/{userId}`, while global data like teams and matches reside in top-level collections. This simplifies security rules by ensuring all documents within a collection share the same access needs.\n\n**Access Modeling:**\nPath-based ownership is used for user-specific data (e.g., `/users/{userId}/settings`). Collaborative data, if any, will leverage membership maps. A dedicated collection, `/roles_admin/{uid}`, manages global roles, using existence over content for efficiency.\n\n**QAPs (Rules are not Filters):**\nThe structure facilitates secure `list` operations by ensuring that collections contain documents with homogeneous security requirements. For example, listing matches is secure because all documents in the `/matches` collection have the same access control policies.\n\n**Invariants:**\nThe structure supports data integrity by facilitating validation rules for ownership, timestamps, and denormalized data. For instance, a rule can ensure that a `match` document's `teamAId` and `teamBId` always reference valid team documents.\n\nThis structure is optimized for the CBIT SportsHub application's requirements, providing a secure, scalable, and debuggable Firestore database."
+  }
+}

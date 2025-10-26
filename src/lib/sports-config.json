@@ -1,0 +1,53 @@
+
+[
+  {
+    "sportName": "Football",
+    "minPlayers": 5,
+    "maxPlayers": 11
+  },
+  {
+    "sportName": "Basketball",
+    "minPlayers": 3,
+    "maxPlayers": 5
+  },
+  {
+    "sportName": "Cricket",
+    "minPlayers": 11,
+    "maxPlayers": 11
+  },
+  {
+    "sportName": "Volleyball",
+    "minPlayers": 6,
+    "maxPlayers": 6
+  },
+  {
+    "sportName": "Throwball",
+    "minPlayers": 7,
+    "maxPlayers": 7
+  },
+  {
+    "sportName": "Badminton (Singles)",
+    "minPlayers": 1,
+    "maxPlayers": 1
+  },
+  {
+    "sportName": "Badminton (Doubles)",
+    "minPlayers": 2,
+    "maxPlayers": 2
+  },
+  {
+    "sportName": "Table Tennis (Singles)",
+    "minPlayers": 1,
+    "maxPlayers": 1
+  },
+  {
+    "sportName": "Table Tennis (Doubles)",
+    "minPlayers": 2,
+    "maxPlayers": 2
+  },
+  {
+    "sportName": "Kabaddi",
+    "minPlayers": 7,
+    "maxPlayers": 7
+  }
+]
