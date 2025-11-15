@@ -398,43 +398,43 @@ export default function AdminPage() {
         : teams.filter(t => t.sport === teamFilter);
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto">
+        <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
             <header className="space-y-2">
                 <div className="flex items-center gap-3">
-                    <div className="h-1 w-16 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
+                    <div className="h-1 w-10 sm:w-16 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
                     <span className="text-xs font-semibold tracking-widest text-white/40 uppercase">Control Center</span>
                 </div>
-                <h1 className="font-headline text-5xl font-black tracking-tight text-white/90">Admin Dashboard</h1>
-                <p className="text-white/50 text-lg">Manage tournaments, matches, teams, and players with precision.</p>
+                <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white/90">Admin Dashboard</h1>
+                <p className="text-white/50 text-base sm:text-lg">Manage tournaments, matches, teams, and players with precision.</p>
             </header>
 
             <Card className="glass-strong border-white/10">
-                <CardHeader className="border-b border-white/5">
+                <CardHeader className="border-b border-white/5 p-4 sm:p-6">
                     <div className="flex items-center gap-2">
-                        <PlusCircle className="h-6 w-6 text-emerald-400" />
-                        <CardTitle className="font-headline text-2xl font-bold text-white/90">Create New Match</CardTitle>
+                        <PlusCircle className="h-5 sm:h-6 w-5 sm:w-6 text-emerald-400" />
+                        <CardTitle className="font-headline text-xl sm:text-2xl font-bold text-white/90">Create New Match</CardTitle>
                     </div>
-                    <CardDescription className="text-white/50 text-base mt-2">
+                    <CardDescription className="text-white/50 text-sm sm:text-base mt-2">
                         Use the form below to add a new match. Enter a team name to select an existing team or create a new one.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-6">
+                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="sport" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Sport</FormLabel><Select onValueChange={(value) => { field.onChange(value); form.setValue(`teamAName`, ''); form.setValue(`teamBName`, ''); }} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors"><SelectValue placeholder="Select a sport" /></SelectTrigger></FormControl><SelectContent>{sports.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="teamAName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Team A</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamB.toLowerCase())} placeholder="Select or create Team A" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="teamBName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Team B</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamA.toLowerCase())} placeholder="Select or create Team B" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="status" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors"><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="UPCOMING">Upcoming</SelectItem><SelectItem value="LIVE">Live</SelectItem><SelectItem value="COMPLETED">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="startTime" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold">Date & Time</FormLabel><FormControl><Input type="datetime-local" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors" /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold">Venue</FormLabel><FormControl><Input placeholder="E.g., Main Football Ground" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors placeholder:text-white/30" /></FormControl><FormMessage /></FormItem>)} />
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                                <FormField control={form.control} name="sport" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold text-sm">Sport</FormLabel><Select onValueChange={(value) => { field.onChange(value); form.setValue(`teamAName`, ''); form.setValue(`teamBName`, ''); }} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors h-11"><SelectValue placeholder="Select a sport" /></SelectTrigger></FormControl><SelectContent>{sports.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="teamAName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold text-sm">Team A</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamB.toLowerCase())} placeholder="Select or create Team A" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="teamBName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold text-sm">Team B</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamB.toLowerCase())} placeholder="Select or create Team B" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="status" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold text-sm">Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors h-11"><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="UPCOMING">Upcoming</SelectItem><SelectItem value="LIVE">Live</SelectItem><SelectItem value="COMPLETED">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="startTime" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold text-sm">Date & Time</FormLabel><FormControl><Input type="datetime-local" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors h-11" /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold text-sm">Venue</FormLabel><FormControl><Input placeholder="E.g., Main Football Ground" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors placeholder:text-white/30 h-11" /></FormControl><FormMessage /></FormItem>)} />
                             </div>
                             <div className="flex justify-end pt-2">
                                 <Button 
                                     type="submit" 
                                     disabled={form.formState.isSubmitting} 
                                     size="lg"
-                                    className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold shadow-lg hover:shadow-emerald-500/20 transition-all"
+                                    className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold shadow-lg hover:shadow-emerald-500/20 transition-all w-full sm:w-auto h-11"
                                 >
                                     {form.formState.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
                                     Create Match
@@ -446,51 +446,37 @@ export default function AdminPage() {
             </Card>
 
             <Card className="glass-strong border-white/10">
-                <CardHeader className="border-b border-white/5">
+                <CardHeader className="border-b border-white/5 p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <CardTitle className="font-headline text-2xl font-bold text-white/90 mb-2">Manage Existing Matches</CardTitle>
-                            <CardDescription className="text-white/50">Update scores, status, or delete matches. Navigate to a match page to update player stats or set scores.</CardDescription>
+                            <CardTitle className="font-headline text-xl sm:text-2xl font-bold text-white/90 mb-2">Manage Existing Matches</CardTitle>
+                            <CardDescription className="text-white/50 text-sm sm:text-base">Update scores, status, or delete matches. Navigate to a match page to update player stats or set scores.</CardDescription>
                         </div>
-                        <div className="flex flex-col items-end gap-3">
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm text-white/50 font-medium">Filter by Sport:</span>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter('All')} className={`px-3 py-1 rounded-md text-sm ${matchFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
+                        <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+                            <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                                <span className="text-xs sm:text-sm text-white/50 font-medium shrink-0">Filter:</span>
+                                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter('All')} className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm ${matchFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
                                     {sports.map(sport => (
-                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter(sport as SportName)} className={`px-3 py-1 rounded-md text-sm ${matchFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === sport ? 'border-white/10' : 'border-white/6'}`}>{sport}</motion.button>
+                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter(sport as SportName)} className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm ${matchFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === sport ? 'border-white/10' : 'border-white/6'} whitespace-nowrap`}>{sport}</motion.button>
                                     ))}
                                 </div>
-                            </div>
-                            {/* keep legacy select for finer control on small screens */}
-                            <div className="hidden md:block">
-                                <Select value={matchFilter} onValueChange={(value) => setMatchFilter(value as SportName | 'All')}>
-                                    <SelectTrigger className="w-[180px] bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="All">All Sports</SelectItem>
-                                        {sports.map(sport => (
-                                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="pt-6">
-                    <div className="space-y-4">
+                <CardContent className="p-4 sm:p-6 pt-4 sm:pt-6">
+                    <div className="space-y-3 sm:space-y-4">
                         {dataLoading ? (
                             <div className="flex justify-center py-12">
                                 <Loader2 className="h-8 w-8 animate-spin text-white/20" />
                             </div>
                         ) : filteredMatches.length === 0 ? (
                             <div className="text-center py-12">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
-                                    <Trophy className="h-8 w-8 text-white/20" />
+                                <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-full bg-white/5 mb-4">
+                                    <Trophy className="h-6 sm:h-8 w-6 sm:w-8 text-white/20" />
                                 </div>
-                                <p className="text-white/40 font-medium">
+                                <p className="text-white/40 font-medium text-sm sm:text-base">
                                     {matchFilter === 'All' ? 'No matches created yet.' : `No ${matchFilter} matches found.`}
                                 </p>
                             </div>
@@ -503,9 +489,9 @@ export default function AdminPage() {
                             const isEditingThis = editingMatch?.id === match.id;
                             
                             return (
-                            <Card key={match.id} className="glass p-5 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group cursor-pointer hover-lift">
-                                <div className="flex flex-wrap items-center gap-4">
-                                    <div className="flex-1 min-w-[200px]" onClick={() => router.push(`/match/${match.id}`)}>
+                            <Card key={match.id} className="glass p-3 sm:p-5 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group cursor-pointer hover-lift">
+                                <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+                                    <div className="flex-1 min-w-[180px] sm:min-w-[200px] w-full sm:w-auto" onClick={() => router.push(`/match/${match.id}`)}>
                                         <div className="flex items-center gap-2 mb-2">
                                             <Badge variant="outline" className="text-xs font-semibold border-white/20 text-white/60">
                                                 {match.sport}
@@ -517,62 +503,66 @@ export default function AdminPage() {
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="font-bold text-lg text-white/90 group-hover:text-white transition-colors">{teamA?.name} vs {teamB?.name}</p>
-                                        <p className="text-sm text-white/40 mt-1">{new Date(match.startTime).toLocaleString('en-US', { 
+                                        <p className="font-bold text-base sm:text-lg text-white/90 group-hover:text-white transition-colors">{teamA?.name} vs {teamB?.name}</p>
+                                        <p className="text-xs sm:text-sm text-white/40 mt-1">{new Date(match.startTime).toLocaleString('en-US', { 
                                             month: 'short', 
                                             day: 'numeric', 
                                             hour: '2-digit', 
                                             minute: '2-digit' 
                                         })}</p>
-                                        <div className="flex items-center text-sm text-white/40 gap-1 mt-1">
+                                        <div className="flex items-center text-xs sm:text-sm text-white/40 gap-1 mt-1">
                                             <MapPin className="h-3 w-3" />
-                                            <span>{match.venue}</span>
+                                            <span className="truncate">{match.venue}</span>
                                         </div>
                                     </div>
                                     {isEditingThis ? (
-                                         <>
-                                            <p className="text-sm text-white/40 font-medium">Edit score on match page</p>
+                                         <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                                            <p className="text-xs sm:text-sm text-white/40 font-medium w-full sm:w-auto">Edit score on match page</p>
                                             <Select value={editingMatch?.status} onValueChange={(value) => setEditingMatch({...editingMatch, status: value as any})}>
-                                                <SelectTrigger className="w-[140px] bg-white/5 border-white/10"><SelectValue /></SelectTrigger>
+                                                <SelectTrigger className="w-full sm:w-[140px] bg-white/5 border-white/10 h-9 sm:h-10"><SelectValue /></SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="UPCOMING">Upcoming</SelectItem>
                                                     <SelectItem value="LIVE">Live</SelectItem>
                                                     <SelectItem value="COMPLETED">Completed</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            <Button size="icon" className="bg-emerald-600 hover:bg-emerald-500" onClick={handleUpdateMatch}><Save className="h-4 w-4" /></Button>
-                                            <Button size="icon" variant="ghost" className="hover:bg-white/10" onClick={() => setEditingMatch(null)}><X className="h-4 w-4" /></Button>
-                                         </>
+                                            <div className="flex gap-2">
+                                                <Button size="icon" className="bg-emerald-600 hover:bg-emerald-500 h-9 w-9" onClick={handleUpdateMatch}><Save className="h-4 w-4" /></Button>
+                                                <Button size="icon" variant="ghost" className="hover:bg-white/10 h-9 w-9" onClick={() => setEditingMatch(null)}><X className="h-4 w-4" /></Button>
+                                            </div>
+                                         </div>
                                     ) : (
-                                        <>
+                                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start flex-wrap">
                                             <div className="flex items-center gap-2">
-                                                <div className="font-mono font-bold text-2xl tabular-nums text-white/90">{match.teamAScore}</div>
+                                                <div className="font-mono font-bold text-xl sm:text-2xl tabular-nums text-white/90">{match.teamAScore}</div>
                                                 <span className="text-white/30">-</span>
-                                                <div className="font-mono font-bold text-2xl tabular-nums text-white/90">{match.teamBScore}</div>
+                                                <div className="font-mono font-bold text-xl sm:text-2xl tabular-nums text-white/90">{match.teamBScore}</div>
                                             </div>
                                             <Badge 
                                                 variant={match.status === 'LIVE' ? 'destructive' : match.status === 'UPCOMING' ? 'secondary' : 'default'} 
-                                                className="w-[100px] justify-center font-semibold"
+                                                className="w-[90px] sm:w-[100px] justify-center font-semibold text-xs"
                                             >
                                                 {match.status}
                                             </Badge>
-                                            <Button size="icon" variant="outline" className="border-white/10 hover:bg-white/10 hover:border-white/20" onClick={() => startEditing(match)} disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button size="icon" variant="destructive" className="hover:bg-red-600" disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Trash2 className="h-4 w-4" /></Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent className="glass-strong border-white/10">
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle className="text-white/90">Are you sure?</AlertDialogTitle>
-                                                        <AlertDialogDescription className="text-white/60">This action cannot be undone. This will permanently delete the match.</AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeleteMatch(match.id)}>Delete</AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </>
+                                            <div className="flex gap-2">
+                                                <Button size="icon" variant="outline" className="border-white/10 hover:bg-white/10 hover:border-white/20 h-9 w-9" onClick={() => startEditing(match)} disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button size="icon" variant="destructive" className="hover:bg-red-600 h-9 w-9" disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Trash2 className="h-4 w-4" /></Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent className="glass-strong border-white/10">
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle className="text-white/90">Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription className="text-white/60">This action cannot be undone. This will permanently delete the match.</AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeleteMatch(match.id)}>Delete</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </Card>
@@ -583,59 +573,46 @@ export default function AdminPage() {
             </Card>
 
             <Card className="glass-strong border-white/10">
-                <CardHeader className="border-b border-white/5">
+                <CardHeader className="border-b border-white/5 p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <CardTitle className="font-headline text-2xl font-bold text-white/90 mb-2">Manage Teams & Players</CardTitle>
-                            <CardDescription className="text-white/50">Edit player names or remove players and teams.</CardDescription>
+                            <CardTitle className="font-headline text-xl sm:text-2xl font-bold text-white/90 mb-2">Manage Teams & Players</CardTitle>
+                            <CardDescription className="text-white/50 text-sm sm:text-base">Edit player names or remove players and teams.</CardDescription>
                         </div>
-                        <div className="flex flex-col items-end gap-3">
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm text-white/50 font-medium">Filter by Sport:</span>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter('All')} className={`px-3 py-1 rounded-md text-sm ${teamFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
+                        <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+                            <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                                <span className="text-xs sm:text-sm text-white/50 font-medium shrink-0">Filter:</span>
+                                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter('All')} className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm ${teamFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
                                     {sports.map(sport => (
-                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter(sport as SportName)} className={`px-3 py-1 rounded-md text-sm ${teamFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === sport ? 'border-white/10' : 'border-white/6'}`}>{sport}</motion.button>
+                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter(sport as SportName)} className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm ${teamFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === sport ? 'border-white/10' : 'border-white/6'} whitespace-nowrap`}>{sport}</motion.button>
                                     ))}
                                 </div>
-                            </div>
-                            <div className="hidden md:block">
-                                <Select value={teamFilter} onValueChange={(value) => setTeamFilter(value as SportName | 'All')}>
-                                    <SelectTrigger className="w-[180px] bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="All">All Sports</SelectItem>
-                                        {sports.map(sport => (
-                                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-6">
+                <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-4 sm:pt-6">
                      {filteredTeams.length === 0 && !dataLoading && (
                          <div className="text-center py-12">
-                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
-                                 <Users className="h-8 w-8 text-white/20" />
+                             <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-full bg-white/5 mb-4">
+                                 <Users className="h-6 sm:h-8 w-6 sm:w-8 text-white/20" />
                              </div>
-                             <p className="text-white/40 font-medium">
+                             <p className="text-white/40 font-medium text-sm sm:text-base">
                                  {teamFilter === 'All' ? 'No teams exist. Create a match to add teams.' : `No ${teamFilter} teams found.`}
                              </p>
                          </div>
                      )}
                     {filteredTeams.map(team => (
-                        <Card key={team.id} className="glass p-6 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group">
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <h4 className="font-bold text-2xl text-white/90 group-hover:text-white transition-colors">{team.name}</h4>
+                        <Card key={team.id} className="glass p-4 sm:p-6 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
+                                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                                    <h4 className="font-bold text-xl sm:text-2xl text-white/90 group-hover:text-white transition-colors">{team.name}</h4>
                                     <Badge variant="outline" className="text-xs font-semibold border-white/20 text-white/60">{team.sport}</Badge>
                                 </div>
                                  <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="destructive" size="sm" className="hover:bg-red-600" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
+                                        <Button variant="destructive" size="sm" className="hover:bg-red-600 w-full sm:w-auto h-9 text-sm" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
                                             <Trash2 className="mr-2 h-4 w-4"/>Delete Team
                                         </Button>
                                     </AlertDialogTrigger>
@@ -651,58 +628,62 @@ export default function AdminPage() {
                                     </AlertDialogContent>
                                 </AlertDialog>
                             </div>
-                            <div className="mt-4 space-y-3">
+                            <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                                 {players.filter(p => p.teamId === team.id).map(player => (
-                                    <div key={player.id} className="flex items-center gap-2 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                                    <div key={player.id} className="flex items-center gap-2 p-2 sm:p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
                                         {editingPlayer?.id === player.id ? (
                                             <>
-                                                <Input data-player-id={player.id} defaultValue={player.name} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handlePlayerUpdate(player.id, e.currentTarget.value); } if (e.key === 'Escape') cancelEditingPlayer(); }} className="h-9 bg-white/5 border-white/10" />
-                                                <Button size="icon" className="h-9 w-9 bg-emerald-600 hover:bg-emerald-500" onClick={() => handlePlayerUpdate(player.id, (document.querySelector(`input[data-player-id='${player.id}']`) as HTMLInputElement).value)}><Save className="h-4 w-4" /></Button>
-                                                <Button size="icon" variant="ghost" className="h-9 w-9 hover:bg-white/10" onClick={cancelEditingPlayer}><X className="h-4 w-4" /></Button>
+                                                <Input data-player-id={player.id} defaultValue={player.name} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handlePlayerUpdate(player.id, e.currentTarget.value); } if (e.key === 'Escape') cancelEditingPlayer(); }} className="h-9 bg-white/5 border-white/10 text-sm" />
+                                                <Button size="icon" className="h-9 w-9 bg-emerald-600 hover:bg-emerald-500 shrink-0" onClick={() => handlePlayerUpdate(player.id, (document.querySelector(`input[data-player-id='${player.id}']`) as HTMLInputElement).value)}><Save className="h-4 w-4" /></Button>
+                                                <Button size="icon" variant="ghost" className="h-9 w-9 hover:bg-white/10 shrink-0" onClick={cancelEditingPlayer}><X className="h-4 w-4" /></Button>
                                             </>
                                         ) : (
                                             <>
-                                                <span className="flex-1 text-white/80 font-medium">{player.name}</span>
-                                                <Button size="icon" variant="outline" className="h-9 w-9 border-white/10 hover:bg-white/10 hover:border-white/20" onClick={() => startEditingPlayer(player)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button size="icon" variant="destructive" className="h-9 w-9 hover:bg-red-600" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><UserX className="h-4 w-4" /></Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent className="glass-strong border-white/10">
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle className="text-white/90">Remove {player.name}?</AlertDialogTitle>
-                                                            <AlertDialogDescription className="text-white/60">This will remove the player from the team. This action cannot be undone.</AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeletePlayer(player.id)}>Confirm Removal</AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
+                                                <span className="flex-1 text-white/80 font-medium text-sm sm:text-base truncate">{player.name}</span>
+                                                <div className="flex gap-2 shrink-0">
+                                                    <Button size="icon" variant="outline" className="h-9 w-9 border-white/10 hover:bg-white/10 hover:border-white/20" onClick={() => startEditingPlayer(player)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button size="icon" variant="destructive" className="h-9 w-9 hover:bg-red-600" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><UserX className="h-4 w-4" /></Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className="glass-strong border-white/10">
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle className="text-white/90">Remove {player.name}?</AlertDialogTitle>
+                                                                <AlertDialogDescription className="text-white/60">This will remove the player from the team. This action cannot be undone.</AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                                                                <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeletePlayer(player.id)}>Confirm Removal</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
                                             </>
                                         )}
                                     </div>
                                 ))}
                                 {players.filter(p => p.teamId === team.id).length === 0 && (
-                                    <p className="text-sm text-white/40 text-center py-4">No players found for this team. Add one below.</p>
+                                    <p className="text-xs sm:text-sm text-white/40 text-center py-3 sm:py-4">No players found for this team. Add one below.</p>
                                 )}
                             </div>
-                            <div className="mt-5 pt-5 border-t border-white/5">
+                            <div className="mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-white/5">
                             {addingPlayerToTeam === team.id ? (
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                                     <Input 
                                         placeholder="New player name" 
                                         value={newPlayerName}
                                         onChange={(e) => setNewPlayerName(e.target.value)}
                                         autoFocus
                                         onKeyDown={(e) => { if (e.key === 'Enter') handleAddPlayer(team.id, team.sport); if (e.key === 'Escape') { setAddingPlayerToTeam(null); setNewPlayerName(""); } }}
-                                        className="h-10 bg-white/5 border-white/10 placeholder:text-white/30"
+                                        className="h-9 sm:h-10 bg-white/5 border-white/10 placeholder:text-white/30 text-sm"
                                     />
-                                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 font-semibold" onClick={() => handleAddPlayer(team.id, team.sport)}>Save Player</Button>
-                                    <Button size="sm" variant="ghost" className="hover:bg-white/10" onClick={() => { setAddingPlayerToTeam(null); setNewPlayerName(""); }}>Cancel</Button>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 font-semibold h-9 sm:h-10 flex-1 sm:flex-none" onClick={() => handleAddPlayer(team.id, team.sport)}>Save Player</Button>
+                                        <Button size="sm" variant="ghost" className="hover:bg-white/10 h-9 sm:h-10 flex-1 sm:flex-none" onClick={() => { setAddingPlayerToTeam(null); setNewPlayerName(""); }}>Cancel</Button>
+                                    </div>
                                 </div>
                             ) : (
-                                <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/10 hover:border-white/20 font-medium" onClick={() => setAddingPlayerToTeam(team.id)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
+                                <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/10 hover:border-white/20 font-medium h-9 sm:h-10 w-full sm:w-auto text-sm" onClick={() => setAddingPlayerToTeam(team.id)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
                                     <UserPlus className="mr-2 h-4 w-4" /> Add Player
                                 </Button>
                             )}

@@ -184,8 +184,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset className="bg-background">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-white/5 bg-[#0D0D0D]/80 backdrop-blur-xl px-6">
-            <Button size="icon" variant="outline" className="sm:hidden border-white/10 hover:bg-white/5">
+        <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center gap-4 border-b border-white/5 bg-[#0D0D0D]/80 backdrop-blur-xl px-3 sm:px-6">
+            <Button size="icon" variant="outline" className="lg:hidden border-white/10 hover:bg-white/5">
                 <PanelLeft className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
             </Button>
@@ -195,7 +195,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="flex-1 overflow-auto px-6 py-8"
+          className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8"
         >
             {children}
         </motion.main>

@@ -36,7 +36,7 @@ const cardVariants = {
 export default function AuthenticationPage() {
   return (
     <motion.main 
-      className="relative flex min-h-screen items-center justify-center p-6 overflow-hidden" 
+      className="relative flex min-h-screen items-center justify-center p-3 sm:p-6 overflow-hidden" 
       style={{ background: '#0C0C0C' }}
       variants={pageVariants}
       initial="hidden"
@@ -122,37 +122,37 @@ export default function AuthenticationPage() {
       />
 
       {/* Content Container */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
         
         {/* Left: Minimalistic Branding */}
         <motion.div 
-          className="space-y-8 px-8"
+          className="space-y-6 sm:space-y-8 px-4 sm:px-8 order-2 lg:order-1"
           variants={contentVariants}
         >
           {/* Logo & Title */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <motion.div 
-              className="inline-flex items-center gap-5 p-5 rounded-2xl glass border border-white/10"
+              className="inline-flex items-center gap-3 sm:gap-5 p-3 sm:p-5 rounded-2xl glass border border-white/10"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
               <div className="relative">
-                <Flame className="h-14 w-14 text-white" />
+                <Flame className="h-10 sm:h-14 w-10 sm:w-14 text-white" />
                 <div className="absolute inset-0 blur-lg bg-white/30" />
               </div>
               <div>
-                <h1 className="font-headline text-6xl font-black tracking-tight text-gradient">
+                <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-gradient">
                   SportsHub
                 </h1>
-                <p className="text-base text-white/60 font-light">Central</p>
+                <p className="text-sm sm:text-base text-white/60 font-light">Central</p>
               </div>
             </motion.div>
 
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold text-white/90 leading-tight">
+            <div className="space-y-2 sm:space-y-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white/90 leading-tight">
                 Welcome Back
               </h2>
-              <p className="text-white/50 text-lg leading-relaxed max-w-md">
+              <p className="text-white/50 text-base sm:text-lg leading-relaxed max-w-md">
                 Sign in to access live matches, analytics, and tournament management.
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function AuthenticationPage() {
 
         {/* Right: Premium Auth Card with Enhanced Glassmorphism */}
         <motion.div 
-          className="flex items-center justify-center px-8"
+          className="flex items-center justify-center px-4 sm:px-8 order-1 lg:order-2"
           variants={cardVariants}
         >
         <div className="relative w-full max-w-md">
