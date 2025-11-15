@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { sports, deleteTeam as deleteTeamData, deletePlayer as deletePlayerData, updatePlayerName as updatePlayerNameData, updateMatch as updateMatchData, deleteMatch as deleteMatchData, addPlayerToTeam as addPlayerToTeamData, getOrCreateTeam, createMatch } from '@/lib/data-client';
-import { PlusCircle, Trash2, Loader2, Edit, Save, X, UserX, UserPlus, MapPin } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Edit, Save, X, UserX, UserPlus, MapPin, Trophy, Users } from 'lucide-react';
 import type { Match, Team, Player, SportName } from '@/lib/types';
 import {
   AlertDialog,
@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Combobox } from '@/components/ui/combobox';
 import { collection, onSnapshot, query } from 'firebase/firestore';
@@ -55,6 +56,8 @@ export default function AdminPage() {
     const [teams, setTeams] = useState<Team[]>([]);
     const [players, setPlayers] = useState<Player[]>([]);
     const [dataLoading, setDataLoading] = useState(true);
+    const [matchFilter, setMatchFilter] = useState<SportName | 'All'>('All');
+    const [teamFilter, setTeamFilter] = useState<SportName | 'All'>('All');
     const firestore = useFirestore();
 
     useEffect(() => {
@@ -385,33 +388,54 @@ export default function AdminPage() {
         .filter(t => t.sport === watchSport)
         .map(t => ({ label: t.name, value: t.name }));
 
+    // Filtered data based on sport filters
+    const filteredMatches = matchFilter === 'All' 
+        ? matches 
+        : matches.filter(m => m.sport === matchFilter);
+    
+    const filteredTeams = teamFilter === 'All'
+        ? teams
+        : teams.filter(t => t.sport === teamFilter);
+
     return (
         <div className="space-y-8 max-w-7xl mx-auto">
-            <header>
-                <h1 className="font-headline text-4xl font-bold tracking-tight">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Manage tournaments, matches, teams, and players.</p>
+            <header className="space-y-2">
+                <div className="flex items-center gap-3">
+                    <div className="h-1 w-16 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
+                    <span className="text-xs font-semibold tracking-widest text-white/40 uppercase">Control Center</span>
+                </div>
+                <h1 className="font-headline text-5xl font-black tracking-tight text-white/90">Admin Dashboard</h1>
+                <p className="text-white/50 text-lg">Manage tournaments, matches, teams, and players with precision.</p>
             </header>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Create New Match</CardTitle>
-                    <CardDescription>
-                    Use the form below to add a new match. Enter a team name to select an existing team or create a new one.
+            <Card className="glass-strong border-white/10">
+                <CardHeader className="border-b border-white/5">
+                    <div className="flex items-center gap-2">
+                        <PlusCircle className="h-6 w-6 text-emerald-400" />
+                        <CardTitle className="font-headline text-2xl font-bold text-white/90">Create New Match</CardTitle>
+                    </div>
+                    <CardDescription className="text-white/50 text-base mt-2">
+                        Use the form below to add a new match. Enter a team name to select an existing team or create a new one.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="sport" render={({ field }) => (<FormItem><FormLabel>Sport</FormLabel><Select onValueChange={(value) => { field.onChange(value); form.setValue(`teamAName`, ''); form.setValue(`teamBName`, ''); }} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a sport" /></SelectTrigger></FormControl><SelectContent>{sports.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="teamAName" render={({ field }) => (<FormItem><FormLabel>Team A</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamB.toLowerCase())} placeholder="Select or create Team A" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="teamBName" render={({ field }) => (<FormItem><FormLabel>Team B</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamA.toLowerCase())} placeholder="Select or create Team B" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="status" render={({ field }) => (<FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="UPCOMING">Upcoming</SelectItem><SelectItem value="LIVE">Live</SelectItem><SelectItem value="COMPLETED">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="startTime" render={({ field }) => ( <FormItem><FormLabel>Date & Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem><FormLabel>Venue</FormLabel><FormControl><Input placeholder="E.g., Main Football Ground" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="sport" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Sport</FormLabel><Select onValueChange={(value) => { field.onChange(value); form.setValue(`teamAName`, ''); form.setValue(`teamBName`, ''); }} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors"><SelectValue placeholder="Select a sport" /></SelectTrigger></FormControl><SelectContent>{sports.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="teamAName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Team A</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamB.toLowerCase())} placeholder="Select or create Team A" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="teamBName" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Team B</FormLabel><FormControl><Combobox options={availableTeams.filter(t => t.value.toLowerCase() !== watchTeamA.toLowerCase())} placeholder="Select or create Team B" disabled={!watchSport} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="status" render={({ field }) => (<FormItem><FormLabel className="text-white/70 font-semibold">Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors"><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="UPCOMING">Upcoming</SelectItem><SelectItem value="LIVE">Live</SelectItem><SelectItem value="COMPLETED">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="startTime" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold">Date & Time</FormLabel><FormControl><Input type="datetime-local" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors" /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name="venue" render={({ field }) => ( <FormItem><FormLabel className="text-white/70 font-semibold">Venue</FormLabel><FormControl><Input placeholder="E.g., Main Football Ground" {...field} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors placeholder:text-white/30" /></FormControl><FormMessage /></FormItem>)} />
                             </div>
-                            <div className="flex justify-end">
-                                <Button type="submit" disabled={form.formState.isSubmitting} size="lg">
+                            <div className="flex justify-end pt-2">
+                                <Button 
+                                    type="submit" 
+                                    disabled={form.formState.isSubmitting} 
+                                    size="lg"
+                                    className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold shadow-lg hover:shadow-emerald-500/20 transition-all"
+                                >
                                     {form.formState.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
                                     Create Match
                                 </Button>
@@ -421,16 +445,57 @@ export default function AdminPage() {
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Manage Existing Matches</CardTitle>
-                    <CardDescription>Update scores, status, or delete matches. Navigate to a match page to update player stats or set scores.</CardDescription>
+            <Card className="glass-strong border-white/10">
+                <CardHeader className="border-b border-white/5">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <CardTitle className="font-headline text-2xl font-bold text-white/90 mb-2">Manage Existing Matches</CardTitle>
+                            <CardDescription className="text-white/50">Update scores, status, or delete matches. Navigate to a match page to update player stats or set scores.</CardDescription>
+                        </div>
+                        <div className="flex flex-col items-end gap-3">
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm text-white/50 font-medium">Filter by Sport:</span>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter('All')} className={`px-3 py-1 rounded-md text-sm ${matchFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
+                                    {sports.map(sport => (
+                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setMatchFilter(sport as SportName)} className={`px-3 py-1 rounded-md text-sm ${matchFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${matchFilter === sport ? 'border-white/10' : 'border-white/6'}`}>{sport}</motion.button>
+                                    ))}
+                                </div>
+                            </div>
+                            {/* keep legacy select for finer control on small screens */}
+                            <div className="hidden md:block">
+                                <Select value={matchFilter} onValueChange={(value) => setMatchFilter(value as SportName | 'All')}>
+                                    <SelectTrigger className="w-[180px] bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="All">All Sports</SelectItem>
+                                        {sports.map(sport => (
+                                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                     <div className="space-y-4">
-                        {dataLoading ? <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div> :
-                         matches.length === 0 ? <p className="text-muted-foreground text-center py-8">No matches created yet.</p> :
-                        matches.map((match) => {
+                        {dataLoading ? (
+                            <div className="flex justify-center py-12">
+                                <Loader2 className="h-8 w-8 animate-spin text-white/20" />
+                            </div>
+                        ) : filteredMatches.length === 0 ? (
+                            <div className="text-center py-12">
+                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                                    <Trophy className="h-8 w-8 text-white/20" />
+                                </div>
+                                <p className="text-white/40 font-medium">
+                                    {matchFilter === 'All' ? 'No matches created yet.' : `No ${matchFilter} matches found.`}
+                                </p>
+                            </div>
+                        ) : (
+                        filteredMatches.map((match) => {
                             const teamA = teams.find(t => t.id === match.teamAId);
                             const teamB = teams.find(t => t.id === match.teamBId);
                             if (!teamA || !teamB) return null;
@@ -438,45 +503,72 @@ export default function AdminPage() {
                             const isEditingThis = editingMatch?.id === match.id;
                             
                             return (
-                            <Card key={match.id} className="p-4 bg-background transition-all">
+                            <Card key={match.id} className="glass p-5 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group cursor-pointer hover-lift">
                                 <div className="flex flex-wrap items-center gap-4">
-                                    <div className="flex-1 min-w-[200px] cursor-pointer" onClick={() => router.push(`/match/${match.id}`)}>
-                                        <p className="font-bold text-lg">{teamA?.name} vs {teamB?.name}</p>
-                                        <p className="text-sm text-muted-foreground">{match.sport} - {new Date(match.startTime).toLocaleString()}</p>
-                                        <div className="flex items-center text-sm text-muted-foreground gap-1 mt-1">
+                                    <div className="flex-1 min-w-[200px]" onClick={() => router.push(`/match/${match.id}`)}>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Badge variant="outline" className="text-xs font-semibold border-white/20 text-white/60">
+                                                {match.sport}
+                                            </Badge>
+                                            {match.status === 'LIVE' && (
+                                                <span className="flex h-2 w-2 relative">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="font-bold text-lg text-white/90 group-hover:text-white transition-colors">{teamA?.name} vs {teamB?.name}</p>
+                                        <p className="text-sm text-white/40 mt-1">{new Date(match.startTime).toLocaleString('en-US', { 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        })}</p>
+                                        <div className="flex items-center text-sm text-white/40 gap-1 mt-1">
                                             <MapPin className="h-3 w-3" />
                                             <span>{match.venue}</span>
                                         </div>
                                     </div>
                                     {isEditingThis ? (
                                          <>
-                                            {/* Score editing is now primarily on the match page for complexity */}
-                                            <p className="text-sm text-muted-foreground">Edit score on match page</p>
+                                            <p className="text-sm text-white/40 font-medium">Edit score on match page</p>
                                             <Select value={editingMatch?.status} onValueChange={(value) => setEditingMatch({...editingMatch, status: value as any})}>
-                                                <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+                                                <SelectTrigger className="w-[140px] bg-white/5 border-white/10"><SelectValue /></SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="UPCOMING">Upcoming</SelectItem>
                                                     <SelectItem value="LIVE">Live</SelectItem>
                                                     <SelectItem value="COMPLETED">Completed</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            <Button size="icon" onClick={handleUpdateMatch}><Save className="h-4 w-4" /></Button>
-                                            <Button size="icon" variant="ghost" onClick={() => setEditingMatch(null)}><X className="h-4 w-4" /></Button>
+                                            <Button size="icon" className="bg-emerald-600 hover:bg-emerald-500" onClick={handleUpdateMatch}><Save className="h-4 w-4" /></Button>
+                                            <Button size="icon" variant="ghost" className="hover:bg-white/10" onClick={() => setEditingMatch(null)}><X className="h-4 w-4" /></Button>
                                          </>
                                     ) : (
                                         <>
-                                            <p className="font-mono font-bold text-xl">{match.teamAScore} - {match.teamBScore}</p>
-                                            <Badge variant={match.status === 'LIVE' ? 'destructive' : match.status === 'UPCOMING' ? 'secondary' : 'default'} className="w-[100px] justify-center">{match.status}</Badge>
-                                            <Button size="icon" variant="outline" onClick={() => startEditing(match)} disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
+                                            <div className="flex items-center gap-2">
+                                                <div className="font-mono font-bold text-2xl tabular-nums text-white/90">{match.teamAScore}</div>
+                                                <span className="text-white/30">-</span>
+                                                <div className="font-mono font-bold text-2xl tabular-nums text-white/90">{match.teamBScore}</div>
+                                            </div>
+                                            <Badge 
+                                                variant={match.status === 'LIVE' ? 'destructive' : match.status === 'UPCOMING' ? 'secondary' : 'default'} 
+                                                className="w-[100px] justify-center font-semibold"
+                                            >
+                                                {match.status}
+                                            </Badge>
+                                            <Button size="icon" variant="outline" className="border-white/10 hover:bg-white/10 hover:border-white/20" onClick={() => startEditing(match)} disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                    <Button size="icon" variant="destructive" disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Trash2 className="h-4 w-4" /></Button>
+                                                    <Button size="icon" variant="destructive" className="hover:bg-red-600" disabled={!!editingMatch || !!editingPlayer || !!addingPlayerToTeam}><Trash2 className="h-4 w-4" /></Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone. This will permanently delete the match.</AlertDialogDescription></AlertDialogHeader>
+                                                <AlertDialogContent className="glass-strong border-white/10">
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle className="text-white/90">Are you sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription className="text-white/60">This action cannot be undone. This will permanently delete the match.</AlertDialogDescription>
+                                                    </AlertDialogHeader>
                                                     <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handleDeleteMatch(match.id)}>Delete</AlertDialogAction>
+                                                        <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeleteMatch(match.id)}>Delete</AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>
                                             </AlertDialog>
@@ -484,55 +576,106 @@ export default function AdminPage() {
                                     )}
                                 </div>
                             </Card>
-                        )})}
+                        );
+                        }))}
                     </div>
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Manage Teams & Players</CardTitle>
-                    <CardDescription>Edit player names or remove players and teams.</CardDescription>
+            <Card className="glass-strong border-white/10">
+                <CardHeader className="border-b border-white/5">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <CardTitle className="font-headline text-2xl font-bold text-white/90 mb-2">Manage Teams & Players</CardTitle>
+                            <CardDescription className="text-white/50">Edit player names or remove players and teams.</CardDescription>
+                        </div>
+                        <div className="flex flex-col items-end gap-3">
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm text-white/50 font-medium">Filter by Sport:</span>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter('All')} className={`px-3 py-1 rounded-md text-sm ${teamFilter === 'All' ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === 'All' ? 'border-white/10' : 'border-white/6'}`}>All</motion.button>
+                                    {sports.map(sport => (
+                                        <motion.button key={sport} whileTap={{ scale: 0.98 }} onClick={() => setTeamFilter(sport as SportName)} className={`px-3 py-1 rounded-md text-sm ${teamFilter === sport ? 'bg-white/8 text-white' : 'bg-white/3 text-white/70'} border ${teamFilter === sport ? 'border-white/10' : 'border-white/6'}`}>{sport}</motion.button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="hidden md:block">
+                                <Select value={teamFilter} onValueChange={(value) => setTeamFilter(value as SportName | 'All')}>
+                                    <SelectTrigger className="w-[180px] bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="All">All Sports</SelectItem>
+                                        {sports.map(sport => (
+                                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                     {teams.length === 0 && !dataLoading && <p className="text-muted-foreground text-center py-8">No teams exist. Create a match to add teams.</p>}
-                    {teams.map(team => (
-                        <Card key={team.id} className="p-4 bg-background">
-                            <div className="flex items-center justify-between">
-                                <h4 className="font-bold text-xl">{team.name} <span className="text-sm text-muted-foreground">({team.sport})</span></h4>
+                <CardContent className="space-y-6 pt-6">
+                     {filteredTeams.length === 0 && !dataLoading && (
+                         <div className="text-center py-12">
+                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                                 <Users className="h-8 w-8 text-white/20" />
+                             </div>
+                             <p className="text-white/40 font-medium">
+                                 {teamFilter === 'All' ? 'No teams exist. Create a match to add teams.' : `No ${teamFilter} teams found.`}
+                             </p>
+                         </div>
+                     )}
+                    {filteredTeams.map(team => (
+                        <Card key={team.id} className="glass p-6 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group">
+                            <div className="flex items-center justify-between mb-5">
+                                <div className="flex items-center gap-3">
+                                    <h4 className="font-bold text-2xl text-white/90 group-hover:text-white transition-colors">{team.name}</h4>
+                                    <Badge variant="outline" className="text-xs font-semibold border-white/20 text-white/60">{team.sport}</Badge>
+                                </div>
                                  <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="destructive" size="sm" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><Trash2 className="mr-2 h-4 w-4"/>Delete Team</Button>
+                                        <Button variant="destructive" size="sm" className="hover:bg-red-600" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
+                                            <Trash2 className="mr-2 h-4 w-4"/>Delete Team
+                                        </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader><AlertDialogTitle>Delete {team.name}?</AlertDialogTitle><AlertDialogDescription>This will remove the team and all its players, and any matches they are in. This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                                    <AlertDialogContent className="glass-strong border-white/10">
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle className="text-white/90">Delete {team.name}?</AlertDialogTitle>
+                                            <AlertDialogDescription className="text-white/60">This will remove the team and all its players, and any matches they are in. This action cannot be undone.</AlertDialogDescription>
+                                        </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => handleDeleteTeam(team.id)}>Confirm Delete</AlertDialogAction>
+                                            <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                                            <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeleteTeam(team.id)}>Confirm Delete</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
                             </div>
-                            <div className="mt-4 space-y-2">
+                            <div className="mt-4 space-y-3">
                                 {players.filter(p => p.teamId === team.id).map(player => (
-                                    <div key={player.id} className="flex items-center gap-2">
+                                    <div key={player.id} className="flex items-center gap-2 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
                                         {editingPlayer?.id === player.id ? (
                                             <>
-                                                <Input data-player-id={player.id} defaultValue={player.name} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handlePlayerUpdate(player.id, e.currentTarget.value); } if (e.key === 'Escape') cancelEditingPlayer(); }} className="h-8" />
-                                                <Button size="icon" className="h-8 w-8" onClick={() => handlePlayerUpdate(player.id, (document.querySelector(`input[data-player-id='${player.id}']`) as HTMLInputElement).value)}><Save className="h-4 w-4" /></Button>
-                                                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={cancelEditingPlayer}><X className="h-4 w-4" /></Button>
+                                                <Input data-player-id={player.id} defaultValue={player.name} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handlePlayerUpdate(player.id, e.currentTarget.value); } if (e.key === 'Escape') cancelEditingPlayer(); }} className="h-9 bg-white/5 border-white/10" />
+                                                <Button size="icon" className="h-9 w-9 bg-emerald-600 hover:bg-emerald-500" onClick={() => handlePlayerUpdate(player.id, (document.querySelector(`input[data-player-id='${player.id}']`) as HTMLInputElement).value)}><Save className="h-4 w-4" /></Button>
+                                                <Button size="icon" variant="ghost" className="h-9 w-9 hover:bg-white/10" onClick={cancelEditingPlayer}><X className="h-4 w-4" /></Button>
                                             </>
                                         ) : (
                                             <>
-                                                <span className="flex-1">{player.name}</span>
-                                                <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => startEditingPlayer(player)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
+                                                <span className="flex-1 text-white/80 font-medium">{player.name}</span>
+                                                <Button size="icon" variant="outline" className="h-9 w-9 border-white/10 hover:bg-white/10 hover:border-white/20" onClick={() => startEditingPlayer(player)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><Edit className="h-4 w-4" /></Button>
                                                 <AlertDialog>
-                                                    <AlertDialogTrigger asChild><Button size="icon" variant="destructive" className="h-8 w-8" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><UserX className="h-4 w-4" /></Button></AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader><AlertDialogTitle>Remove {player.name}?</AlertDialogTitle><AlertDialogDescription>This will remove the player from the team. This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button size="icon" variant="destructive" className="h-9 w-9 hover:bg-red-600" disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}><UserX className="h-4 w-4" /></Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent className="glass-strong border-white/10">
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle className="text-white/90">Remove {player.name}?</AlertDialogTitle>
+                                                            <AlertDialogDescription className="text-white/60">This will remove the player from the team. This action cannot be undone.</AlertDialogDescription>
+                                                        </AlertDialogHeader>
                                                         <AlertDialogFooter>
-                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={() => handleDeletePlayer(player.id)}>Confirm Removal</AlertDialogAction>
+                                                            <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction className="bg-red-600 hover:bg-red-500" onClick={() => handleDeletePlayer(player.id)}>Confirm Removal</AlertDialogAction>
                                                         </AlertDialogFooter>
                                                     </AlertDialogContent>
                                                 </AlertDialog>
@@ -541,10 +684,10 @@ export default function AdminPage() {
                                     </div>
                                 ))}
                                 {players.filter(p => p.teamId === team.id).length === 0 && (
-                                    <p className="text-sm text-muted-foreground">No players found for this team. Add one below.</p>
+                                    <p className="text-sm text-white/40 text-center py-4">No players found for this team. Add one below.</p>
                                 )}
                             </div>
-                            <div className="mt-4">
+                            <div className="mt-5 pt-5 border-t border-white/5">
                             {addingPlayerToTeam === team.id ? (
                                 <div className="flex items-center gap-2">
                                     <Input 
@@ -553,13 +696,13 @@ export default function AdminPage() {
                                         onChange={(e) => setNewPlayerName(e.target.value)}
                                         autoFocus
                                         onKeyDown={(e) => { if (e.key === 'Enter') handleAddPlayer(team.id, team.sport); if (e.key === 'Escape') { setAddingPlayerToTeam(null); setNewPlayerName(""); } }}
-                                        className="h-9"
+                                        className="h-10 bg-white/5 border-white/10 placeholder:text-white/30"
                                     />
-                                    <Button size="sm" onClick={() => handleAddPlayer(team.id, team.sport)}>Save Player</Button>
-                                    <Button size="sm" variant="ghost" onClick={() => { setAddingPlayerToTeam(null); setNewPlayerName(""); }}>Cancel</Button>
+                                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 font-semibold" onClick={() => handleAddPlayer(team.id, team.sport)}>Save Player</Button>
+                                    <Button size="sm" variant="ghost" className="hover:bg-white/10" onClick={() => { setAddingPlayerToTeam(null); setNewPlayerName(""); }}>Cancel</Button>
                                 </div>
                             ) : (
-                                <Button variant="outline" size="sm" onClick={() => setAddingPlayerToTeam(team.id)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
+                                <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/10 hover:border-white/20 font-medium" onClick={() => setAddingPlayerToTeam(team.id)} disabled={!!editingPlayer || !!editingMatch || !!addingPlayerToTeam}>
                                     <UserPlus className="mr-2 h-4 w-4" /> Add Player
                                 </Button>
                             )}

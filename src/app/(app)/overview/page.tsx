@@ -12,7 +12,28 @@ import { AnimatePresence, motion } from "framer-motion"
 import { SportIcon } from '@/components/sport-icon';
 import { collection, onSnapshot, query }from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TrendingUp, Users, Trophy, Activity } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+  }
+};
 
 export default function OverviewPage() {
   const [filter, setFilter] = useState<SportName | 'All'>('All');
@@ -59,40 +80,142 @@ export default function OverviewPage() {
   }, [filter, completedMatches, firestore]); 
 
   if (loading) {
-    return <div className="flex h-full w-full items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-white/20" />
+          <p className="text-sm text-white/40">Loading matches...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">Match Overview</h1>
-        <p className="text-muted-foreground">Live scores, upcoming matches, and results.</p>
-      </div>
+    <motion.div 
+      className="flex flex-col gap-10 pb-12"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Hero Section */}
+      <motion.div variants={itemVariants} className="relative">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="h-1 w-12 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
+            <span className="text-xs font-medium tracking-widest text-white/40 uppercase">Live Dashboard</span>
+          </div>
+          <h1 className="font-headline text-5xl md:text-6xl font-black tracking-tight text-gradient leading-tight">
+            Match Center
+          </h1>
+          <p className="text-lg text-white/50 max-w-2xl">
+            Real-time scores, upcoming fixtures, and comprehensive match analytics.
+          </p>
+        </div>
 
-      <Tabs defaultValue="All" onValueChange={(value) => setFilter(value as SportName | 'All')}>
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-9">
-          <TabsTrigger value="All">All</TabsTrigger>
-          {sports.map(sport => (
-            <TabsTrigger key={sport} value={sport}>{sport}</TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+            <div className="flex items-center justify-between mb-2">
+              <Activity className="h-5 w-5 text-red-400" />
+              <Badge className="bg-red-500/10 text-red-400 border-red-500/20">Live</Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-black tabular-nums text-white/90">{liveMatches.length}</p>
+              <p className="text-xs text-white/40 font-medium">Live Now</p>
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+            <div className="flex items-center justify-between mb-2">
+              <Trophy className="h-5 w-5 text-blue-400" />
+              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">Upcoming</Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-black tabular-nums text-white/90">{upcomingMatches.length}</p>
+              <p className="text-xs text-white/40 font-medium">Scheduled</p>
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="h-5 w-5 text-green-400" />
+              <Badge className="bg-green-500/10 text-green-400 border-green-500/20">Done</Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-black tabular-nums text-white/90">{completedMatches.length}</p>
+              <p className="text-xs text-white/40 font-medium">Completed</p>
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+            <div className="flex items-center justify-between mb-2">
+              <Users className="h-5 w-5 text-purple-400" />
+              <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">Total</Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-black tabular-nums text-white/90">{matches.length}</p>
+              <p className="text-xs text-white/40 font-medium">All Matches</p>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Sport Filters */}
+      <motion.div variants={itemVariants}>
+        <Tabs defaultValue="All" onValueChange={(value) => setFilter(value as SportName | 'All')}>
+          <TabsList className="inline-flex h-auto flex-wrap gap-2 bg-transparent border border-white/10 p-2 w-full justify-start rounded-xl">
+            <TabsTrigger 
+              value="All" 
+              className="px-5 py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium"
+            >
+              All Sports
+            </TabsTrigger>
+            {sports.map(sport => (
+              <TabsTrigger 
+                key={sport} 
+                value={sport} 
+                className="px-5 py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium"
+              >
+                {sport}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-2 space-y-8">
-          <AnimatePresence>
+        <div className="lg:col-span-2 space-y-10">
+          <AnimatePresence mode="wait">
             {liveMatches.length > 0 && (
               <motion.section 
                 key="live-matches"
                 initial={{ opacity: 0, y: 20 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
-                <h2 className="font-headline text-2xl font-bold">Live Matches</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {liveMatches.map(match => (
-                    <MatchCard key={match.id} match={match} />
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <h2 className="font-headline text-2xl font-bold text-white/90">Live Matches</h2>
+                  </div>
+                  <Badge className="bg-red-500/10 text-red-400 border-red-500/20 font-medium">
+                    {liveMatches.length}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {liveMatches.map((match, index) => (
+                    <motion.div
+                      key={match.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                    >
+                      <MatchCard match={match} />
+                    </motion.div>
                   ))}
                 </div>
               </motion.section>
@@ -106,12 +229,24 @@ export default function OverviewPage() {
                 initial={{ opacity: 0, y: 20 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: -20 }}
-                className="space-y-4"
+                className="space-y-5"
               >
-                <h2 className="font-headline text-2xl font-bold">Upcoming Matches</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {upcomingMatches.map(match => (
-                    <MatchCard key={match.id} match={match} />
+                <div className="flex items-center gap-3">
+                  <h2 className="font-headline text-2xl font-bold text-white/90">Upcoming Matches</h2>
+                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 font-medium">
+                    {upcomingMatches.length}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {upcomingMatches.map((match, index) => (
+                    <motion.div
+                      key={match.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                    >
+                      <MatchCard match={match} />
+                    </motion.div>
                   ))}
                 </div>
               </motion.section>
@@ -120,11 +255,29 @@ export default function OverviewPage() {
 
           <AnimatePresence>
             {completedMatches.length > 0 && (
-               <motion.section>
-                <h2 className="font-headline text-2xl font-bold">Completed Matches</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {completedMatches.map(match => (
-                    <MatchCard key={match.id} match={match} />
+               <motion.section
+                key="completed-matches"
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-5"
+               >
+                <div className="flex items-center gap-3">
+                  <h2 className="font-headline text-2xl font-bold text-white/90">Completed Matches</h2>
+                  <Badge className="bg-green-500/10 text-green-400 border-green-500/20 font-medium">
+                    {completedMatches.length}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {completedMatches.map((match, index) => (
+                    <motion.div
+                      key={match.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                    >
+                      <MatchCard match={match} />
+                    </motion.div>
                   ))}
                 </div>
               </motion.section>
@@ -132,53 +285,87 @@ export default function OverviewPage() {
           </AnimatePresence>
 
           {(liveMatches.length + upcomingMatches.length + completedMatches.length) === 0 && (
-            <p className="text-muted-foreground text-center py-8">No matches found for this filter.</p>
+            <div className="glass rounded-xl p-12 text-center border">
+              <Trophy className="h-16 w-16 mx-auto mb-4 text-white/10" />
+              <p className="text-white/40 text-lg font-medium">No matches found</p>
+              <p className="text-white/30 text-sm mt-2">Try selecting a different sport filter</p>
+            </div>
           )}
         </div>
         
         <aside className="lg:col-span-1 sticky top-20">
             <AnimatePresence>
                 {filter !== 'All' && (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center gap-2">
-                                     <SportIcon sport={filter as SportName} className="h-6 w-6" />
-                                     <CardTitle className="font-headline">{filter} Points Table</CardTitle>
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                        <Card className="glass-strong border-white/10 overflow-hidden">
+                            <CardHeader className="border-b border-white/5 pb-4">
+                                <div className="flex items-center gap-3">
+                                     <SportIcon sport={filter as SportName} className="h-6 w-6 text-white/70" />
+                                     <CardTitle className="font-headline text-xl font-bold text-white/90">{filter} Standings</CardTitle>
                                 </div>
-                                <CardDescription>Team standings for the {filter} tournament.</CardDescription>
+                                <CardDescription className="text-white/40 mt-2">
+                                  Live tournament rankings
+                                </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                {isTableLoading ? <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div> :
-                                pointsTable.length > 0 ? (
-                                    <Table>
+                            <CardContent className="p-0">
+                                {isTableLoading ? (
+                                  <div className="flex justify-center py-12">
+                                    <Loader2 className="h-6 w-6 animate-spin text-white/20" />
+                                  </div>
+                                ) : pointsTable.length > 0 ? (
+                                    <div className="overflow-x-auto">
+                                      <Table>
                                         <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-[50px]">Rank</TableHead>
-                                            <TableHead>Team</TableHead>
-                                            <TableHead>P</TableHead>
-                                            <TableHead>W</TableHead>
-                                            <TableHead>D</TableHead>
-                                            <TableHead>L</TableHead>
-                                            <TableHead className="text-right">Pts</TableHead>
-                                        </TableRow>
+                                          <TableRow className="border-white/5 hover:bg-transparent">
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider">Pos</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider">Team</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider text-center">P</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider text-center">W</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider text-center">D</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider text-center">L</TableHead>
+                                            <TableHead className="text-white/40 font-semibold text-xs uppercase tracking-wider text-right">Pts</TableHead>
+                                          </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                        {pointsTable.map(item => (
-                                            <TableRow key={item.teamId}>
-                                                <TableCell className="font-bold">{item.rank}</TableCell>
-                                                <TableCell className="font-medium">{item.teamName}</TableCell>
-                                                <TableCell>{item.played}</TableCell>
-                                                <TableCell>{item.won}</TableCell>
-                                                <TableCell>{item.drawn}</TableCell>
-                                                <TableCell>{item.lost}</TableCell>
-                                                <TableCell className="text-right font-bold text-lg">{item.points}</TableCell>
+                                          {pointsTable.map((item, index) => (
+                                            <TableRow 
+                                              key={item.teamId}
+                                              className="border-white/5 hover:bg-white/5 transition-colors group"
+                                            >
+                                              <TableCell className="font-bold text-white/60 group-hover:text-white/90 transition-colors">
+                                                <div className="flex items-center gap-2">
+                                                  {index < 3 && (
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500" />
+                                                  )}
+                                                  {item.rank}
+                                                </div>
+                                              </TableCell>
+                                              <TableCell className="font-semibold text-white/80 group-hover:text-white transition-colors">
+                                                {item.teamName}
+                                              </TableCell>
+                                              <TableCell className="text-white/50 text-center tabular-nums">{item.played}</TableCell>
+                                              <TableCell className="text-green-400/70 text-center tabular-nums font-medium">{item.won}</TableCell>
+                                              <TableCell className="text-yellow-400/70 text-center tabular-nums font-medium">{item.drawn}</TableCell>
+                                              <TableCell className="text-red-400/70 text-center tabular-nums font-medium">{item.lost}</TableCell>
+                                              <TableCell className="text-right font-bold text-lg text-white/90 tabular-nums">{item.points}</TableCell>
                                             </TableRow>
-                                        ))}
+                                          ))}
                                         </TableBody>
-                                    </Table>
+                                      </Table>
+                                    </div>
                                 ) : (
-                                    <p className="text-sm text-muted-foreground text-center py-4">No completed matches for this sport yet.</p>
+                                    <div className="py-12 px-6 text-center">
+                                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/5 mb-3">
+                                        <Trophy className="h-6 w-6 text-white/20" />
+                                      </div>
+                                      <p className="text-sm text-white/40 font-medium">No standings available</p>
+                                      <p className="text-xs text-white/30 mt-1">Check back after matches are completed</p>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -187,6 +374,6 @@ export default function OverviewPage() {
             </AnimatePresence>
         </aside>
       </div>
-    </div>
+    </motion.div>
   );
 }

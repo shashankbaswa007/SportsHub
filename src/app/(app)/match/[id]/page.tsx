@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Save, Plus, Minus, Edit, X, RefreshCw, Loader2, ArrowLeft, MapPin } from 'lucide-react';
 import { MatchPrediction } from '@/components/match-prediction';
+import { MatchPerformanceCharts } from '@/components/match-performance-charts';
 import { doc, onSnapshot, collection, query, where, Firestore } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 
@@ -24,17 +25,6 @@ const getStatusVariant = (status: 'LIVE' | 'UPCOMING' | 'COMPLETED') => {
     case 'UPCOMING': return 'secondary';
     case 'COMPLETED': return 'default';
   }
-};
-
-const sportBgGradients: Record<SportName, string> = {
-    'Football': 'linear-gradient(135deg, #27ae60, #2ecc71)',
-    'Cricket': 'linear-gradient(135deg, #0a3d62, #1e6091)',
-    'Basketball': 'linear-gradient(135deg, #e67e22, #f39c12)',
-    'Volleyball': 'linear-gradient(135deg, #2980b9, #6dd5fa)',
-    'Table Tennis': 'linear-gradient(135deg, #8e44ad, #00cec9)',
-    'Badminton': 'linear-gradient(135deg, #1abc9c, #2ecc71)',
-    'Kabaddi': 'linear-gradient(135deg, #8d5524, #e17055)',
-    'Throwball': 'linear-gradient(135deg, #d35400, #e67e22)',
 };
 
 type EditablePlayerStats = { [key: string]: string | number };
@@ -66,14 +56,14 @@ export default function MatchPage() {
   }, []);
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !firestore) {
         setLoading(false);
         return;
-    };
+    }
 
-    const unsubMatch = onSnapshot(doc(firestore, "matches", id), async (doc) => {
-        if (doc.exists()) {
-            const matchData = { id: doc.id, ...doc.data() } as Match;
+    const unsubMatch = onSnapshot(doc(firestore, "matches", id), async (docSnapshot) => {
+        if (docSnapshot.exists()) {
+            const matchData = { id: docSnapshot.id, ...docSnapshot.data() } as Match;
             setMatch(matchData);
 
             if (matchData.teamAId) {
@@ -150,10 +140,6 @@ export default function MatchPage() {
         </div>
     );
   }
-
-  const backgroundStyle = {
-    background: sportBgGradients[match.sport] || 'hsl(var(--background))',
-  };
 
   const handleEditPlayer = (player: Player) => {
     setEditingPlayer(player.id);
@@ -266,13 +252,13 @@ export default function MatchPage() {
   const cricketScore = match.sport === 'Cricket' ? match.scoreDetails as CricketScore : null;
 
   return (
-    <div className="relative min-h-full" style={backgroundStyle}>
-        <div className="relative z-10 space-y-8 p-4 md:p-8 bg-background/30 backdrop-blur-sm min-h-full">
-            <header className="flex flex-col items-center text-center gap-4 pt-8 text-white">
-                <Button variant="ghost" className="absolute top-4 left-4 text-white hover:bg-white/10 hover:text-white" onClick={handleBackNavigation}>
+    <div className="relative min-h-full">
+        <div className="relative z-10 space-y-8">
+            <header className="flex flex-col items-center text-center gap-4">
+                <Button variant="ghost" className="absolute top-0 left-0" onClick={handleBackNavigation}>
                     <ArrowLeft className="mr-2 h-4 w-4" /> Back to Overview
                 </Button>
-                <div className="flex items-center gap-3 font-semibold text-lg text-white/90">
+                <div className="flex items-center gap-3 font-semibold text-lg">
                     <SportIcon sport={match.sport} className="h-6 w-6" />
                     <span>{match.sport} Match</span>
                 </div>
@@ -284,7 +270,7 @@ export default function MatchPage() {
                     <div className="flex flex-col">
                         <div className="flex items-center justify-center gap-4">
                             <span className="font-headline text-5xl font-bold">{match.teamAScore}</span>
-                            <span className="font-headline text-3xl text-white/80">-</span>
+                            <span className="font-headline text-3xl text-muted-foreground">-</span>
                             <span className="font-headline text-5xl font-bold">{match.teamBScore}</span>
                         </div>
                          {cricketScore && <p className="font-mono text-center text-lg">{`${cricketScore.runs}/${cricketScore.wickets} (${cricketScore.overs})`}</p>}
@@ -328,7 +314,7 @@ export default function MatchPage() {
                                             )
                                           )}
                                         </div>
-                                         {editingSet?.set === set.set ? (
+                                         {editingSet?.set === set.set && editingSet ? (
                                              <div className="flex items-center gap-2 mt-2">
                                                 <Input type="number" value={editingSet.teamAScore} onChange={e => setEditingSet({...editingSet, teamAScore: Number(e.target.value)})} className="w-full h-8"/>
                                                 <span>-</span>
@@ -394,9 +380,22 @@ export default function MatchPage() {
                             </div>
                         </CardContent>
                     </Card>
-                    <MatchPrediction match={match} teamA={teamA} teamB={teamB} />
+                    {match.status !== 'COMPLETED' && <MatchPrediction match={match} teamA={teamA} teamB={teamB} />}
                 </div>
             </div>
+
+            {/* Performance Charts for Completed Matches */}
+            {match.status === 'COMPLETED' && teamAPlayers.length > 0 && teamBPlayers.length > 0 && (
+                <div className="mt-8">
+                    <MatchPerformanceCharts 
+                        match={match}
+                        teamA={teamA}
+                        teamB={teamB}
+                        teamAPlayers={teamAPlayers}
+                        teamBPlayers={teamBPlayers}
+                    />
+                </div>
+            )}
         </div>
     </div>
   );

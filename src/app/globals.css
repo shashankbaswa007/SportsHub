@@ -1,162 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Sora:wght@400;600;700;800&family=Playfair+Display:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Enforce dark-only theme (no light theme). These variables follow the spec provided. */
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 9.1% 46.5%;
-    --accent: 214.3 31.8% 91.4%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.75rem;
+    --background-hex: #0C0C0C; /* main background */
+    --section-1-hex: #111111;
+    --section-2-hex: #141414;
+    --card-surface: rgba(255,255,255,0.03);
+    --border-weak: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text-primary: #F5F5F5;
+    --text-secondary: #BFBFBF;
+    --radius: 12px;
 
-    /* Sidebar Light Theme */
-    --sidebar-background: 240 30% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 22.5%;
-    --sidebar-accent: 217.2 32.6% 27.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-primary: 210 100% 74%; /* Active Item Highlight */
-    --sidebar-primary-foreground: 240 64% 12%;
-    --sidebar-ring: 210 100% 74%;
+    /* Tailwind-compatible HSL variables used by theme tokens
+       We map them to dark values so the rest of the system continues to work */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 6.7%;
+    --card-foreground: 0 0% 93%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 85%;
+    
+    /* Chart color variables for Recharts */
+    --chart-1: 160 84% 39%; /* emerald-500 */
+    --chart-2: 25 95% 53%; /* orange-500 */
+    --chart-3: 48 96% 53%; /* yellow-500 */
+    --chart-4: 217 91% 60%; /* blue-500 */
+    --chart-5: 271 81% 56%; /* purple-500 */
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 263.4 95.2% 66.3%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 263.4 95.2% 66.3%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    /* Sidebar Dark Theme */
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-accent: 217.2 32.6% 27.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-primary: 263.4 95.2% 66.3%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-ring: 263.4 95.2% 66.3%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background: var(--background-hex);
+    color: var(--text-primary);
+    font-family: Inter, Sora, Playfair Display, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" auto;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
   }
 
   ::selection {
     @apply bg-primary/20;
   }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 }
 
 @layer utilities {
-  .animated-gradient {
-    animation: gradient-animation 15s ease infinite;
-    background-size: 400% 400%;
-    background-image: linear-gradient(-45deg, #ffffff, #dcdcdc, #a9a9a9, #000000, #a9a9a9, #dcdcdc, #ffffff);
-  }
-  
-  @keyframes gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
   }
 
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Animated gradient background */
+  .animated-gradient {
+    animation: gradient-shift 15s ease infinite;
+    background-size: 200% 200%;
+    background-image: linear-gradient(
+      135deg,
+      rgba(13, 13, 13, 1) 0%,
+      rgba(26, 26, 26, 1) 50%,
+      rgba(13, 13, 13, 1) 100%
+    );
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Premium card glow */
   .glow-card {
     position: relative;
     overflow: hidden;
-    border-radius: 0.75rem; /* Corresponds to rounded-xl */
   }
 
   .glow-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 200%;
-    height: 200%;
+    inset: -2px;
     background: conic-gradient(
-      from var(--angle),
+      from var(--glow-angle, 0deg),
       transparent 0%,
-      hsl(var(--primary) / 0.5) 20%,
-      transparent 30%,
-      hsl(var(--accent) / 0.5) 70%,
-      transparent 80%
+      currentColor 10%,
+      transparent 20%,
+      transparent 80%,
+      currentColor 90%,
+      transparent 100%
     );
-    transform-origin: center;
-    animation: glow-spin 6s linear infinite;
-    transition: opacity 0.3s ease;
-    opacity: 0.3;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: rotate-glow 6s linear infinite;
+    z-index: -1;
   }
   
   .glow-card:hover::before {
-    animation-duration: 4s;
-    opacity: 0.6;
+    opacity: 0.15;
   }
 
-  @property --angle {
+  @property --glow-angle {
     syntax: '<angle>';
     initial-value: 0deg;
     inherits: false;
   }
 
-  @keyframes glow-spin {
+  @keyframes rotate-glow {
+    from { --glow-angle: 0deg; }
+    to { --glow-angle: 360deg; }
+  }
+
+  /* Hover lift effect */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Fade in animations */
+  .fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes fadeIn {
     from {
-      --angle: 0deg;
+      opacity: 0;
+      transform: translateY(20px);
     }
     to {
-      --angle: 360deg;
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
-  .glow-card > * {
-    position: relative;
-    z-index: 1;
+  .slide-in-right {
+    animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .scale-in {
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, #F5F5F5 0%, #A9A9A9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shimmer effect */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Pulse dot for live indicator */
+  .pulse-dot {
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.1);
+    }
+  }
+
+  /* Stagger children animation */
+  .stagger-children > * {
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
 }

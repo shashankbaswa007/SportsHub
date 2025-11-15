@@ -11,8 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Lock, Shield, CheckCircle2, User, Mail, Bell } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
@@ -23,6 +23,25 @@ const passwordSchema = z.object({
   path: ['confirmPassword'],
 });
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
+  }
+};
 
 export default function SettingsPage() {
     const { toast } = useToast();
@@ -36,8 +55,6 @@ export default function SettingsPage() {
             confirmPassword: '',
         },
     });
-
-    const appearanceForm = useForm();
 
     const onSubmit = (values: z.infer<typeof passwordSchema>) => {
         setIsLoading(true);
@@ -54,90 +71,165 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="space-y-8 max-w-2xl mx-auto">
-            <div>
-                <h1 className="font-headline text-3xl font-bold">Settings</h1>
-                <p className="text-muted-foreground">Manage your account and preferences.</p>
-            </div>
+        <motion.div 
+            className="space-y-8 max-w-5xl mx-auto"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            {/* Premium Header */}
+            <motion.div variants={itemVariants} className="relative">
+                <div className="absolute -top-4 -left-4 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+                <div className="relative">
+                    <h1 className="font-headline text-5xl font-black tracking-tight text-gradient">Settings</h1>
+                    <p className="text-white/60 text-lg mt-2">Manage your account preferences and security</p>
+                </div>
+            </motion.div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Change Password</CardTitle>
-                    <CardDescription>Update your password here. Make sure it's a strong one.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="currentPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Current Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={form.control}
-                                name="newPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>New Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={form.control}
-                                name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Confirm New Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Update Password
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+            {/* Stats Cards */}
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="glass border-white/10 hover:border-white/20 transition-all group">
+                    <CardContent className="p-6">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 transition-all">
+                                <Shield className="h-6 w-6 text-blue-400" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-white/50">Security Level</p>
+                                <p className="text-xl font-bold text-white/90">High</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Appearance</CardTitle>
-                    <CardDescription>Customize the look and feel of the application.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...appearanceForm}>
-                        <form className="space-y-4">
-                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                    <FormLabel className="text-base">
-                                        Theme
-                                    </FormLabel>
-                                </div>
-                                <FormControl>
-                                    <ThemeToggle />
-                                </FormControl>
-                            </FormItem>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
+                <Card className="glass border-white/10 hover:border-white/20 transition-all group">
+                    <CardContent className="p-6">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 group-hover:bg-green-500/20 transition-all">
+                                <CheckCircle2 className="h-6 w-6 text-green-400" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-white/50">Account Status</p>
+                                <p className="text-xl font-bold text-white/90">Active</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="glass border-white/10 hover:border-white/20 transition-all group">
+                    <CardContent className="p-6">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 group-hover:bg-purple-500/20 transition-all">
+                                <Bell className="h-6 w-6 text-purple-400" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-white/50">Notifications</p>
+                                <p className="text-xl font-bold text-white/90">Enabled</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            {/* Password Change Card */}
+            <motion.div variants={itemVariants}>
+                <Card className="glass-strong border-white/10 hover:border-white/20 transition-all overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50" />
+                    <CardHeader className="pb-6 space-y-2">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                                <Lock className="h-5 w-5 text-white/70" />
+                            </div>
+                            <CardTitle className="font-headline text-2xl font-bold text-white/95">Change Password</CardTitle>
+                        </div>
+                        <CardDescription className="text-white/60">
+                            Update your password to keep your account secure. Make sure it's strong and unique.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="currentPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-white/90 font-semibold">Current Password</FormLabel>
+                                            <FormControl>
+                                                <Input 
+                                                    type="password" 
+                                                    {...field} 
+                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-white/20 focus:bg-white/10 h-12 rounded-xl transition-all"
+                                                    placeholder="Enter your current password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name="newPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-white/90 font-semibold">New Password</FormLabel>
+                                            <FormControl>
+                                                <Input 
+                                                    type="password" 
+                                                    {...field} 
+                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-white/20 focus:bg-white/10 h-12 rounded-xl transition-all"
+                                                    placeholder="Enter your new password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-white/90 font-semibold">Confirm New Password</FormLabel>
+                                            <FormControl>
+                                                <Input 
+                                                    type="password" 
+                                                    {...field} 
+                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-white/20 focus:bg-white/10 h-12 rounded-xl transition-all"
+                                                    placeholder="Confirm your new password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                                    <Button 
+                                        type="submit" 
+                                        className="w-full h-12 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-2xl border border-white/10 hover:border-white/20"
+                                        style={{
+                                            background: 'linear-gradient(135deg, #1C1C1C 0%, #2A2A2A 100%)'
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Updating...
+                                            </>
+                                        ) : (
+                                            'Update Password'
+                                        )}
+                                    </Button>
+                                </motion.div>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            {/* Account Info Card */}
+            
+        </motion.div>
     );
 }
