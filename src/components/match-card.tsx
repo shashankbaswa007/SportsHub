@@ -137,8 +137,8 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     if (match.status === 'UPCOMING') {
         return (
             <div className="flex flex-col items-center gap-2">
-                <span className="text-4xl font-bold text-white/20">VS</span>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+                <span className="text-3xl sm:text-4xl font-bold text-white/20">VS</span>
+                <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
                   <Clock className="h-3 w-3 text-blue-400" />
                   <span className="text-xs font-medium text-blue-400">
                     {new Date(match.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -152,7 +152,7 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
         const score = match.scoreDetails as CricketScore;
         return (
              <div className="flex flex-col items-center gap-1">
-                <div className="font-headline text-3xl font-black tabular-nums text-white/95">
+                <div className="font-headline text-2xl sm:text-3xl font-black tabular-nums text-white/95">
                   {score.runs}/{score.wickets}
                 </div>
                 <div className="text-xs font-medium text-white/40 tracking-wide">
@@ -165,10 +165,10 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     // Default for Football, Basketball, Kabaddi and Set-based sports (showing sets won)
     return (
         <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-3">
-                <span className="font-headline text-5xl font-black tabular-nums text-white/95">{match.teamAScore}</span>
-                <span className="text-2xl text-white/20 font-light">:</span>
-                <span className="font-headline text-5xl font-black tabular-nums text-white/95">{match.teamBScore}</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-white/95">{match.teamAScore}</span>
+                <span className="text-xl sm:text-2xl text-white/20 font-light">:</span>
+                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-white/95">{match.teamBScore}</span>
             </div>
             {Array.isArray(match.scoreDetails) && (
               <span className="text-xs font-medium text-white/40 tracking-wide uppercase">Sets</span>
@@ -232,16 +232,16 @@ export function MatchCard({ match }: MatchCardProps) {
 
   if (loading) {
       return (
-          <Card className="relative flex flex-col overflow-hidden h-full glass border min-h-[280px] group">
+          <Card className="relative flex flex-col overflow-hidden h-full glass border min-h-[240px] sm:min-h-[280px] group">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <CardHeader className="flex-row items-center space-y-0 p-6 border-b border-white/5">
+              <CardHeader className="flex-row items-center space-y-0 p-4 sm:p-6 border-b border-white/5">
                   <div className="h-4 w-32 bg-white/5 rounded animate-pulse"></div>
                   <div className="ml-auto h-6 w-20 bg-white/5 rounded-full animate-pulse"></div>
               </CardHeader>
-              <CardContent className="flex-grow p-8 flex flex-col justify-center items-center">
-                 <Loader2 className="h-10 w-10 animate-spin text-white/20" />
+              <CardContent className="flex-grow p-6 sm:p-8 flex flex-col justify-center items-center">
+                 <Loader2 className="h-8 sm:h-10 w-8 sm:w-10 animate-spin text-white/20" />
               </CardContent>
-              <div className="p-6 border-t border-white/5">
+              <div className="p-4 sm:p-6 border-t border-white/5">
                  <div className="h-10 w-full bg-white/5 rounded-lg animate-pulse"></div>
               </div>
           </Card>
@@ -261,7 +261,7 @@ export function MatchCard({ match }: MatchCardProps) {
           hover:shadow-2xl ${accent.glow}
           transition-all duration-500 ease-out
           hover:-translate-y-1
-          min-h-[280px]
+          min-h-[240px] sm:min-h-[280px]
         `}>
           {/* Gradient overlay on hover */}
           <div className={`absolute inset-0 ${accent.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
@@ -269,13 +269,13 @@ export function MatchCard({ match }: MatchCardProps) {
           {/* Top accent line - stronger */}
           <div className={`absolute top-0 left-0 right-0 h-[3px] ${accent.headerBg.replace('bg-gradient-to-r', 'bg-gradient-to-r')} opacity-80`} />
           
-          <CardHeader className={`relative flex-row items-center justify-between space-y-0 p-6 border-b ${accent.divider} ${accent.headerBg}`}>
-            <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-xl ${accent.bg} border-2 ${accent.border}`}>
-                  <SportIcon sport={match.sport} className={`h-5 w-5 ${accent.text}`} />
+          <CardHeader className={`relative flex-row items-center justify-between space-y-0 p-4 sm:p-6 border-b ${accent.divider} ${accent.headerBg}`}>
+            <div className="flex items-center gap-2 sm:gap-3">
+                <div className={`p-2 sm:p-2.5 rounded-xl ${accent.bg} border-2 ${accent.border}`}>
+                  <SportIcon sport={match.sport} className={`h-4 sm:h-5 w-4 sm:w-5 ${accent.text}`} />
                 </div>
                 <div>
-                  <h3 className={`font-semibold text-sm tracking-wide ${accent.text}`}>{match.sport}</h3>
+                  <h3 className={`font-semibold text-xs sm:text-sm tracking-wide ${accent.text}`}>{match.sport}</h3>
                   <p className="text-xs text-white/40 mt-0.5">Match</p>
                 </div>
             </div>
@@ -289,44 +289,44 @@ export function MatchCard({ match }: MatchCardProps) {
             </div>
           </CardHeader>
           
-          <CardContent className="relative flex-grow p-8 flex flex-col justify-center">
+          <CardContent className="relative flex-grow p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
             {/* Team matchup */}
-            <div className="flex items-stretch justify-between gap-6 mb-6">
+            <div className="flex items-stretch justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
               {/* Team A */}
               <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
-                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
-                  <span className="text-xl font-bold text-white/80">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
+                  <span className="text-lg sm:text-xl font-bold text-white/80">
                     {teamA?.name?.charAt(0) || 'A'}
                   </span>
                 </div>
-                <span className="font-headline text-lg font-bold text-white/90 leading-tight line-clamp-2">
+                <span className="font-headline text-sm sm:text-base lg:text-lg font-bold text-white/90 leading-tight line-clamp-2">
                   {teamA?.name || 'Team A'}
                 </span>
               </div>
               
               {/* Score Display */}
-              <div className="flex flex-col items-center justify-center min-w-[120px]">
+              <div className="flex flex-col items-center justify-center min-w-[100px] sm:min-w-[120px]">
                 <ScoreDisplay match={match} />
               </div>
               
               {/* Team B */}
               <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
-                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
-                  <span className="text-xl font-bold text-white/80">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
+                  <span className="text-lg sm:text-xl font-bold text-white/80">
                     {teamB?.name?.charAt(0) || 'B'}
                   </span>
                 </div>
-                <span className="font-headline text-lg font-bold text-white/90 leading-tight line-clamp-2">
+                <span className="font-headline text-sm sm:text-base lg:text-lg font-bold text-white/90 leading-tight line-clamp-2">
                   {teamB?.name || 'Team B'}
                 </span>
               </div>
             </div>
             
             {/* Match info */}
-            <div className="flex items-center justify-center gap-4 text-xs text-white/40 pt-4 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs text-white/40 pt-3 sm:pt-4 border-t border-white/5">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" />
-                  <span>{match.venue}</span>
+                  <span className="truncate max-w-[200px]">{match.venue}</span>
                 </div>
                 {match.status === 'UPCOMING' && (
                   <div className="flex items-center gap-1.5">
@@ -340,10 +340,10 @@ export function MatchCard({ match }: MatchCardProps) {
           {isSetBased && match.status !== 'UPCOMING' && (
              <Accordion type="single" collapsible className="w-full border-t border-white/5">
                 <AccordionItem value="item-1" className="border-0">
-                    <AccordionTrigger className="text-xs font-medium hover:no-underline justify-center py-3 px-6 text-white/60 hover:text-white/80 transition-colors">
+                    <AccordionTrigger className="text-xs font-medium hover:no-underline justify-center py-3 px-4 sm:px-6 text-white/60 hover:text-white/80 transition-colors">
                         View Set Details
                     </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-4">
+                    <AccordionContent className="px-4 sm:px-6 pb-4">
                         <div className="space-y-2.5">
                             {(match.scoreDetails as SetScore[]).map(set => (
                                 <div key={set.set} className="flex justify-between items-center px-3 py-2 rounded-lg bg-white/5 border border-white/5">
@@ -365,23 +365,23 @@ export function MatchCard({ match }: MatchCardProps) {
             </Accordion>
           )}
 
-          <div className="relative p-6 border-t border-white/5">
+          <div className="relative p-4 sm:p-6 border-t border-white/5">
             <Link href={`/match/${match.id}`} className="group/btn block">
               <Button 
                 variant="ghost" 
                 className={`
-                  w-full h-11 
+                  w-full h-10 sm:h-11 
                   bg-white/5 hover:bg-white/10 
                   border border-white/10 hover:border-white/20
                   text-white/80 hover:text-white
-                  font-medium tracking-wide
+                  font-medium tracking-wide text-sm
                   transition-all duration-300
                   group-hover/btn:${accent.bg}
                   group-hover/btn:border-${accent.border}
                 `}
               >
                 {getButtonText()}
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
               </Button>
             </Link>
           </div>

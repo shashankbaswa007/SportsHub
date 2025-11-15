@@ -283,4 +283,17 @@
   .stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
   .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
   .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+  /* Mobile-responsive tables */
+  @media (max-width: 640px) {
+    .responsive-table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .responsive-table table {
+      min-width: 600px;
+    }
+  }
 }

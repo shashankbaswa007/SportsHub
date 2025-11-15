@@ -92,7 +92,7 @@ export default function OverviewPage() {
 
   return (
     <motion.div 
-      className="flex flex-col gap-10 pb-12"
+      className="flex flex-col gap-6 sm:gap-8 lg:gap-10 pb-12 px-3 sm:px-0"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -101,59 +101,59 @@ export default function OverviewPage() {
       <motion.div variants={itemVariants} className="relative">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="h-1 w-12 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
+            <div className="h-1 w-8 sm:w-12 bg-gradient-to-r from-white/60 to-transparent rounded-full" />
             <span className="text-xs font-medium tracking-widest text-white/40 uppercase">Live Dashboard</span>
           </div>
-          <h1 className="font-headline text-5xl md:text-6xl font-black tracking-tight text-gradient leading-tight">
+          <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient leading-tight">
             Match Center
           </h1>
-          <p className="text-lg text-white/50 max-w-2xl">
+          <p className="text-base sm:text-lg text-white/50 max-w-2xl">
             Real-time scores, upcoming fixtures, and comprehensive match analytics.
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-8">
+          <motion.div variants={itemVariants} className="glass p-3 sm:p-4 rounded-xl border hover:border-white/20 transition-colors group">
             <div className="flex items-center justify-between mb-2">
-              <Activity className="h-5 w-5 text-red-400" />
-              <Badge className="bg-red-500/10 text-red-400 border-red-500/20">Live</Badge>
+              <Activity className="h-4 sm:h-5 w-4 sm:w-5 text-red-400" />
+              <Badge className="bg-red-500/10 text-red-400 border-red-500/20 text-xs">Live</Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl font-black tabular-nums text-white/90">{liveMatches.length}</p>
+              <p className="text-2xl sm:text-3xl font-black tabular-nums text-white/90">{liveMatches.length}</p>
               <p className="text-xs text-white/40 font-medium">Live Now</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+          <motion.div variants={itemVariants} className="glass p-3 sm:p-4 rounded-xl border hover:border-white/20 transition-colors group">
             <div className="flex items-center justify-between mb-2">
-              <Trophy className="h-5 w-5 text-blue-400" />
-              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">Upcoming</Badge>
+              <Trophy className="h-4 sm:h-5 w-4 sm:w-5 text-blue-400" />
+              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs">Upcoming</Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl font-black tabular-nums text-white/90">{upcomingMatches.length}</p>
+              <p className="text-2xl sm:text-3xl font-black tabular-nums text-white/90">{upcomingMatches.length}</p>
               <p className="text-xs text-white/40 font-medium">Scheduled</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+          <motion.div variants={itemVariants} className="glass p-3 sm:p-4 rounded-xl border hover:border-white/20 transition-colors group">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              <Badge className="bg-green-500/10 text-green-400 border-green-500/20">Done</Badge>
+              <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-green-400" />
+              <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-xs">Done</Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl font-black tabular-nums text-white/90">{completedMatches.length}</p>
+              <p className="text-2xl sm:text-3xl font-black tabular-nums text-white/90">{completedMatches.length}</p>
               <p className="text-xs text-white/40 font-medium">Completed</p>
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass p-4 rounded-xl border hover:border-white/20 transition-colors group">
+          <motion.div variants={itemVariants} className="glass p-3 sm:p-4 rounded-xl border hover:border-white/20 transition-colors group">
             <div className="flex items-center justify-between mb-2">
-              <Users className="h-5 w-5 text-purple-400" />
-              <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">Total</Badge>
+              <Users className="h-4 sm:h-5 w-4 sm:w-5 text-purple-400" />
+              <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-xs">Total</Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl font-black tabular-nums text-white/90">{matches.length}</p>
+              <p className="text-2xl sm:text-3xl font-black tabular-nums text-white/90">{matches.length}</p>
               <p className="text-xs text-white/40 font-medium">All Matches</p>
             </div>
           </motion.div>
@@ -163,10 +163,10 @@ export default function OverviewPage() {
       {/* Sport Filters */}
       <motion.div variants={itemVariants}>
         <Tabs defaultValue="All" onValueChange={(value) => setFilter(value as SportName | 'All')}>
-          <TabsList className="inline-flex h-auto flex-wrap gap-2 bg-transparent border border-white/10 p-2 w-full justify-start rounded-xl">
+          <TabsList className="inline-flex h-auto flex-wrap gap-2 bg-transparent border border-white/10 p-2 w-full justify-start rounded-xl overflow-x-auto">
             <TabsTrigger 
               value="All" 
-              className="px-5 py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium"
+              className="px-3 sm:px-5 py-2 sm:py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium text-sm whitespace-nowrap"
             >
               All Sports
             </TabsTrigger>
@@ -174,7 +174,7 @@ export default function OverviewPage() {
               <TabsTrigger 
                 key={sport} 
                 value={sport} 
-                className="px-5 py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium"
+                className="px-3 sm:px-5 py-2 sm:py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium text-sm whitespace-nowrap"
               >
                 {sport}
               </TabsTrigger>

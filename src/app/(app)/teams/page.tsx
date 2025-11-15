@@ -97,35 +97,35 @@ export default function TeamsPage() {
         >
             {/* Premium Header */}
             <motion.header variants={sectionVariants} className="relative">
-                <div className="absolute -top-4 -left-4 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl" />
-                <div className="relative space-y-4">
-                    <h1 className="font-headline text-5xl md:text-6xl font-black tracking-tight text-gradient">
+                <div className="absolute -top-4 -left-4 w-24 sm:w-32 h-24 sm:h-32 bg-blue-500/10 rounded-full blur-3xl" />
+                <div className="relative space-y-3 sm:space-y-4">
+                    <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient">
                         Teams & Players
                     </h1>
-                    <p className="text-white/60 text-lg max-w-2xl">
+                    <p className="text-white/60 text-sm sm:text-base lg:text-lg max-w-2xl">
                         Explore all competing teams and their rosters organized by sport
                     </p>
 
                     {/* Stats Summary */}
-                    <div className="flex flex-wrap gap-4 pt-4">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
-                            <Trophy className="h-4 w-4 text-yellow-400" />
-                            <span className="text-sm text-white/70">{sports.length} Sports</span>
+                    <div className="flex flex-wrap gap-2 sm:gap-4 pt-3 sm:pt-4">
+                        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white/5 border border-white/10">
+                            <Trophy className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-yellow-400" />
+                            <span className="text-xs sm:text-sm text-white/70">{sports.length} Sports</span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
-                            <Users className="h-4 w-4 text-blue-400" />
-                            <span className="text-sm text-white/70">{teams.length} Teams</span>
+                        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white/5 border border-white/10">
+                            <Users className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-blue-400" />
+                            <span className="text-xs sm:text-sm text-white/70">{teams.length} Teams</span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
-                            <User className="h-4 w-4 text-green-400" />
-                            <span className="text-sm text-white/70">{players.length} Players</span>
+                        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white/5 border border-white/10">
+                            <User className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-green-400" />
+                            <span className="text-xs sm:text-sm text-white/70">{players.length} Players</span>
                         </div>
                     </div>
                 </div>
             </motion.header>
 
             {/* Teams Grid by Sport */}
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12">
                 <AnimatePresence>
                     {sports.map((sport) => {
                         const sportTeams = teams.filter(t => t.sport === sport);
@@ -137,22 +137,22 @@ export default function TeamsPage() {
                             <motion.section 
                                 key={sport}
                                 variants={sectionVariants}
-                                className="space-y-6"
+                                className="space-y-4 sm:space-y-6"
                             >
                                 {/* Sport Header with Accent */}
-                                <div className={`flex items-center gap-4 pb-4 border-b ${accent.border.replace('border-', 'border-b-')}`}>
-                                    <div className={`p-3 rounded-xl ${accent.bg} border-2 ${accent.border}`}>
-                                        <SportIcon sport={sport} className={`h-7 w-7 ${accent.text}`} />
+                                <div className={`flex items-center gap-2 sm:gap-4 pb-3 sm:pb-4 border-b ${accent.border.replace('border-', 'border-b-')}`}>
+                                    <div className={`p-2 sm:p-3 rounded-xl ${accent.bg} border-2 ${accent.border}`}>
+                                        <SportIcon sport={sport} className={`h-5 sm:h-6 lg:h-7 w-5 sm:w-6 lg:w-7 ${accent.text}`} />
                                     </div>
                                     <div>
-                                        <h2 className={`font-headline text-3xl font-black ${accent.text}`}>{sport}</h2>
-                                        <p className="text-white/50 text-sm">{sportTeams.length} team{sportTeams.length !== 1 ? 's' : ''} competing</p>
+                                        <h2 className={`font-headline text-xl sm:text-2xl lg:text-3xl font-black ${accent.text}`}>{sport}</h2>
+                                        <p className="text-white/50 text-xs sm:text-sm">{sportTeams.length} team{sportTeams.length !== 1 ? 's' : ''} competing</p>
                                     </div>
                                 </div>
 
                                 {/* Teams Grid */}
                                 <motion.div 
-                                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
                                     variants={containerVariants}
                                 >
                                     {sportTeams.map((team, idx) => {
@@ -174,12 +174,12 @@ export default function TeamsPage() {
                                                     {/* Top accent line */}
                                                     <div className={`h-1 ${accent.bg} opacity-60`} />
                                                     
-                                                    <CardHeader className="pb-4">
-                                                        <div className="flex items-start justify-between">
-                                                            <CardTitle className="font-headline text-2xl font-bold text-white/95 group-hover:text-white transition-colors">
+                                                    <CardHeader className="p-3 sm:p-4 pb-3 sm:pb-4">
+                                                        <div className="flex items-start justify-between gap-2">
+                                                            <CardTitle className="font-headline text-lg sm:text-xl lg:text-2xl font-bold text-white/95 group-hover:text-white transition-colors">
                                                                 {team.name}
                                                             </CardTitle>
-                                                            <div className={`px-3 py-1 rounded-full ${accent.bg} border ${accent.border}`}>
+                                                            <div className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${accent.bg} border ${accent.border} shrink-0`}>
                                                                 <span className={`text-xs font-bold ${accent.text}`}>
                                                                     {teamPlayers.length}
                                                                 </span>
@@ -187,27 +187,27 @@ export default function TeamsPage() {
                                                         </div>
                                                     </CardHeader>
                                                     
-                                                    <CardContent>
+                                                    <CardContent className="p-3 sm:p-4 pt-0">
                                                         {teamPlayers.length > 0 ? (
-                                                            <ul className="space-y-3">
+                                                            <ul className="space-y-2 sm:space-y-3">
                                                                 {teamPlayers.map(player => (
                                                                     <motion.li 
                                                                         key={player.id} 
-                                                                        className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all group/player"
+                                                                        className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all group/player"
                                                                         whileHover={{ x: 4 }}
                                                                     >
-                                                                        <div className={`p-1.5 rounded-lg ${accent.bg} border ${accent.border} group-hover/player:scale-110 transition-transform`}>
-                                                                            <User className={`h-4 w-4 ${accent.text}`} />
+                                                                        <div className={`p-1 sm:p-1.5 rounded-lg ${accent.bg} border ${accent.border} group-hover/player:scale-110 transition-transform`}>
+                                                                            <User className={`h-3.5 sm:h-4 w-3.5 sm:w-4 ${accent.text}`} />
                                                                         </div>
-                                                                        <span className="font-medium text-white/90 group-hover/player:text-white transition-colors">
+                                                                        <span className="font-medium text-white/90 group-hover/player:text-white transition-colors text-sm sm:text-base">
                                                                             {player.name}
                                                                         </span>
                                                                     </motion.li>
                                                                 ))}
                                                             </ul>
                                                         ) : (
-                                                            <div className="flex flex-col items-center justify-center py-8 text-white/40">
-                                                                <Users className="h-12 w-12 mb-3 opacity-20" />
+                                                            <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-white/40">
+                                                                <Users className="h-10 sm:h-12 w-10 sm:w-12 mb-2 sm:mb-3 opacity-20" />
                                                                 <p className="text-sm">No players listed</p>
                                                             </div>
                                                         )}
