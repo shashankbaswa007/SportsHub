@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarInset,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Home, Settings, LogOut, Flame, PanelLeft, ShieldCheck, Users, Trophy } from 'lucide-react';
@@ -185,20 +186,87 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </Sidebar>
       <SidebarInset className="bg-background">
         <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center gap-4 border-b border-white/5 bg-[#0D0D0D]/80 backdrop-blur-xl px-3 sm:px-6">
-            <Button size="icon" variant="outline" className="lg:hidden border-white/10 hover:bg-white/5">
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-            </Button>
+            <SidebarTrigger className="lg:hidden border-white/10 hover:bg-white/5 text-white/80 hover:text-white" />
+            <div className="flex-1 flex items-center justify-center lg:hidden">
+              <span className="font-headline text-lg font-bold text-white/90">SportsHub</span>
+            </div>
         </header>
         <motion.main 
           key={pathname}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8"
+          className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8 pb-20 lg:pb-8"
         >
             {children}
         </motion.main>
+        
+        {/* Mobile Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-white/10 bg-[#0D0D0D]/95 backdrop-blur-xl">
+          <div className="flex items-center justify-around px-2 py-3">
+            <Link
+              href="/overview"
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                pathname.startsWith('/overview')
+                  ? 'text-white bg-white/10'
+                  : 'text-white/60 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Home className="h-5 w-5" />
+              <span className="text-xs font-medium">Home</span>
+            </Link>
+            
+            <Link
+              href="/teams"
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                pathname.startsWith('/teams')
+                  ? 'text-white bg-white/10'
+                  : 'text-white/60 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Users className="h-5 w-5" />
+              <span className="text-xs font-medium">Teams</span>
+            </Link>
+            
+            <Link
+              href="/leaderboard"
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                pathname.startsWith('/leaderboard')
+                  ? 'text-white bg-white/10'
+                  : 'text-white/60 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Trophy className="h-5 w-5" />
+              <span className="text-xs font-medium">Leaderboard</span>
+            </Link>
+            
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                  pathname.startsWith('/admin')
+                    ? 'text-white bg-white/10'
+                    : 'text-white/60 hover:text-white/80 hover:bg-white/5'
+                }`}
+              >
+                <ShieldCheck className="h-5 w-5" />
+                <span className="text-xs font-medium">Admin</span>
+              </Link>
+            )}
+            
+            <Link
+              href="/settings"
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                pathname.startsWith('/settings')
+                  ? 'text-white bg-white/10'
+                  : 'text-white/60 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Settings className="h-5 w-5" />
+              <span className="text-xs font-medium">Settings</span>
+            </Link>
+          </div>
+        </nav>
       </SidebarInset>
     </SidebarProvider>
   );
