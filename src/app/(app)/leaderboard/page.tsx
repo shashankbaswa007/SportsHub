@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { sports, calculatePointsTable } from '@/lib/data-client';
 import type { SportName, PointsTableItem } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';

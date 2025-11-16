@@ -6,6 +6,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { ErrorBoundary } from '@/components/error-boundary';
 
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export const metadata: Metadata = {
   title: 'SportsHub Central',
   description: 'A dynamic college sports festival web app for CBIT.',

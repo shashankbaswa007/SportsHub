@@ -4,6 +4,9 @@
 import { sports } from '@/lib/data-client';
 import { SportIcon } from '@/components/sport-icon';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
 import { User, Loader2, Users, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
