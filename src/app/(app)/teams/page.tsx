@@ -131,7 +131,7 @@ export default function TeamsPage() {
                         const sportTeams = teams.filter(t => t.sport === sport);
                         if (sportTeams.length === 0) return null;
 
-                        const accent = sportAccents[sport] || sportAccents['Football'];
+                        const accent = (sportAccents[sport] || sportAccents['Football'])!;
 
                         return (
                             <motion.section 
