@@ -5,6 +5,9 @@ import { AuthForm } from "@/components/auth-form";
 import { Flame } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
+
 const pageVariants = {
   hidden: { opacity: 0 },
   visible: { 

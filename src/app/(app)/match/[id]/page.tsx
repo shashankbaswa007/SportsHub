@@ -4,6 +4,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { updatePlayerStats, recalculateMatchScores, updateSetScore } from '@/lib/data-client';
+
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

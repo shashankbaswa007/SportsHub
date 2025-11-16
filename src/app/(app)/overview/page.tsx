@@ -15,6 +15,9 @@ import { useFirestore } from '@/firebase';
 import { Loader2, TrendingUp, Users, Trophy, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
+// Force dynamic rendering to prevent build-time errors with Firebase
+export const dynamic = 'force-dynamic';
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
