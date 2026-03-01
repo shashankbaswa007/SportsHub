@@ -29,6 +29,9 @@ import {
   Loader2,
   Check,
   Trophy,
+  Bookmark,
+  BookmarkPlus,
+  Trash2,
 } from 'lucide-react';
 
 const VENUES = [
@@ -43,6 +46,32 @@ const VENUES = [
 
 const ROUNDS = ['Group Stage', 'Quarter Final', 'Semi Final', 'Final', 'Friendly'];
 
+const TEMPLATES_STORAGE_KEY = 'sports-hub-match-templates';
+
+interface MatchTemplate {
+  id: string;
+  name: string;
+  sport: SportName;
+  venue: string;
+  round: string;
+}
+
+function loadTemplates(): MatchTemplate[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(TEMPLATES_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTemplates(templates: MatchTemplate[]) {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
+  }
+}
+
 type Step = 1 | 2 | 3;
 
 export const QuickMatchCreator = memo(function QuickMatchCreator() {
@@ -52,6 +81,11 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
   const [step, setStep] = useState<Step>(1);
   const [creating, setCreating] = useState(false);
+
+  // Match templates
+  const [templates, setTemplates] = useState<MatchTemplate[]>(() => loadTemplates());
+  const [templateName, setTemplateName] = useState('');
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
 
   // Step 1: Sport
   const [sport, setSport] = useState<SportName | ''>('');
@@ -65,6 +99,44 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
   const [venue, setVenue] = useState('');
   const [customVenue, setCustomVenue] = useState('');
   const [round, setRound] = useState('');
+
+  const handleSaveTemplate = useCallback(() => {
+    if (!sport || !templateName.trim()) return;
+    const newTemplate: MatchTemplate = {
+      id: Date.now().toString(),
+      name: templateName.trim(),
+      sport: sport as SportName,
+      venue: venue === '__custom__' ? customVenue : venue,
+      round,
+    };
+    const updated = [...templates, newTemplate];
+    setTemplates(updated);
+    saveTemplates(updated);
+    setTemplateName('');
+    setShowSaveTemplate(false);
+    toast({ title: 'Template Saved', description: `"${newTemplate.name}" saved for quick reuse.` });
+  }, [sport, templateName, venue, customVenue, round, templates, toast]);
+
+  const handleLoadTemplate = useCallback((template: MatchTemplate) => {
+    setSport(template.sport);
+    setTeamAId('');
+    setTeamBId('');
+    if (VENUES.includes(template.venue)) {
+      setVenue(template.venue);
+      setCustomVenue('');
+    } else if (template.venue) {
+      setVenue('__custom__');
+      setCustomVenue(template.venue);
+    }
+    setRound(template.round);
+    toast({ title: 'Template Loaded', description: `"${template.name}" applied.` });
+  }, [toast]);
+
+  const handleDeleteTemplate = useCallback((id: string) => {
+    const updated = templates.filter(t => t.id !== id);
+    setTemplates(updated);
+    saveTemplates(updated);
+  }, [templates]);
 
   // Derived helpers
   const sportTeams = useMemo(() => {
@@ -146,6 +218,35 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
         </h3>
         <p className="text-sm text-white/50 mt-1">Create a match in seconds by selecting existing teams.</p>
       </div>
+
+      {/* Saved Templates */}
+      {templates.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Bookmark className="h-3.5 w-3.5 text-purple-400" />
+            <span className="text-xs font-semibold text-white/50">Saved Templates</span>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {templates.map((t) => (
+              <div key={t.id} className="group flex items-center gap-1 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/30 transition-all">
+                <button
+                  onClick={() => handleLoadTemplate(t)}
+                  className="text-xs font-medium text-purple-300 hover:text-purple-200 transition-colors"
+                >
+                  {t.name}
+                </button>
+                <span className="text-[10px] text-purple-400/50 ml-1">{t.sport}</span>
+                <button
+                  onClick={() => handleDeleteTemplate(t.id)}
+                  className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-white/30 hover:text-red-400"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Progress Steps */}
       <div className="flex items-center gap-2">
@@ -404,6 +505,49 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                 {sport} {round ? `• ${round}` : ''} • {effectiveVenue || '—'} •{' '}
                 {date ? new Date(date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
               </div>
+            </div>
+          )}
+
+          {/* Save as Template */}
+          {sport && effectiveVenue.trim() && (
+            <div className="mt-4 pt-4 border-t border-white/5">
+              {showSaveTemplate ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder="Template name (e.g. Football Finals)"
+                    className="h-9 bg-white/5 border-white/10 text-sm flex-1"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTemplate()}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleSaveTemplate}
+                    disabled={!templateName.trim()}
+                    className="h-9 text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30"
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => { setShowSaveTemplate(false); setTemplateName(''); }}
+                    className="h-9 text-xs text-white/40"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSaveTemplate(true)}
+                  className="text-xs text-purple-400/70 hover:text-purple-400 hover:bg-purple-500/10 gap-1.5"
+                >
+                  <BookmarkPlus className="h-3.5 w-3.5" />
+                  Save as Template
+                </Button>
+              )}
             </div>
           )}
 

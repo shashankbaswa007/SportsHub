@@ -10,12 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AnimatePresence, motion } from "framer-motion"
 import { SportIcon } from '@/components/sport-icon';
-import { Loader2, TrendingUp, Users, Trophy, Activity, Bell, BellOff } from 'lucide-react';
+import { Loader2, TrendingUp, Users, Trophy, Activity, Bell, BellOff, Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppData } from '@/lib/data-context';
 import { TournamentStats } from '@/components/tournament-stats';
 import { useMatchNotifications } from '@/hooks/use-match-notifications';
+import { useFavorites } from '@/hooks/use-favorites';
 
 
 
@@ -41,10 +42,24 @@ const itemVariants = {
 
 export default function OverviewPage() {
   const [filter, setFilter] = useState<SportName | 'All'>('All');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const { matches, loading, leaderboards, teamsById } = useAppData();
   const { enabled: notificationsEnabled, toggleNotifications } = useMatchNotifications(matches, teamsById);
+  const { favoriteTeams, favoriteSports } = useFavorites();
 
-  const filteredMatches = useMemo(() => matches.filter(match => filter === 'All' || match.sport === filter), [matches, filter]);
+  const hasFavorites = favoriteTeams.size > 0 || favoriteSports.size > 0;
+
+  const filteredMatches = useMemo(() => {
+    let result = matches.filter(match => filter === 'All' || match.sport === filter);
+    if (showFavoritesOnly && hasFavorites) {
+      result = result.filter(match =>
+        favoriteTeams.has(match.teamAId) ||
+        favoriteTeams.has(match.teamBId) ||
+        favoriteSports.has(match.sport)
+      );
+    }
+    return result;
+  }, [matches, filter, showFavoritesOnly, hasFavorites, favoriteTeams, favoriteSports]);
 
   const liveMatches = useMemo(() => filteredMatches.filter(m => m.status === 'LIVE'), [filteredMatches]);
   const upcomingMatches = useMemo(() => filteredMatches.filter(m => m.status === 'UPCOMING'), [filteredMatches]);
@@ -98,6 +113,21 @@ export default function OverviewPage() {
             >
               {notificationsEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
             </Button>
+            {hasFavorites && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowFavoritesOnly(prev => !prev)}
+                className={`shrink-0 h-9 w-9 rounded-xl transition-all ${
+                  showFavoritesOnly
+                    ? 'bg-pink-500/10 text-pink-400 hover:bg-pink-500/20 border border-pink-500/20'
+                    : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+                }`}
+                title={showFavoritesOnly ? 'Showing favorites only' : 'Show all matches'}
+              >
+                <Heart className={`h-4 w-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+              </Button>
+            )}
           </div>
         </div>
 

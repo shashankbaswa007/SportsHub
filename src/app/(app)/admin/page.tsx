@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { sports, updateMatch as updateMatchData, deleteMatch as deleteMatchData } from '@/lib/data-client';
-import { Trash2, Loader2, Edit, Save, X, MapPin, Trophy, Chrome, Shield, Link2, CheckSquare } from 'lucide-react';
+import { sports, updateMatch as updateMatchData, deleteMatch as deleteMatchData, createMatch } from '@/lib/data-client';
+import { Trash2, Loader2, Edit, Save, X, MapPin, Trophy, Chrome, Shield, Link2, CheckSquare, Copy, CheckCheck } from 'lucide-react';
 import type { Match, SportName } from '@/lib/types';
 import {
   AlertDialog,
@@ -207,10 +207,81 @@ export default function AdminPage() {
         });
     }, []);
 
+    const handleDuplicateMatch = useCallback(async (match: Match) => {
+        if (!firestore) return;
+        const tA = teamsById.get(match.teamAId);
+        const tB = teamsById.get(match.teamBId);
+        try {
+            const result = await createMatch(firestore, {
+                sport: match.sport,
+                teamAId: match.teamAId,
+                teamBId: match.teamBId,
+                status: 'UPCOMING',
+                startTime: new Date().toISOString(),
+                venue: match.venue,
+                details: match.details,
+                teamAName: tA?.name || 'Team A',
+                teamBName: tB?.name || 'Team B',
+            });
+            if (result.success) {
+                toast({ title: 'Match Duplicated', description: `Copy of ${match.details || 'match'} created as UPCOMING.` });
+            } else {
+                toast({ variant: 'destructive', title: 'Error', description: result.error || 'Failed to duplicate match.' });
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message || 'Something went wrong.' });
+        }
+    }, [firestore, teamsById, toast]);
+
     const filteredMatches = useMemo(() => 
         matchFilter === 'All' ? matches : matches.filter(m => m.sport === matchFilter),
         [matches, matchFilter]
     );
+
+    const selectAllMatches = useCallback(() => {
+        setSelectedMatchIds(new Set(filteredMatches.map(m => m.id)));
+    }, [filteredMatches]);
+
+    // ─── Admin Keyboard Shortcuts ──────────────────────────
+    const [activeTab, setActiveTab] = useState('matches');
+
+    useEffect(() => {
+        if (!isAuthorized) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Don't trigger shortcuts when typing in inputs
+            const tag = (e.target as HTMLElement)?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+            // Escape → clear selection
+            if (e.key === 'Escape') {
+                setSelectedMatchIds(new Set());
+                setEditingMatch(null);
+                return;
+            }
+
+            // Ctrl/Cmd + Shift + N → switch to Create Match tab
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'N') {
+                e.preventDefault();
+                setActiveTab('create');
+                return;
+            }
+
+            // Ctrl/Cmd + A → select all filtered matches (when on matches tab)
+            if ((e.metaKey || e.ctrlKey) && e.key === 'a' && activeTab === 'matches') {
+                e.preventDefault();
+                if (selectedMatchIds.size === filteredMatches.length) {
+                    setSelectedMatchIds(new Set());
+                } else {
+                    setSelectedMatchIds(new Set(filteredMatches.map(m => m.id)));
+                }
+                return;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isAuthorized, activeTab, filteredMatches, selectedMatchIds.size]);
 
     // ─── Pre-auth screens ──────────────────────────────────
     if (!isAuthorized) {
@@ -315,7 +386,19 @@ export default function AdminPage() {
                         <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white/90">Admin Dashboard</h1>
                         <p className="text-white/50 text-base sm:text-lg mt-1">Manage tournaments, matches, teams, and players.</p>
                     </div>
-                    <AdminTour />
+                    <div className="flex items-center gap-3">
+                        <div className="hidden sm:flex items-center gap-2 text-[10px] text-white/25">
+                            <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">⌘⇧N</kbd>
+                            <span>New match</span>
+                            <span className="text-white/10">|</span>
+                            <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">⌘A</kbd>
+                            <span>Select all</span>
+                            <span className="text-white/10">|</span>
+                            <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono">Esc</kbd>
+                            <span>Clear</span>
+                        </div>
+                        <AdminTour />
+                    </div>
                 </div>
             </header>
 
@@ -348,7 +431,7 @@ export default function AdminPage() {
             </div>
 
             {/* Tabbed Content */}
-            <Tabs defaultValue="matches" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="w-full justify-start bg-white/5 border border-white/10 p-1 rounded-lg h-auto flex-wrap">
                     <TabsTrigger value="matches" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 rounded-md text-sm px-4 py-2">
                         Matches
@@ -366,7 +449,7 @@ export default function AdminPage() {
 
                 {/* ── Matches Tab ── */}
                 <TabsContent value="matches" className="mt-5 space-y-4" data-tour="manage-matches">
-                    {/* Sport filter */}
+                    {/* Sport filter + selection controls */}
                     <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs text-white/50 font-medium shrink-0">Filter:</span>
                         <button
@@ -392,6 +475,29 @@ export default function AdminPage() {
                                 {s}
                             </button>
                         ))}
+                        <div className="ml-auto flex items-center gap-1.5">
+                            {selectedMatchIds.size === filteredMatches.length && filteredMatches.length > 0 ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-7 text-[11px] text-white/40 hover:text-white/70 gap-1"
+                                    onClick={() => setSelectedMatchIds(new Set())}
+                                >
+                                    <CheckCheck className="h-3 w-3" />
+                                    Deselect All
+                                </Button>
+                            ) : filteredMatches.length > 0 ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-7 text-[11px] text-white/40 hover:text-white/70 gap-1"
+                                    onClick={selectAllMatches}
+                                >
+                                    <CheckSquare className="h-3 w-3" />
+                                    Select All
+                                </Button>
+                            ) : null}
+                        </div>
                     </div>
 
                     {/* Bulk Actions toolbar */}
@@ -516,8 +622,19 @@ export default function AdminPage() {
                                                             className="border-white/10 hover:bg-white/10 h-9 w-9"
                                                             onClick={() => setEditingMatch({ ...match })}
                                                             disabled={!!editingMatch}
+                                                            title="Edit match"
                                                         >
                                                             <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            size="icon"
+                                                            variant="outline"
+                                                            className="border-white/10 hover:bg-white/10 h-9 w-9"
+                                                            onClick={() => handleDuplicateMatch(match)}
+                                                            disabled={!!editingMatch}
+                                                            title="Duplicate match"
+                                                        >
+                                                            <Copy className="h-4 w-4" />
                                                         </Button>
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
