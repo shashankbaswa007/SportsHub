@@ -1,6 +1,13 @@
 /**
  * One-time setup script to bootstrap the first admin in Firestore.
- * Run: node scripts/seed-admin.mjs
+ * 
+ * Prerequisites: Create a .env.local file at the project root with:
+ *   NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+ *   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+ *   NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+ *   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+ * 
+ * Run: node --env-file=.env.local scripts/seed-admin.mjs
  * 
  * This creates documents in both admin_emails and admin_emails_lookup collections.
  * After running this, the specified Google account can link to their College ID login
@@ -11,10 +18,10 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'REDACTED_FIREBASE_API_KEY',
-  projectId: 'shruti-sports-hub',
-  appId: '1:1234567890:web:abcdef123456',
-  authDomain: 'shruti-sports-hub.firebaseapp.com',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
 };
 
 const ADMIN_EMAIL = 'baswashashank123@gmail.com';
