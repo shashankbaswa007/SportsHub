@@ -80,7 +80,7 @@ function StatBar({ label, valueA, valueB }: { label: string; valueA: number; val
 /* ─── Team Stat Bars for sport ─── */
 function getTeamStatBars(sport: SportName, teamAPlayers: Player[], teamBPlayers: Player[]) {
   const sum = (players: Player[], key: string) =>
-    players.reduce((s, p) => s + (Number(p.stats[key]) || 0), 0);
+    players.reduce((s, p) => s + (Number(p.stats?.[key]) || 0), 0);
 
   const bars: { label: string; valueA: number; valueB: number }[] = [];
 
@@ -156,7 +156,7 @@ export default function MatchPage() {
     const emailToCheck = googleEmail || verifiedAdmin;
 
     if (emailToCheck && firestore) {
-      checkIsAdmin(firestore, emailToCheck).then(setIsAdmin);
+      checkIsAdmin(firestore, emailToCheck).then(setIsAdmin).catch(() => setIsAdmin(false));
     } else {
       setIsAdmin(false);
     }
@@ -289,7 +289,7 @@ export default function MatchPage() {
   }
 
   const cricketScore = match.sport === 'Cricket' ? (match.scoreDetails as CricketScore) : null;
-  const statusCfg = statusConfig[match.status];
+  const statusCfg = statusConfig[match.status] ?? statusConfig['UPCOMING'];
   const StatusIcon = statusCfg.icon;
 
   /* ── Player stat card renderer ── */
@@ -317,7 +317,7 @@ export default function MatchPage() {
               isBlue ? 'bg-blue-500/10 border-blue-500/20' : 'bg-rose-500/10 border-rose-500/20'
             }`}>
               <span className={`text-[10px] font-bold ${isBlue ? 'text-blue-400' : 'text-rose-400'}`}>
-                {player.name.charAt(0).toUpperCase()}
+                {(player.name || '?').charAt(0).toUpperCase()}
               </span>
             </div>
             <span className="text-sm font-semibold text-white/80">{player.name}</span>
@@ -331,7 +331,7 @@ export default function MatchPage() {
 
         {isEditing ? (
           <div className="space-y-2 mt-3">
-            {Object.keys(player.stats).map((key) => (
+            {Object.keys(player.stats ?? {}).map((key) => (
               <div key={key} className="flex items-center justify-between gap-2">
                 <span className="text-[10px] sm:text-xs text-white/40 capitalize min-w-[60px]">
                   {key.replace(/([A-Z])/g, ' $1')}
@@ -363,7 +363,7 @@ export default function MatchPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-1">
-            {Object.entries(player.stats).map(([key, value]) => (
+            {Object.entries(player.stats ?? {}).map(([key, value]) => (
               <div key={key} className="flex items-center justify-between">
                 <span className="text-[10px] text-white/30 capitalize truncate">{key.replace(/([A-Z])/g, ' $1')}</span>
                 <span className={`text-xs font-mono font-semibold ${Number(value) > 0 ? 'text-white/80' : 'text-white/20'}`}>{value}</span>
@@ -457,9 +457,9 @@ export default function MatchPage() {
                 </motion.span>
               </div>
 
-              {cricketScore && (
+              {cricketScore && cricketScore.runs != null && (
                 <p className="font-mono text-xs sm:text-sm text-white/40 mt-1">
-                  {cricketScore.runs}/{cricketScore.wickets} ({cricketScore.overs} ov)
+                  {cricketScore.runs}/{cricketScore.wickets ?? 0} ({cricketScore.overs ?? 0} ov)
                 </p>
               )}
 

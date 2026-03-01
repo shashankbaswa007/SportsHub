@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   collection,
   doc,
@@ -116,6 +116,11 @@ function TeamFormDialog({ open, onOpenChange, editingTeam, editingPlayers }: Tea
     setSport(editingTeam?.sport ?? '');
     setPlayerNames(editingPlayers?.map((p) => p.name) ?? ['']);
   }, [editingTeam, editingPlayers]);
+
+  // Sync form state when editingTeam/editingPlayers change while dialog is open
+  useEffect(() => {
+    if (open) resetForm();
+  }, [open, resetForm]);
 
   // Reset when dialog opens
   const handleOpenChange = (value: boolean) => {

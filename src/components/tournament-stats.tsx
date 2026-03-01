@@ -396,7 +396,7 @@ export function TournamentStats({ className }: TournamentStatsProps) {
                   <span className="text-xs font-semibold text-white/60">Sport Distribution</span>
                 </div>
                 <Badge className="bg-violet-500/10 text-violet-400 border-violet-500/20 text-[10px]">
-                  {Object.keys(stats.sportDistribution).length} Sports
+                  {stats.sportDistribution.length} Sports
                 </Badge>
               </div>
               <MiniBarChart data={stats.sportDistribution} />
