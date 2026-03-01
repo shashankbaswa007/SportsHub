@@ -10,24 +10,16 @@ service cloud.firestore {
     function isAdmin() {
       // Check if the user's email exists as a document ID in admin_emails collection
       return isAuth() && 
-        exists(/databases/$(database)/documents/admin_emails_lookup/$(request.auth.token.email));
+        exists(/databases/$(database)/documents/admin_emails/$(request.auth.token.email));
     }
 
-    // Admin emails collection — admins can read/manage, authenticated users can read (for UI checks)
-    // Also allow creates from users accepting an invite (checked by having a valid pending invite)
-    match /admin_emails/{docId} {
+    // Admin emails collection — document ID = email address for direct lookup
+    // Admins can read/manage, authenticated users can read (for UI checks) and create (invite acceptance)
+    match /admin_emails/{email} {
       allow read: if isAuth();
       allow create: if isAdmin() || isAuth();
       allow delete: if isAdmin();
       allow update: if false; // immutable once created
-    }
-
-    // Admin emails lookup collection — keyed by email for fast exists() checks in rules
-    match /admin_emails_lookup/{email} {
-      allow read: if isAuth();
-      allow create: if isAdmin() || isAuth();
-      allow delete: if isAdmin();
-      allow update: if false;
     }
 
     // Admin invites — admins can create/read/delete, any authenticated user can read & accept

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  collection, query, where, getDocs, doc, updateDoc, addDoc, setDoc,
-  serverTimestamp, deleteDoc,
+  collection, query, where, getDocs, doc, updateDoc, setDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
@@ -154,15 +154,10 @@ export default function InviteAcceptPage() {
         return;
       }
 
-      // Accept the invite: add to admin_emails + admin_emails_lookup
-      await addDoc(collection(firestore, 'admin_emails'), {
+      // Accept the invite: add to admin_emails with email as document ID
+      await setDoc(doc(firestore, 'admin_emails', googleEmail), {
         email: googleEmail,
         name: invite.name || googleEmail.split('@')[0],
-        addedBy: invite.invitedBy,
-        addedAt: serverTimestamp(),
-      });
-
-      await setDoc(doc(firestore, 'admin_emails_lookup', googleEmail), {
         addedBy: invite.invitedBy,
         addedAt: serverTimestamp(),
       });

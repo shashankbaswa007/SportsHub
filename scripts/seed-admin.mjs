@@ -9,13 +9,13 @@
  * 
  * Run: node --env-file=.env.local scripts/seed-admin.mjs
  * 
- * This creates documents in both admin_emails and admin_emails_lookup collections.
+ * This creates a document in the admin_emails collection with the email as document ID.
  * After running this, the specified Google account can link to their College ID login
  * and gain admin access.
  */
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -33,21 +33,15 @@ async function seedAdmin() {
 
   console.log(`Seeding admin: ${ADMIN_EMAIL}`);
 
-  // 1. Add to admin_emails collection (used by the app for listing/UI)
-  const docRef = await addDoc(collection(db, 'admin_emails'), {
+  // Add to admin_emails collection with email as document ID
+  // This is used by both the app and Firestore rules for exists() checks
+  await setDoc(doc(db, 'admin_emails', ADMIN_EMAIL), {
     email: ADMIN_EMAIL,
     name: ADMIN_NAME,
     addedBy: 'system',
     addedAt: serverTimestamp(),
   });
-  console.log(`✓ Created admin_emails/${docRef.id}`);
-
-  // 2. Add to admin_emails_lookup collection (used by Firestore rules for exists() check)
-  await setDoc(doc(db, 'admin_emails_lookup', ADMIN_EMAIL), {
-    addedBy: 'system',
-    addedAt: serverTimestamp(),
-  });
-  console.log(`✓ Created admin_emails_lookup/${ADMIN_EMAIL}`);
+  console.log(`✓ Created admin_emails/${ADMIN_EMAIL}`);
 
   console.log('\nDone! You can now:');
   console.log('1. Log in with your College ID');

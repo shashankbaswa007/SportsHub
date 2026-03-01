@@ -1,10 +1,11 @@
 'use client';
 
-import { collection, query, where, getDocs, type Firestore } from 'firebase/firestore';
+import { doc, getDoc, type Firestore } from 'firebase/firestore';
 
 /**
  * Checks if a given email is in the admin_emails Firestore allowlist.
- * Uses a simple in-memory cache to avoid repeated queries within the same session.
+ * Uses document ID = email for direct lookup (matches Firestore rules).
+ * Simple in-memory cache to avoid repeated reads within the same session.
  */
 let cachedResult: { email: string; isAdmin: boolean } | null = null;
 
@@ -19,12 +20,10 @@ export async function checkIsAdmin(firestore: Firestore, email: string | null | 
   }
 
   try {
-    const adminQuery = query(
-      collection(firestore, 'admin_emails'),
-      where('email', '==', normalizedEmail)
-    );
-    const snap = await getDocs(adminQuery);
-    const isAdmin = !snap.empty;
+    // Direct document lookup — document ID is the email address
+    // This matches the Firestore rules: exists(/databases/.../admin_emails/$(request.auth.token.email))
+    const adminDoc = await getDoc(doc(firestore, 'admin_emails', normalizedEmail));
+    const isAdmin = adminDoc.exists();
     cachedResult = { email: normalizedEmail, isAdmin };
     return isAdmin;
   } catch (error) {

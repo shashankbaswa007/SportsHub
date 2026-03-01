@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, memo } from 'react';
 import {
-  collection, addDoc, deleteDoc, doc, setDoc, onSnapshot,
-  serverTimestamp, query, where, getDocs,
+  collection, addDoc, deleteDoc, doc, onSnapshot,
+  serverTimestamp, setDoc,
 } from 'firebase/firestore';
 import { useFirestore, useFirebase } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -206,8 +206,8 @@ export const AdminManagement = memo(function AdminManagement() {
 
     setDeletingId(id);
     try {
-      await deleteDoc(doc(firestore, 'admin_emails', id));
-      await deleteDoc(doc(firestore, 'admin_emails_lookup', email.toLowerCase()));
+      // Document ID is the email address
+      await deleteDoc(doc(firestore, 'admin_emails', email.toLowerCase()));
       toast({ title: 'Admin Removed', description: `${email} no longer has admin access.` });
     } catch (error) {
       console.error('Failed to remove admin:', error);
