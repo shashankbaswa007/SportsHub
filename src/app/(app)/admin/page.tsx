@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { sports, updateMatch as updateMatchData, deleteMatch as deleteMatchData } from '@/lib/data-client';
-import { Trash2, Loader2, Edit, Save, X, MapPin, Trophy, Chrome, Shield, Link2 } from 'lucide-react';
+import { Trash2, Loader2, Edit, Save, X, MapPin, Trophy, Chrome, Shield, Link2, CheckSquare } from 'lucide-react';
 import type { Match, SportName } from '@/lib/types';
 import {
   AlertDialog,
@@ -31,6 +31,7 @@ import { ActivityLog } from '@/components/admin/activity-log';
 import { TeamManager } from '@/components/admin/team-manager';
 import { QuickMatchCreator } from '@/components/admin/quick-match-creator';
 import { AdminManagement } from '@/components/admin/admin-management';
+import { CSVImport } from '@/components/admin/csv-import';
 import { useFirestore, useFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useAppData } from '@/lib/data-context';
@@ -153,6 +154,7 @@ export default function AdminPage() {
 
     // ─── Match management state ────────────────────────────
     const [editingMatch, setEditingMatch] = useState<EditableMatch | null>(null);
+    const [selectedMatchIds, setSelectedMatchIds] = useState<Set<string>>(new Set());
 
     const handleUpdateMatch = useCallback(async () => {
         if (!editingMatch || !editingMatch.id || !firestore) {
@@ -181,6 +183,29 @@ export default function AdminPage() {
             toast({ variant: "destructive", title: "Error", description: "Failed to delete match. Please try again." });
         }
     }, [firestore, toast]);
+
+    const handleBulkStatusChange = useCallback(async (status: Match['status']) => {
+        if (!firestore || selectedMatchIds.size === 0) return;
+        try {
+            const promises = [...selectedMatchIds].map(id => 
+                updateMatchData(firestore, id, { status })
+            );
+            await Promise.all(promises);
+            toast({ title: 'Bulk Update', description: `${selectedMatchIds.size} matches set to ${status}.` });
+            setSelectedMatchIds(new Set());
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to update some matches.' });
+        }
+    }, [firestore, selectedMatchIds, toast]);
+
+    const toggleMatchSelection = useCallback((matchId: string) => {
+        setSelectedMatchIds(prev => {
+            const next = new Set(prev);
+            if (next.has(matchId)) next.delete(matchId);
+            else next.add(matchId);
+            return next;
+        });
+    }, []);
 
     const filteredMatches = useMemo(() => 
         matchFilter === 'All' ? matches : matches.filter(m => m.sport === matchFilter),
@@ -369,6 +394,28 @@ export default function AdminPage() {
                         ))}
                     </div>
 
+                    {/* Bulk Actions toolbar */}
+                    {selectedMatchIds.size > 0 && (
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex-wrap">
+                            <CheckSquare className="h-4 w-4 text-blue-400 shrink-0" />
+                            <span className="text-xs font-semibold text-blue-400 shrink-0">{selectedMatchIds.size} selected</span>
+                            <div className="flex gap-1.5 ml-auto flex-wrap">
+                                <Button size="sm" className="h-7 text-[11px] bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30" onClick={() => handleBulkStatusChange('UPCOMING')}>
+                                    Set Upcoming
+                                </Button>
+                                <Button size="sm" className="h-7 text-[11px] bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30" onClick={() => handleBulkStatusChange('LIVE')}>
+                                    Set Live
+                                </Button>
+                                <Button size="sm" className="h-7 text-[11px] bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30" onClick={() => handleBulkStatusChange('COMPLETED')}>
+                                    Set Completed
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-7 text-[11px] text-white/40" onClick={() => setSelectedMatchIds(new Set())}>
+                                    Clear
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Match list */}
                     {filteredMatches.length === 0 ? (
                         <div className="text-center py-16">
@@ -391,6 +438,21 @@ export default function AdminPage() {
                                 return (
                                     <Card key={match.id} className="glass p-4 bg-white/[0.02] border-white/10 hover:border-white/20 transition-all group hover-lift">
                                         <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+                                            {/* Selection checkbox */}
+                                            <button
+                                                onClick={() => toggleMatchSelection(match.id)}
+                                                className={`w-5 h-5 rounded border-2 shrink-0 flex items-center justify-center transition-all ${
+                                                    selectedMatchIds.has(match.id)
+                                                        ? 'bg-blue-500 border-blue-500'
+                                                        : 'border-white/20 hover:border-white/40'
+                                                }`}
+                                            >
+                                                {selectedMatchIds.has(match.id) && (
+                                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                )}
+                                            </button>
                                             <div className="flex-1 min-w-[180px] w-full sm:w-auto cursor-pointer" onClick={() => router.push(`/match/${match.id}`)}>
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <Badge variant="outline" className="text-xs font-semibold border-white/20 text-white/60">
@@ -486,8 +548,9 @@ export default function AdminPage() {
                 </TabsContent>
 
                 {/* ── Teams Tab ── */}
-                <TabsContent value="teams" className="mt-5">
+                <TabsContent value="teams" className="mt-5 space-y-6">
                     <TeamManager />
+                    <CSVImport />
                 </TabsContent>
 
                 {/* ── Create Match Tab ── */}

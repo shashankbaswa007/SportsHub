@@ -27,6 +27,7 @@ import { DataProvider } from '@/lib/data-context';
 import { GlobalSearch } from '@/components/global-search';
 import { ConnectionBanner } from '@/components/connection-banner';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -200,6 +201,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="font-headline text-lg font-bold text-white/90 lg:hidden">SportsHub</span>
               <GlobalSearch />
             </div>
+            <ThemeToggle />
         </header>
         <main className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8 pb-20 lg:pb-8">
               <ErrorBoundary>

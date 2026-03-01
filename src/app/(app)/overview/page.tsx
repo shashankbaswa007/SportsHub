@@ -10,10 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AnimatePresence, motion } from "framer-motion"
 import { SportIcon } from '@/components/sport-icon';
-import { Loader2, TrendingUp, Users, Trophy, Activity } from 'lucide-react';
+import { Loader2, TrendingUp, Users, Trophy, Activity, Bell, BellOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useAppData } from '@/lib/data-context';
 import { TournamentStats } from '@/components/tournament-stats';
+import { useMatchNotifications } from '@/hooks/use-match-notifications';
 
 
 
@@ -39,7 +41,8 @@ const itemVariants = {
 
 export default function OverviewPage() {
   const [filter, setFilter] = useState<SportName | 'All'>('All');
-  const { matches, loading, leaderboards } = useAppData();
+  const { matches, loading, leaderboards, teamsById } = useAppData();
+  const { enabled: notificationsEnabled, toggleNotifications } = useMatchNotifications(matches, teamsById);
 
   const filteredMatches = useMemo(() => matches.filter(match => filter === 'All' || match.sport === filter), [matches, filter]);
 
@@ -78,9 +81,24 @@ export default function OverviewPage() {
           <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient leading-tight">
             Match Center
           </h1>
-          <p className="text-base sm:text-lg text-white/50 max-w-2xl">
-            Real-time scores, upcoming fixtures, and comprehensive match analytics.
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-base sm:text-lg text-white/50 max-w-2xl">
+              Real-time scores, upcoming fixtures, and comprehensive match analytics.
+            </p>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleNotifications}
+              className={`shrink-0 h-9 w-9 rounded-xl transition-all ${
+                notificationsEnabled
+                  ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'
+                  : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+              }`}
+              title={notificationsEnabled ? 'Notifications enabled' : 'Enable live match notifications'}
+            >
+              {notificationsEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
         {/* Stats Overview */}

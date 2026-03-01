@@ -12,6 +12,7 @@ import { Loader2, Trophy, Medal, Award, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppData } from '@/lib/data-context';
 import { ExportResults } from '@/components/export-results';
+import { TournamentBracket } from '@/components/tournament-bracket';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -271,6 +272,21 @@ export default function LeaderboardPage() {
                         </Table>
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+
+                {/* Tournament Bracket */}
+                <Card className="glass-strong border-white/10 mt-6 overflow-hidden">
+                  <div className="h-[2px] bg-gradient-to-r from-white/10 via-white/20 to-white/10" />
+                  <CardHeader className="p-4 sm:p-6 pb-3">
+                    <CardTitle className="font-headline text-lg sm:text-xl font-bold text-white/90 flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-white/40" />
+                      Match Bracket
+                    </CardTitle>
+                    <p className="text-xs text-white/40">All {sport} matches visualized as a bracket</p>
+                  </CardHeader>
+                  <CardContent className="p-4 sm:p-6 pt-0">
+                    <TournamentBracket matches={matches} teamsById={teamsById} sport={sport} />
                   </CardContent>
                 </Card>
               </motion.div>

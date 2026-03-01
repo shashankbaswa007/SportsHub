@@ -8,8 +8,9 @@ import { User, Loader2, Users, Trophy, Heart } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Team, Player } from '@/lib/types';
 import { useAppData } from '@/lib/data-context';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useFavorites } from '@/hooks/use-favorites';
+import { PlayerProfileDialog } from '@/components/player-profile-dialog';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,8 +62,11 @@ const sportAccents: Record<string, {
 };
 
 export default function TeamsPage() {
-    const { teams, players, playersByTeam, loading } = useAppData();
+    const { teams, players, playersByTeam, loading, matches, teamsById } = useAppData();
     const { isTeamFavorite, toggleFavoriteTeam, isSportFavorite, toggleFavoriteSport } = useFavorites();
+    const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+    const [selectedPlayerTeam, setSelectedPlayerTeam] = useState<Team | null>(null);
+    const [profileOpen, setProfileOpen] = useState(false);
 
     if (loading) {
         return (
@@ -192,7 +196,12 @@ export default function TeamsPage() {
                                                                 {teamPlayers.map(player => (
                                                                     <li 
                                                                         key={player.id} 
-                                                                        className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 hover:translate-x-1 transition-all group/player"
+                                                                        className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 hover:translate-x-1 transition-all group/player cursor-pointer"
+                                                                        onClick={() => {
+                                                                            setSelectedPlayer(player);
+                                                                            setSelectedPlayerTeam(team);
+                                                                            setProfileOpen(true);
+                                                                        }}
                                                                     >
                                                                         <div className={`p-1 sm:p-1.5 rounded-lg ${accent.bg} border ${accent.border} group-hover/player:scale-110 transition-transform`}>
                                                                             <User className={`h-3.5 sm:h-4 w-3.5 sm:w-4 ${accent.text}`} />
@@ -220,6 +229,16 @@ export default function TeamsPage() {
                     })}
                 </AnimatePresence>
             </div>
+
+            {/* Player Profile Dialog */}
+            <PlayerProfileDialog
+                player={selectedPlayer}
+                team={selectedPlayerTeam}
+                matches={matches}
+                teamsById={teamsById}
+                open={profileOpen}
+                onOpenChange={setProfileOpen}
+            />
         </motion.div>
     );
 }

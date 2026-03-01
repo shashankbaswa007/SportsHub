@@ -22,6 +22,8 @@ import { MatchCountdown } from '@/components/match-countdown';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { ScoreTimeline } from '@/components/score-timeline';
 import { MatchPolls } from '@/components/match-polls';
+import { LiveScorePanel } from '@/components/live-score-panel';
+import { ShareMatchButton } from '@/components/share-match-button';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useFirestore, useFirebase } from '@/firebase';
 import { useAppData } from '@/lib/data-context';
@@ -376,13 +378,14 @@ export default function MatchPage() {
   /* ────────────── RENDER ────────────── */
   return (
     <div className="relative min-h-full pb-8">
-      {/* ─── Back Button ─── */}
-      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-4">
+      {/* ─── Back Button + Share ─── */}
+      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-4 flex items-center justify-between">
         <Button variant="ghost" className="h-9 text-sm text-white/50 hover:text-white/80 -ml-2" onClick={handleBackNavigation}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Back to Overview</span>
           <span className="sm:hidden">Back</span>
         </Button>
+        <ShareMatchButton match={match} teamA={teamA} teamB={teamB} />
       </motion.div>
 
       {/* ═══════════════════════ HERO SCOREBOARD ═══════════════════════ */}
@@ -725,6 +728,11 @@ export default function MatchPage() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      {/* ─── Admin Live Score Panel ─── */}
+      {isAdmin && match.status !== 'UPCOMING' && (
+        <LiveScorePanel match={match} teamA={teamA} teamB={teamB} firestore={firestore} />
+      )}
     </div>
   );
 }
