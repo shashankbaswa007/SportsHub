@@ -78,9 +78,11 @@ export function SportIcon({ sport, className, ...props }: SportIconProps) {
         return <CricketIcon className={className} {...props} />;
     case 'Throwball':
         return <Droplets className={className} {...props} />;
-    case 'Badminton':
+    case 'Badminton (Singles)':
+    case 'Badminton (Doubles)':
         return <BadmintonIcon className={className} {...props} />;
-    case 'Table Tennis':
+    case 'Table Tennis (Singles)':
+    case 'Table Tennis (Doubles)':
         return <TableTennisIcon className={className} {...props} />;
     case 'Kabaddi':
         return <Users className={className} {...props} />;

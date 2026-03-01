@@ -8,8 +8,10 @@ export function useAuthCheck() {
   const pathname = usePathname();
   
   useEffect(() => {
-    const user = localStorage.getItem('sports-hub-user');
-    const role = localStorage.getItem('sports-hub-role');
+    if (typeof window === 'undefined') return;
+
+    const user = window.localStorage.getItem('sports-hub-user');
+    const role = window.localStorage.getItem('sports-hub-role');
     
     if (!user) {
       // Not logged in, redirect to login page

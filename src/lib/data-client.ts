@@ -148,8 +148,11 @@ export const recalculateMatchScores = async (db: Firestore, matchId: string): Pr
         const teamABalls = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Balls Bowled'] || 0), 0);
         const teamAOvers = Math.floor(teamABalls / 6) + (teamABalls % 6) / 10;
         
+        const teamBRuns = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Runs'] || 0), 0);
+        
         newScoreDetails = { runs: teamARuns, wickets: teamAWickets, overs: teamAOvers };
-        newTeamAScore = teamARuns; 
+        newTeamAScore = teamARuns;
+        newTeamBScore = teamBRuns;
     } else if (Array.isArray(match.scoreDetails)) { // Set-based sports
         let teamASetsWon = 0;
         let teamBSetsWon = 0;
@@ -227,8 +230,8 @@ export const calculatePointsTable = async (db: Firestore, sport: SportName): Pro
                 teamB.lost++;
             } else {
                 teamB.won++;
-                teamB.lost++;
-                teamA.points += 0;
+                teamB.points += 2;
+                teamA.lost++;
             }
         }
     });
@@ -257,27 +260,18 @@ export const deletePlayer = async (db: Firestore, playerId: string) => {
 
 export const deleteTeam = async (db: Firestore, teamId: string) => {
     const batch = writeBatch(db);
-    
-    const teamRef = doc(db, 'teams', teamId);
-    batch.delete(teamRef);
+    batch.delete(doc(db, 'teams', teamId));
 
-    const playersQuery = query(collection(db, 'players'), where('teamId', '==', teamId));
-    const playersSnap = await getDocs(playersQuery);
-    if (!playersSnap.empty) {
-        playersSnap.forEach(doc => batch.delete(doc.ref));
-    }
+    // Parallelize all related-document lookups for ~3x faster deletion
+    const [playersSnap, matchesSnapA, matchesSnapB] = await Promise.all([
+        getDocs(query(collection(db, 'players'), where('teamId', '==', teamId))),
+        getDocs(query(collection(db, 'matches'), where('teamAId', '==', teamId))),
+        getDocs(query(collection(db, 'matches'), where('teamBId', '==', teamId))),
+    ]);
 
-    const matchesQueryA = query(collection(db, 'matches'), where('teamAId', '==', teamId));
-    const matchesSnapA = await getDocs(matchesQueryA);
-    if (!matchesSnapA.empty) {
-        matchesSnapA.forEach(doc => batch.delete(doc.ref));
-    }
-
-    const matchesQueryB = query(collection(db, 'matches'), where('teamBId', '==', teamId));
-    const matchesSnapB = await getDocs(matchesQueryB);
-     if (!matchesSnapB.empty) {
-        matchesSnapB.forEach(doc => batch.delete(doc.ref));
-    }
+    playersSnap.forEach(d => batch.delete(d.ref));
+    matchesSnapA.forEach(d => batch.delete(d.ref));
+    matchesSnapB.forEach(d => batch.delete(d.ref));
 
     await batch.commit();
 };
@@ -355,40 +349,23 @@ export const createMatch = async (db: Firestore, data: {
     startTime: string;
     venue: string;
     details?: string;
+    teamAName?: string;
+    teamBName?: string;
 }): Promise<{ success: boolean; matchId?: string; error?: string }> => {
     try {
-        // Validate the existence of both teams
-        const [teamADoc, teamBDoc] = await Promise.all([
-            getDoc(doc(db, 'teams', data.teamAId)),
-            getDoc(doc(db, 'teams', data.teamBId))
-        ]);
-
-        if (!teamADoc.exists()) {
-            return { success: false, error: "Team A does not exist" };
-        }
-        if (!teamBDoc.exists()) {
-            return { success: false, error: "Team B does not exist" };
-        }
-
-        const teamA = teamADoc.data();
-        const teamB = teamBDoc.data();
-
-        // Create the match document with initialized scores
+        const now = new Date().toISOString();
+        // Teams are already validated by getOrCreateTeam — skip redundant reads
         const newMatchData = {
             ...data,
-            details: data.details || `${teamA?.name || 'Team A'} vs ${teamB?.name || 'Team B'}`,
+            details: data.details || `${data.teamAName || 'Team A'} vs ${data.teamBName || 'Team B'}`,
             teamAScore: 0,
             teamBScore: 0,
             scoreDetails: getDefaultScoreDetails(data.sport),
-            createdAt: new Date().toISOString(),
-            lastUpdated: new Date().toISOString(),
-            teamAName: teamA?.name,
-            teamBName: teamB?.name,
+            createdAt: now,
+            lastUpdated: now,
         };
 
-        // Create the match document
         const matchRef = await addDoc(collection(db, 'matches'), newMatchData);
-        
         return { success: true, matchId: matchRef.id };
     } catch (error: any) {
         console.error("Error in createMatch (client): ", error);

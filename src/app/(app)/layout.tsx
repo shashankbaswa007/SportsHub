@@ -2,8 +2,11 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { signOut } from 'firebase/auth';
+import { useFirebase } from '@/firebase';
+import { clearAdminCache } from '@/lib/admin-check';
 import {
   SidebarProvider,
   Sidebar,
@@ -17,37 +20,43 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, LogOut, Flame, PanelLeft, ShieldCheck, Users, Trophy } from 'lucide-react';
+import { Home, Settings, LogOut, Flame, ShieldCheck, Users, Trophy } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { motion } from "framer-motion"
+import { DataProvider } from '@/lib/data-context';
+import { GlobalSearch } from '@/components/global-search';
+import { ConnectionBanner } from '@/components/connection-banner';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isClient, setIsClient] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { auth } = useFirebase();
 
   useEffect(() => {
-    const user = localStorage.getItem('sports-hub-user');
-    const role = localStorage.getItem('sports-hub-role');
-    
-    if (!user) {
-      router.replace('/');
-      return;
+    if (typeof window !== 'undefined') {
+      const user = window.localStorage.getItem('sports-hub-user');
+      if (!user) {
+        router.replace('/');
+        return;
+      }
     }
-
-    setIsAdmin(role === 'admin');
-    setIsClient(true);
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('sports-hub-user');
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
+    clearAdminCache();
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('sports-hub-user');
+      window.localStorage.removeItem('sports-hub-role');
+      window.sessionStorage.removeItem('sports-hub-verified-admin');
+    }
     router.replace('/');
   };
-
-  if (!isClient) {
-    return null; // Or a loading spinner
-  }
 
   return (
     <SidebarProvider>
@@ -125,8 +134,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-             {isAdmin && (
-                <SidebarMenuItem>
+            <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
                     isActive={pathname.startsWith('/admin')}
@@ -146,7 +154,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-            )}
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
@@ -185,21 +192,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset className="bg-background">
+        <ConnectionBanner />
+        <DataProvider>
         <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center gap-4 border-b border-white/5 bg-[#0D0D0D]/80 backdrop-blur-xl px-3 sm:px-6">
             <SidebarTrigger className="lg:hidden border-white/10 hover:bg-white/5 text-white/80 hover:text-white" />
-            <div className="flex-1 flex items-center justify-center lg:hidden">
-              <span className="font-headline text-lg font-bold text-white/90">SportsHub</span>
+            <div className="flex-1 flex items-center justify-center lg:justify-start gap-3">
+              <span className="font-headline text-lg font-bold text-white/90 lg:hidden">SportsHub</span>
+              <GlobalSearch />
             </div>
         </header>
-        <motion.main 
-          key={pathname}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8 pb-20 lg:pb-8"
-        >
-            {children}
-        </motion.main>
+        <main className="flex-1 overflow-auto px-3 sm:px-6 py-4 sm:py-8 pb-20 lg:pb-8">
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+        </main>
+        </DataProvider>
         
         {/* Mobile Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-white/10 bg-[#0D0D0D]/95 backdrop-blur-xl">
@@ -240,8 +247,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs font-medium">Leaderboard</span>
             </Link>
             
-            {isAdmin && (
-              <Link
+            <Link
                 href="/admin"
                 className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
                   pathname.startsWith('/admin')
@@ -252,7 +258,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <ShieldCheck className="h-5 w-5" />
                 <span className="text-xs font-medium">Admin</span>
               </Link>
-            )}
             
             <Link
               href="/settings"

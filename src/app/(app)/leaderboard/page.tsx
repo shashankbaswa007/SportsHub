@@ -1,46 +1,44 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { sports, calculatePointsTable } from '@/lib/data-client';
+import { useState, useMemo } from 'react';
+import { sports } from '@/lib/data-client';
 import type { SportName, PointsTableItem } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Force dynamic rendering to prevent build-time errors with Firebase
-export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { SportIcon } from '@/components/sport-icon';
-import { useFirestore } from '@/firebase';
 import { Loader2, Trophy, Medal, Award, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAppData } from '@/lib/data-context';
+import { ExportResults } from '@/components/export-results';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.2
+      staggerChildren: 0.03,
+      delayChildren: 0
     }
   }
 };
 
 const headerVariants = {
-  hidden: { opacity: 0, y: -20 },
+  hidden: { opacity: 0, y: -8 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
+    transition: { duration: 0.2, ease: "easeOut" }
   }
 };
 
 const contentVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 8 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5 }
+    transition: { duration: 0.2 }
   }
 };
 
@@ -60,26 +58,7 @@ const sportAccents: Record<string, { color: string; bg: string; border: string }
 
 export default function LeaderboardPage() {
   const [selectedSport, setSelectedSport] = useState<SportName>('Football');
-  const [leaderboards, setLeaderboards] = useState<Record<SportName, PointsTableItem[]>>({} as Record<SportName, PointsTableItem[]>);
-  const [loading, setLoading] = useState(true);
-  const firestore = useFirestore();
-
-  useEffect(() => {
-    async function loadLeaderboards() {
-      setLoading(true);
-      const boards: Record<SportName, PointsTableItem[]> = {} as Record<SportName, PointsTableItem[]>;
-      
-      for (const sport of sports) {
-        const table = await calculatePointsTable(firestore, sport);
-        boards[sport] = table;
-      }
-      
-      setLeaderboards(boards);
-      setLoading(false);
-    }
-    
-    loadLeaderboards();
-  }, [firestore]);
+  const { leaderboards, loading, matches, teamsById } = useAppData();
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -111,6 +90,17 @@ export default function LeaderboardPage() {
   const currentLeaderboard = leaderboards[selectedSport] || [];
   const accent = (sportAccents[selectedSport] || sportAccents['Football'])!;
 
+  const sportCompletedMatches = useMemo(
+    () => matches.filter(m => m.sport === selectedSport && m.status === 'COMPLETED'),
+    [matches, selectedSport]
+  );
+
+  const teamNameMap = useMemo(() => {
+    const m = new Map<string, string>();
+    teamsById.forEach((team, id) => m.set(id, team.name));
+    return m;
+  }, [teamsById]);
+
   return (
     <motion.div 
       className="flex flex-col gap-6 sm:gap-8"
@@ -122,9 +112,18 @@ export default function LeaderboardPage() {
       <motion.div variants={headerVariants} className="relative">
         <div className="absolute -top-4 -left-4 w-24 sm:w-32 h-24 sm:h-32 bg-yellow-500/10 rounded-full blur-3xl" />
         <div className="relative space-y-3 sm:space-y-4">
-          <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient">
-            Leaderboards
-          </h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient">
+              Leaderboards
+            </h1>
+            <ExportResults
+              leaderboard={currentLeaderboard}
+              matches={sportCompletedMatches}
+              filename={`${selectedSport.toLowerCase().replace(/\s+/g, '-')}-results`}
+              sportName={selectedSport}
+              teamNames={teamNameMap}
+            />
+          </div>
           <p className="text-white/60 text-sm sm:text-base lg:text-lg">
             Team rankings and standings across all sports competitions
           </p>
@@ -137,9 +136,7 @@ export default function LeaderboardPage() {
           <TabsList className="inline-flex h-auto flex-wrap gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md border border-white/10 p-1.5 sm:p-2 w-full justify-start rounded-xl overflow-x-auto">
             {sports.map(sport => {
               const sportAccent = (sportAccents[sport] || sportAccents['Football'])!;
-              const accentBg = sportAccent.bg;
-              const accentBorder = sportAccent.border;
-              const accentColor = sportAccent.color;
+              const isActive = selectedSport === sport;
               
               return (
                 <TabsTrigger 
@@ -147,13 +144,10 @@ export default function LeaderboardPage() {
                   value={sport} 
                   className={`
                     flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg whitespace-nowrap
-                    data-[state=active]:${accentBg}
-                    data-[state=active]:border-2
-                    data-[state=active]:${accentBorder}
-                    data-[state=active]:${accentColor}
                     transition-all duration-300
                     hover:bg-white/10
                     text-xs sm:text-sm
+                    ${isActive ? `${sportAccent.bg} border-2 ${sportAccent.border} ${sportAccent.color}` : ''}
                   `}
                 >
                   <SportIcon sport={sport} className="h-4 sm:h-5 w-4 sm:w-5" />
@@ -165,7 +159,7 @@ export default function LeaderboardPage() {
         </motion.div>
 
 
-        {sports.map(sport => (
+        {sports.filter(sport => sport === selectedSport).map(sport => (
           <TabsContent key={sport} value={sport} className="mt-4 sm:mt-6">
             <AnimatePresence mode="wait">
               <motion.div
@@ -222,9 +216,9 @@ export default function LeaderboardPage() {
                             {currentLeaderboard.map((item, index) => (
                               <motion.tr
                                 key={item.teamId}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.3, delay: index * 0.05 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.1, delay: Math.min(index * 0.02, 0.1) }}
                                 className={`
                                   border-white/10 hover:bg-white/5 transition-all
                                   ${item.rank === 1 ? 'bg-yellow-500/10 hover:bg-yellow-500/15' : 

@@ -35,14 +35,14 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({ children, color = '#522
 
     const dyAnims = Array.from(svg.querySelectorAll('feOffset > animate[attributeName="dy"]'));
     if (dyAnims.length >= 2) {
-      dyAnims[0].setAttribute('values', `${height}; 0`);
-      dyAnims[1].setAttribute('values', `0; -${height}`);
+      dyAnims[0]!.setAttribute('values', `${height}; 0`);
+      dyAnims[1]!.setAttribute('values', `0; -${height}`);
     }
 
     const dxAnims = Array.from(svg.querySelectorAll('feOffset > animate[attributeName="dx"]'));
     if (dxAnims.length >= 2) {
-      dxAnims[0].setAttribute('values', `${width}; 0`);
-      dxAnims[1].setAttribute('values', `0; -${width}`);
+      dxAnims[0]!.setAttribute('values', `${width}; 0`);
+      dxAnims[1]!.setAttribute('values', `0; -${width}`);
     }
 
     const baseDur = 6;
@@ -87,10 +87,10 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({ children, color = '#522
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const vars: React.CSSProperties = {
-    ['--electric-border-color']: color,
-    ['--eb-border-width']: `${thickness}px`
-  };
+  const vars = {
+    '--electric-border-color': color,
+    '--eb-border-width': `${thickness}px`
+  } as React.CSSProperties;
 
   return (
     <div ref={rootRef} className={`electric-border ${className ?? ''}`} style={{ ...vars, ...style }}>

@@ -10,9 +10,8 @@ import { SportIcon } from './sport-icon';
 import { ArrowRight, Loader2, MapPin, Clock, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import { memo, useMemo } from 'react';
+import { useAppData } from '@/lib/data-context';
 
 
 interface MatchCardProps {
@@ -50,6 +49,8 @@ const sportAccents: Record<SportName, {
   bg: string;
   headerBg: string;
   divider: string;
+  hoverBtnBg: string;
+  hoverBtnBorder: string;
 }> = {
     'Football': { 
       border: 'border-emerald-500/50', 
@@ -57,7 +58,9 @@ const sportAccents: Record<SportName, {
       text: 'text-emerald-400',
       bg: 'bg-emerald-500/10',
       headerBg: 'bg-gradient-to-r from-emerald-500/10 to-transparent',
-      divider: 'border-emerald-500/20'
+      divider: 'border-emerald-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-emerald-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-emerald-500/50',
     },
     'Basketball': { 
       border: 'border-orange-500/50', 
@@ -65,7 +68,9 @@ const sportAccents: Record<SportName, {
       text: 'text-orange-400',
       bg: 'bg-orange-500/10',
       headerBg: 'bg-gradient-to-r from-orange-500/10 to-transparent',
-      divider: 'border-orange-500/20'
+      divider: 'border-orange-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-orange-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-orange-500/50',
     },
     'Volleyball': { 
       border: 'border-yellow-500/50', 
@@ -73,7 +78,9 @@ const sportAccents: Record<SportName, {
       text: 'text-yellow-400',
       bg: 'bg-yellow-500/10',
       headerBg: 'bg-gradient-to-r from-yellow-500/10 to-transparent',
-      divider: 'border-yellow-500/20'
+      divider: 'border-yellow-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-yellow-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-yellow-500/50',
     },
     'Cricket': { 
       border: 'border-blue-500/50', 
@@ -81,7 +88,9 @@ const sportAccents: Record<SportName, {
       text: 'text-blue-400',
       bg: 'bg-blue-500/10',
       headerBg: 'bg-gradient-to-r from-blue-500/10 to-transparent',
-      divider: 'border-blue-500/20'
+      divider: 'border-blue-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-blue-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-blue-500/50',
     },
     'Throwball': { 
       border: 'border-purple-500/50', 
@@ -89,7 +98,9 @@ const sportAccents: Record<SportName, {
       text: 'text-purple-400',
       bg: 'bg-purple-500/10',
       headerBg: 'bg-gradient-to-r from-purple-500/10 to-transparent',
-      divider: 'border-purple-500/20'
+      divider: 'border-purple-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-purple-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-purple-500/50',
     },
     'Badminton (Singles)': { 
       border: 'border-rose-500/50', 
@@ -97,7 +108,9 @@ const sportAccents: Record<SportName, {
       text: 'text-rose-400',
       bg: 'bg-rose-500/10',
       headerBg: 'bg-gradient-to-r from-rose-500/10 to-transparent',
-      divider: 'border-rose-500/20'
+      divider: 'border-rose-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-rose-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-rose-500/50',
     },
     'Badminton (Doubles)': { 
       border: 'border-rose-500/50', 
@@ -105,7 +118,9 @@ const sportAccents: Record<SportName, {
       text: 'text-rose-400',
       bg: 'bg-rose-500/10',
       headerBg: 'bg-gradient-to-r from-rose-500/10 to-transparent',
-      divider: 'border-rose-500/20'
+      divider: 'border-rose-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-rose-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-rose-500/50',
     },
     'Table Tennis (Singles)': { 
       border: 'border-pink-500/50', 
@@ -113,7 +128,9 @@ const sportAccents: Record<SportName, {
       text: 'text-pink-400',
       bg: 'bg-pink-500/10',
       headerBg: 'bg-gradient-to-r from-pink-500/10 to-transparent',
-      divider: 'border-pink-500/20'
+      divider: 'border-pink-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-pink-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-pink-500/50',
     },
     'Table Tennis (Doubles)': { 
       border: 'border-pink-500/50', 
@@ -121,7 +138,9 @@ const sportAccents: Record<SportName, {
       text: 'text-pink-400',
       bg: 'bg-pink-500/10',
       headerBg: 'bg-gradient-to-r from-pink-500/10 to-transparent',
-      divider: 'border-pink-500/20'
+      divider: 'border-pink-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-pink-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-pink-500/50',
     },
     'Kabaddi': { 
       border: 'border-amber-500/50', 
@@ -129,7 +148,9 @@ const sportAccents: Record<SportName, {
       text: 'text-amber-400',
       bg: 'bg-amber-500/10',
       headerBg: 'bg-gradient-to-r from-amber-500/10 to-transparent',
-      divider: 'border-amber-500/20'
+      divider: 'border-amber-500/20',
+      hoverBtnBg: 'group-hover/btn:bg-amber-500/10',
+      hoverBtnBorder: 'group-hover/btn:border-amber-500/50',
     },
 };
 
@@ -177,48 +198,11 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     );
 };
 
-export function MatchCard({ match }: MatchCardProps) {
-  const [teamA, setTeamA] = useState<Team | null>(null);
-  const [teamB, setTeamB] = useState<Team | null>(null);
-  const [loading, setLoading] = useState(true);
-  const firestore = useFirestore();
-
-  useEffect(() => {
-    let unsubA: (() => void) | undefined;
-    let unsubB: (() => void) | undefined;
-    
-    setLoading(true);
-    setTeamA(null);
-    setTeamB(null);
-
-
-    if (match.teamAId) {
-        unsubA = onSnapshot(doc(firestore, "teams", match.teamAId), (docSnapshot) => {
-            if (docSnapshot.exists()) {
-                setTeamA({ id: docSnapshot.id, ...docSnapshot.data() } as Team);
-            }
-        });
-    }
-
-    if (match.teamBId) {
-        unsubB = onSnapshot(doc(firestore, "teams", match.teamBId), (docSnapshot) => {
-            if (docSnapshot.exists()) {
-                setTeamB({ id: docSnapshot.id, ...docSnapshot.data() } as Team);
-            }
-        });
-    }
-
-    return () => {
-        if (unsubA) unsubA();
-        if (unsubB) unsubB();
-    };
-}, [match.id, match.teamAId, match.teamBId, firestore]);
-
-  useEffect(() => {
-    if ((!match.teamAId || teamA) && (!match.teamBId || teamB)) {
-      setLoading(false);
-    }
-  }, [teamA, teamB, match.teamAId, match.teamBId]);
+export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
+  const { teamsById } = useAppData();
+  const teamA = teamsById.get(match.teamAId) ?? null;
+  const teamB = teamsById.get(match.teamBId) ?? null;
+  const loading = !teamA || !teamB;
 
 
   const accent = sportAccents[match.sport] || sportAccents['Football'];
@@ -250,9 +234,9 @@ export function MatchCard({ match }: MatchCardProps) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15 }}
       className="h-full group"
     >
         <Card className={`
@@ -376,8 +360,8 @@ export function MatchCard({ match }: MatchCardProps) {
                   text-white/80 hover:text-white
                   font-medium tracking-wide text-sm
                   transition-all duration-300
-                  group-hover/btn:${accent.bg}
-                  group-hover/btn:border-${accent.border}
+                  ${accent.hoverBtnBg}
+                  ${accent.hoverBtnBorder}
                 `}
               >
                 {getButtonText()}
@@ -388,4 +372,4 @@ export function MatchCard({ match }: MatchCardProps) {
         </Card>
     </motion.div>
   );
-}
+});

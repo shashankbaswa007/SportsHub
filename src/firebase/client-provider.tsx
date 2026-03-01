@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, type ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
 import { FirebaseProvider } from '@/firebase/provider';
 import { initializeFirebase } from '@/firebase';
 
@@ -9,27 +9,26 @@ interface FirebaseClientProviderProps {
 }
 
 export function FirebaseClientProvider({ children }: FirebaseClientProviderProps) {
-  const firebaseServices = useMemo(() => {
-    // Initialize Firebase on the client side, once per component mount.
-    const services = initializeFirebase();
-    
-    // If Firebase fails to initialize (e.g., during SSR), return null services
-    if (!services) {
-      return {
-        firebaseApp: null,
-        auth: null,
-        firestore: null,
-      };
-    }
-    
-    return services;
-  }, []); // Empty dependency array ensures this runs only once on mount
+  // Start with null so the first client render matches the server render (both show the loading shell).
+  // Then initialize Firebase after hydration via useEffect to avoid a hydration mismatch.
+  const [services, setServices] = useState<ReturnType<typeof initializeFirebase>>(null);
+
+  useEffect(() => {
+    setServices(initializeFirebase());
+  }, []);
+
+  // Before Firebase is ready (SSR + first client render), show a loading shell
+  if (!services) {
+    return (
+      <div className="min-h-screen bg-[var(--background-hex,#0C0C0C)]" />
+    );
+  }
 
   return (
     <FirebaseProvider
-      firebaseApp={firebaseServices.firebaseApp!}
-      auth={firebaseServices.auth!}
-      firestore={firebaseServices.firestore!}
+      firebaseApp={services.firebaseApp}
+      auth={services.auth}
+      firestore={services.firestore}
     >
       {children}
     </FirebaseProvider>

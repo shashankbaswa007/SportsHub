@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { Bar, BarChart, Line, LineChart, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import type { Match, Player, Team, SportName } from '@/lib/types';
 import { Trophy, TrendingUp, Users, Target } from 'lucide-react';
 

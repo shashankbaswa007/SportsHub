@@ -30,9 +30,6 @@ const signupSchema = z.object({
   username: usernameSchema,
 });
 
-const ADMIN_ID = process.env.NEXT_PUBLIC_ADMIN_ID;
-const DEFAULT_USER_PASSWORD = process.env.NEXT_PUBLIC_DEFAULT_USER_PASSWORD;
-
 export function AuthForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -54,31 +51,21 @@ export function AuthForm() {
     try {
       setIsLoading(true);
       const email = `${values.username}@sportshub.edu`;
-      const isAdmin = values.username === ADMIN_ID;
       
       try {
-        // For admin login, check if password matches admin ID
-        if (isAdmin && values.password !== ADMIN_ID) {
-          toast({
-            variant: 'destructive',
-            title: 'Login Failed',
-            description: 'Invalid admin credentials.',
-          });
-          return;
-        }
-
         await signInWithEmailAndPassword(auth, email, values.password);
         
         // Login successful
         toast({
           title: 'Login Successful',
-          description: isAdmin ? 'Welcome, Admin!' : 'Welcome back!',
+          description: 'Welcome back!',
         });
         
-        localStorage.setItem('sports-hub-user', values.username);
-        localStorage.setItem('sports-hub-role', isAdmin ? 'admin' : 'user');
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('sports-hub-user', values.username);
+        }
         
-        router.push(isAdmin ? '/admin' : '/overview');
+        router.push('/overview');
       } catch (error) {
         if (error instanceof FirebaseError) {
           switch (error.code) {
@@ -141,8 +128,10 @@ export function AuthForm() {
         // Sign in the user immediately after creating account
         await signInWithEmailAndPassword(auth, email, password);
         
-        localStorage.setItem('sports-hub-user', values.username);
-        localStorage.setItem('sports-hub-role', 'user');
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('sports-hub-user', values.username);
+          window.localStorage.setItem('sports-hub-role', 'user');
+        }
         
         router.push('/overview');
       } catch (error) {

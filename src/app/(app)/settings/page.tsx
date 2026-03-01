@@ -1,13 +1,12 @@
 
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
-// Force dynamic rendering to prevent build-time errors with Firebase
-export const dynamic = 'force-dynamic';
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+import { useFirebase } from '@/firebase';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Lock, Shield, CheckCircle2, User, Mail, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AdminManagement } from '@/components/admin/admin-management';
+import { checkIsAdmin } from '@/lib/admin-check';
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
@@ -31,24 +32,39 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
+      staggerChildren: 0.03,
+      delayChildren: 0
     }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 8 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" }
+    transition: { duration: 0.2, ease: "easeOut" }
   }
 };
 
 export default function SettingsPage() {
     const { toast } = useToast();
+    const { auth, firestore } = useFirebase();
     const [isLoading, setIsLoading] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const googleEmail = auth.currentUser?.providerData.find(
+            (p) => p.providerId === 'google.com'
+        )?.email ?? null;
+        const verifiedAdmin = typeof window !== 'undefined'
+            ? window.sessionStorage.getItem('sports-hub-verified-admin')
+            : null;
+        const emailToCheck = googleEmail || verifiedAdmin;
+        if (emailToCheck && firestore) {
+            checkIsAdmin(firestore, emailToCheck).then(setIsAdmin);
+        }
+    }, [auth.currentUser, firestore]);
 
     const form = useForm<z.infer<typeof passwordSchema>>({
         resolver: zodResolver(passwordSchema),
@@ -59,18 +75,35 @@ export default function SettingsPage() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof passwordSchema>) => {
+    const onSubmit = async (values: z.infer<typeof passwordSchema>) => {
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            console.log(values);
+        try {
+            const user = auth.currentUser;
+            if (!user || !user.email) {
+                toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in to change your password.' });
+                return;
+            }
+            // Re-authenticate with current password
+            const credential = EmailAuthProvider.credential(user.email, values.currentPassword);
+            await reauthenticateWithCredential(user, credential);
+            // Update password
+            await updatePassword(user, values.newPassword);
             toast({
                 title: 'Password Updated',
                 description: 'Your password has been changed successfully.',
             });
             form.reset();
+        } catch (error: any) {
+            if (error?.code === 'auth/wrong-password' || error?.code === 'auth/invalid-credential') {
+                toast({ variant: 'destructive', title: 'Wrong Password', description: 'Your current password is incorrect.' });
+            } else if (error?.code === 'auth/weak-password') {
+                toast({ variant: 'destructive', title: 'Weak Password', description: 'New password must be at least 6 characters.' });
+            } else {
+                toast({ variant: 'destructive', title: 'Error', description: 'Failed to update password. Please try again.' });
+            }
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
 
     return (
@@ -232,6 +265,13 @@ export default function SettingsPage() {
             </motion.div>
 
             {/* Account Info Card */}
+
+            {/* Admin Management — only visible to admins */}
+            {isAdmin && (
+                <motion.div variants={itemVariants}>
+                    <AdminManagement />
+                </motion.div>
+            )}
             
         </motion.div>
     );

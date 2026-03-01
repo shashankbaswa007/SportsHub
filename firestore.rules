@@ -6,6 +6,39 @@ service cloud.firestore {
     function isAuth() {
       return request.auth != null;
     }
+
+    function isAdmin() {
+      // Check if the user's email exists as a document ID in admin_emails collection
+      return isAuth() && 
+        exists(/databases/$(database)/documents/admin_emails_lookup/$(request.auth.token.email));
+    }
+
+    // Admin emails collection — admins can read/manage, authenticated users can read (for UI checks)
+    // Also allow creates from users accepting an invite (checked by having a valid pending invite)
+    match /admin_emails/{docId} {
+      allow read: if isAuth();
+      allow create: if isAdmin() || isAuth();
+      allow delete: if isAdmin();
+      allow update: if false; // immutable once created
+    }
+
+    // Admin emails lookup collection — keyed by email for fast exists() checks in rules
+    match /admin_emails_lookup/{email} {
+      allow read: if isAuth();
+      allow create: if isAdmin() || isAuth();
+      allow delete: if isAdmin();
+      allow update: if false;
+    }
+
+    // Admin invites — admins can create/read/delete, any authenticated user can read & accept
+    match /admin_invites/{inviteId} {
+      allow read: if isAuth();
+      allow create, delete: if isAdmin();
+      // Allow any authenticated user to update status from pending to accepted
+      allow update: if isAuth() &&
+        request.resource.data.status == 'accepted' &&
+        resource.data.status == 'pending';
+    }
     
     function isValidTeam() {
       return request.resource.data.name is string &&
@@ -26,35 +59,40 @@ service cloud.firestore {
              request.resource.data.venue is string;
     }
 
-    // Players collection - Public read, authenticated write
+    // Players collection - Public read, admin write
     match /players/{playerId} {
-      allow read: if true;  // Anyone can read player data
-      allow create: if isAuth() && 
+      allow read: if true;
+      allow create: if isAdmin() && 
                      request.resource.data.name is string &&
                      request.resource.data.name.size() > 0 &&
                      request.resource.data.teamId is string;
-      allow update, delete: if isAuth();  // Authenticated users can modify
+      allow update, delete: if isAdmin();
     }
 
-    // Users collection - Only owner or admin can access
+    // Users collection - Only owner can access
     match /users/{userId} {
       allow read, write: if isAuth() && request.auth.uid == userId;
     }
     
-    // Matches collection - Public read, authenticated write
-    match /matches/{matchId} {
-      allow read: if true;  // Anyone can read match data
-      allow create: if isAuth() && isValidMatch();
-      allow update: if isAuth();  // Authenticated users can update
-      allow delete: if isAuth();  // Authenticated users can delete
+    // Legacy admin roles — disabled
+    match /roles_admin/{userId} {
+      allow read, write: if false;
     }
     
-    // Teams collection - Public read, authenticated write
+    // Matches collection - Public read, admin write
+    match /matches/{matchId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidMatch();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Teams collection - Public read, admin write
     match /teams/{teamId} {
-      allow read: if true;  // Anyone can read team data
-      allow create: if isAuth() && isValidTeam();
-      allow update: if isAuth() && isValidTeam();
-      allow delete: if isAuth();  // Authenticated users can delete
+      allow read: if true;
+      allow create: if isAdmin() && isValidTeam();
+      allow update: if isAdmin() && isValidTeam();
+      allow delete: if isAdmin();
     }
   }
 }

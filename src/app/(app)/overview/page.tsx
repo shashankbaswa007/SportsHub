@@ -1,86 +1,54 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { sports, calculatePointsTable } from '@/lib/data-client';
-import type { Match, SportName, PointsTableItem } from '@/lib/types';
+import { useState, useMemo } from 'react';
+import { sports } from '@/lib/data-client';
+import type { SportName, PointsTableItem } from '@/lib/types';
 import { MatchCard } from '@/components/match-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AnimatePresence, motion } from "framer-motion"
 import { SportIcon } from '@/components/sport-icon';
-import { collection, onSnapshot, query }from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 import { Loader2, TrendingUp, Users, Trophy, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useAppData } from '@/lib/data-context';
+import { TournamentStats } from '@/components/tournament-stats';
 
-// Force dynamic rendering to prevent build-time errors with Firebase
-export const dynamic = 'force-dynamic';
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
+      staggerChildren: 0.03,
+      delayChildren: 0
     }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
   }
 };
 
 export default function OverviewPage() {
   const [filter, setFilter] = useState<SportName | 'All'>('All');
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(true);
-  const firestore = useFirestore();
-
-  useEffect(() => {
-    if (!firestore) return;
-    const q = query(collection(firestore, "matches"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matchesData: Match[] = [];
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match);
-      });
-      setMatches(matchesData.sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()));
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [firestore]);
+  const { matches, loading, leaderboards } = useAppData();
 
   const filteredMatches = useMemo(() => matches.filter(match => filter === 'All' || match.sport === filter), [matches, filter]);
 
   const liveMatches = useMemo(() => filteredMatches.filter(m => m.status === 'LIVE'), [filteredMatches]);
   const upcomingMatches = useMemo(() => filteredMatches.filter(m => m.status === 'UPCOMING'), [filteredMatches]);
   const completedMatches = useMemo(() => filteredMatches.filter(m => m.status === 'COMPLETED'), [filteredMatches]);
-  
-  const [pointsTable, setPointsTable] = useState<PointsTableItem[]>([]);
-  const [isTableLoading, setIsTableLoading] = useState(false);
 
-  useEffect(() => {
-    async function updatePointsTable() {
-      if (filter !== 'All') {
-        setIsTableLoading(true);
-        const table = await calculatePointsTable(firestore, filter);
-        setPointsTable(table);
-        setIsTableLoading(false);
-      } else {
-        setPointsTable([]);
-      }
-    }
-    updatePointsTable();
-  }, [filter, completedMatches, firestore]); 
+  const pointsTable = filter !== 'All' ? (leaderboards[filter] ?? []) : [];
+  const isTableLoading = false;
 
   if (loading) {
     return (
@@ -163,6 +131,17 @@ export default function OverviewPage() {
         </div>
       </motion.div>
 
+      {/* Tournament Statistics Dashboard */}
+      <motion.div variants={itemVariants}>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="h-1 w-6 bg-gradient-to-r from-white/40 to-transparent rounded-full" />
+            <span className="text-xs font-medium tracking-widest text-white/40 uppercase">Tournament Insights</span>
+          </div>
+          <TournamentStats />
+        </div>
+      </motion.div>
+
       {/* Sport Filters */}
       <motion.div variants={itemVariants}>
         <Tabs defaultValue="All" onValueChange={(value) => setFilter(value as SportName | 'All')}>
@@ -192,9 +171,9 @@ export default function OverviewPage() {
             {liveMatches.length > 0 && (
               <motion.section 
                 key="live-matches"
-                initial={{ opacity: 0, y: 20 }} 
+                initial={{ opacity: 0, y: 8 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -20 }}
+                exit={{ opacity: 0, y: -8 }}
                 className="space-y-5"
               >
                 <div className="flex items-center gap-3">
@@ -215,7 +194,7 @@ export default function OverviewPage() {
                       key={match.id}
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                      transition={{ delay: Math.min(index * 0.02, 0.1), duration: 0.15 }}
                     >
                       <MatchCard match={match} />
                     </motion.div>
@@ -229,9 +208,9 @@ export default function OverviewPage() {
             {upcomingMatches.length > 0 && (
                <motion.section 
                 key="upcoming-matches"
-                initial={{ opacity: 0, y: 20 }} 
+                initial={{ opacity: 0, y: 8 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -20 }}
+                exit={{ opacity: 0, y: -8 }}
                 className="space-y-5"
               >
                 <div className="flex items-center gap-3">
@@ -244,9 +223,9 @@ export default function OverviewPage() {
                   {upcomingMatches.map((match, index) => (
                     <motion.div
                       key={match.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                      transition={{ delay: Math.min(index * 0.02, 0.1), duration: 0.15 }}
                     >
                       <MatchCard match={match} />
                     </motion.div>
@@ -260,9 +239,9 @@ export default function OverviewPage() {
             {completedMatches.length > 0 && (
                <motion.section
                 key="completed-matches"
-                initial={{ opacity: 0, y: 20 }} 
+                initial={{ opacity: 0, y: 8 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -20 }}
+                exit={{ opacity: 0, y: -8 }}
                 className="space-y-5"
                >
                 <div className="flex items-center gap-3">
@@ -275,9 +254,9 @@ export default function OverviewPage() {
                   {completedMatches.map((match, index) => (
                     <motion.div
                       key={match.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.08, duration: 0.4 }}
+                      transition={{ delay: Math.min(index * 0.02, 0.1), duration: 0.15 }}
                     >
                       <MatchCard match={match} />
                     </motion.div>
@@ -300,10 +279,10 @@ export default function OverviewPage() {
             <AnimatePresence>
                 {filter !== 'All' && (
                     <motion.div 
-                      initial={{ opacity: 0, x: 20 }} 
+                      initial={{ opacity: 0, x: 8 }} 
                       animate={{ opacity: 1, x: 0 }} 
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.4 }}
+                      exit={{ opacity: 0, x: 8 }}
+                      transition={{ duration: 0.2 }}
                     >
                         <Card className="glass-strong border-white/10 overflow-hidden">
                             <CardHeader className="border-b border-white/5 pb-4">
