@@ -11,6 +11,19 @@ export type SportName =
   | 'Table Tennis (Doubles)'
   | 'Kabaddi';
 
+export const SPORTS: SportName[] = [
+  'Football',
+  'Basketball',
+  'Volleyball',
+  'Cricket',
+  'Throwball',
+  'Badminton (Singles)',
+  'Badminton (Doubles)',
+  'Table Tennis (Singles)',
+  'Table Tennis (Doubles)',
+  'Kabaddi',
+];
+
 export type MatchStatus = 'LIVE' | 'UPCOMING' | 'COMPLETED';
 
 export type Team = {
