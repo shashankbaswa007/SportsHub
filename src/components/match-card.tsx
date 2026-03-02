@@ -275,32 +275,32 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
           
           <CardContent className="relative flex-grow p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
             {/* Team matchup */}
-            <div className="flex items-stretch justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
+            <div className="flex items-stretch justify-between gap-2 sm:gap-4 mb-4 sm:mb-6">
               {/* Team A */}
-              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
-                  <span className="text-lg sm:text-xl font-bold text-white/80">
+              <div className="flex-1 min-w-0 flex flex-col items-center justify-center text-center space-y-1.5">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-0.5 shrink-0">
+                  <span className="text-base sm:text-lg font-bold text-white/80">
                     {teamA?.name?.charAt(0) || 'A'}
                   </span>
                 </div>
-                <span className="font-headline text-sm sm:text-base lg:text-lg font-bold text-white/90 leading-tight line-clamp-2">
+                <span className="font-headline text-xs sm:text-sm font-bold text-white/90 leading-snug line-clamp-2 w-full break-words">
                   {teamA?.name || 'Team A'}
                 </span>
               </div>
               
               {/* Score Display */}
-              <div className="flex flex-col items-center justify-center min-w-[100px] sm:min-w-[120px]">
+              <div className="flex flex-col items-center justify-center shrink-0 min-w-[70px] sm:min-w-[90px]">
                 <ScoreDisplay match={match} />
               </div>
               
               {/* Team B */}
-              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-1">
-                  <span className="text-lg sm:text-xl font-bold text-white/80">
+              <div className="flex-1 min-w-0 flex flex-col items-center justify-center text-center space-y-1.5">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-0.5 shrink-0">
+                  <span className="text-base sm:text-lg font-bold text-white/80">
                     {teamB?.name?.charAt(0) || 'B'}
                   </span>
                 </div>
-                <span className="font-headline text-sm sm:text-base lg:text-lg font-bold text-white/90 leading-tight line-clamp-2">
+                <span className="font-headline text-xs sm:text-sm font-bold text-white/90 leading-snug line-clamp-2 w-full break-words">
                   {teamB?.name || 'Team B'}
                 </span>
               </div>
