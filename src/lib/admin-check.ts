@@ -1,11 +1,11 @@
 'use client';
 
-import { doc, getDoc, type Firestore } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, type Firestore } from 'firebase/firestore';
 
 /**
  * Checks if a given email is in the admin_emails Firestore allowlist.
- * Uses document ID = email for direct lookup (matches Firestore rules).
- * Simple in-memory cache to avoid repeated reads within the same session.
+ * First tries direct document lookup (doc ID = email), then falls back
+ * to querying by email field in case the document ID doesn't match.
  */
 let cachedResult: { email: string; isAdmin: boolean } | null = null;
 
@@ -20,14 +20,29 @@ export async function checkIsAdmin(firestore: Firestore, email: string | null | 
   }
 
   try {
-    // Direct document lookup — document ID is the email address
-    // This matches the Firestore rules: exists(/databases/.../admin_emails/$(request.auth.token.email))
+    // Method 1: Direct document lookup — document ID is the email address
     const adminDoc = await getDoc(doc(firestore, 'admin_emails', normalizedEmail));
-    const isAdmin = adminDoc.exists();
-    cachedResult = { email: normalizedEmail, isAdmin };
-    return isAdmin;
+    console.log('[AdminCheck] Direct lookup admin_emails/' + normalizedEmail + ':', adminDoc.exists());
+    
+    if (adminDoc.exists()) {
+      cachedResult = { email: normalizedEmail, isAdmin: true };
+      return true;
+    }
+
+    // Method 2: Query by email field (fallback if doc ID doesn't match)
+    const q = query(collection(firestore, 'admin_emails'), where('email', '==', normalizedEmail));
+    const snap = await getDocs(q);
+    console.log('[AdminCheck] Query by email field:', { found: !snap.empty, count: snap.size });
+    
+    if (!snap.empty) {
+      cachedResult = { email: normalizedEmail, isAdmin: true };
+      return true;
+    }
+
+    cachedResult = { email: normalizedEmail, isAdmin: false };
+    return false;
   } catch (error) {
-    console.error('Admin check failed:', error);
+    console.error('[AdminCheck] Admin check failed:', error);
     return false;
   }
 }
