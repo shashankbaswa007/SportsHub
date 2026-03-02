@@ -65,6 +65,7 @@ export default function AdminPage() {
     useEffect(() => {
         const isPendingRedirect = typeof window !== 'undefined'
             && window.sessionStorage.getItem('sports-hub-google-redirect-pending') === 'true';
+        console.log('[Admin] Redirect handler check:', { isPendingRedirect, hasFirestore: !!firestore });
         if (!isPendingRedirect || !firestore) return;
 
         const processRedirectResult = async () => {
@@ -75,12 +76,19 @@ export default function AdminPage() {
                     || initializeApp(firebaseConfig, 'google-verify');
                 const secondaryAuth = getAuth(secondaryApp);
 
+                console.log('[Admin] Calling getRedirectResult on secondary auth...');
                 const result = await getRedirectResult(secondaryAuth);
+                console.log('[Admin] getRedirectResult returned:', {
+                    hasResult: !!result,
+                    email: result?.user?.email || null,
+                    uid: result?.user?.uid || null,
+                });
                 // Clear the pending flag regardless of outcome
                 window.sessionStorage.removeItem('sports-hub-google-redirect-pending');
 
                 if (!result || !result.user.email) {
                     // No result means user cancelled or navigated away
+                    console.log('[Admin] No redirect result — user may have cancelled');
                     setIsLinkingGoogle(false);
                     return;
                 }
@@ -89,7 +97,9 @@ export default function AdminPage() {
                 await firebaseSignOut(secondaryAuth);
 
                 clearAdminCache();
+                console.log('[Admin] Checking admin status for:', googleEmail);
                 const adminVerified = await checkIsAdmin(firestore, googleEmail);
+                console.log('[Admin] Admin verified:', adminVerified);
 
                 if (adminVerified) {
                     window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
@@ -104,7 +114,7 @@ export default function AdminPage() {
                 }
             } catch (error: any) {
                 window.sessionStorage.removeItem('sports-hub-google-redirect-pending');
-                console.error('Google redirect result error:', error);
+                console.error('[Admin] Google redirect result error:', error);
                 toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Failed to verify Google account.' });
             } finally {
                 setIsLinkingGoogle(false);
