@@ -145,7 +145,8 @@ export default function AdminPage() {
         } catch (error: any) {
             if (error.code !== 'auth/popup-closed-by-user') {
                 console.error('Google verify error:', error);
-                toast({ variant: 'destructive', title: 'Error', description: 'Failed to verify Google account. Please try again.' });
+                const errorMsg = error.message || error.code || 'Unknown error';
+                toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: `${errorMsg}` });
             }
         } finally {
             setIsLinkingGoogle(false);
