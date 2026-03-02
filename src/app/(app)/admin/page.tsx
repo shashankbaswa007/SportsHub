@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, getAuth } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut as firebaseSignOut, getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 import { firebaseConfig } from '@/firebase/config';
 import { Button } from '@/components/ui/button';
@@ -59,8 +59,67 @@ export default function AdminPage() {
         (p) => p.providerId === 'google.com'
     )?.email ?? null;
 
+    // ─── Handle redirect result from Google sign-in ────────
+    // After signInWithRedirect, the page reloads and we need to
+    // pick up the result from the secondary Firebase app.
     useEffect(() => {
-        if (!auth.currentUser) {
+        const isPendingRedirect = typeof window !== 'undefined'
+            && window.sessionStorage.getItem('sports-hub-google-redirect-pending') === 'true';
+        if (!isPendingRedirect || !firestore) return;
+
+        const processRedirectResult = async () => {
+            setIsLinkingGoogle(true);
+            try {
+                // Recreate / get the secondary app to retrieve the redirect result
+                const secondaryApp = getApps().find(a => a.name === 'google-verify')
+                    || initializeApp(firebaseConfig, 'google-verify');
+                const secondaryAuth = getAuth(secondaryApp);
+
+                const result = await getRedirectResult(secondaryAuth);
+                // Clear the pending flag regardless of outcome
+                window.sessionStorage.removeItem('sports-hub-google-redirect-pending');
+
+                if (!result || !result.user.email) {
+                    // No result means user cancelled or navigated away
+                    setIsLinkingGoogle(false);
+                    return;
+                }
+
+                const googleEmail = result.user.email;
+                await firebaseSignOut(secondaryAuth);
+
+                clearAdminCache();
+                const adminVerified = await checkIsAdmin(firestore, googleEmail);
+
+                if (adminVerified) {
+                    window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
+                    setIsAuthorized(true);
+                    toast({ title: 'Admin Verified', description: `Welcome, Admin! Verified as ${googleEmail}` });
+                } else {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Not Authorized',
+                        description: `${googleEmail} is not in the admin allowlist. Contact an existing admin to get invited.`,
+                    });
+                }
+            } catch (error: any) {
+                window.sessionStorage.removeItem('sports-hub-google-redirect-pending');
+                console.error('Google redirect result error:', error);
+                toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Failed to verify Google account.' });
+            } finally {
+                setIsLinkingGoogle(false);
+            }
+        };
+
+        processRedirectResult();
+    }, [firestore, toast]);
+
+    useEffect(() => {
+        // If a Google redirect is pending, don't redirect to / — wait for it to complete
+        const isPendingRedirect = typeof window !== 'undefined'
+            && window.sessionStorage.getItem('sports-hub-google-redirect-pending') === 'true';
+
+        if (!auth.currentUser && !isPendingRedirect) {
             toast({
                 variant: 'destructive',
                 title: 'Access Denied',
@@ -116,39 +175,17 @@ export default function AdminPage() {
 
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            const googleResult = await signInWithPopup(secondaryAuth, provider);
-            const googleEmail = googleResult.user.email;
 
-            await firebaseSignOut(secondaryAuth);
-
-            if (!googleEmail) {
-                toast({ variant: 'destructive', title: 'Error', description: 'Could not get email from Google account.' });
-                return;
+            // Store pending flag before redirect (page will fully reload)
+            if (typeof window !== 'undefined') {
+                window.sessionStorage.setItem('sports-hub-google-redirect-pending', 'true');
             }
-
-            clearAdminCache();
-            const adminVerified = await checkIsAdmin(firestore, googleEmail);
-
-            if (adminVerified) {
-                if (typeof window !== 'undefined') {
-                    window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
-                }
-                setIsAuthorized(true);
-                toast({ title: 'Admin Verified', description: `Welcome, Admin! Verified as ${googleEmail}` });
-            } else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Not Authorized',
-                    description: `${googleEmail} is not in the admin allowlist. Contact an existing admin to get invited.`,
-                });
-            }
+            await signInWithRedirect(secondaryAuth, provider);
+            // Page navigates away here — code below won't run
         } catch (error: any) {
-            if (error.code !== 'auth/popup-closed-by-user') {
-                console.error('Google verify error:', error);
-                const errorMsg = error.message || error.code || 'Unknown error';
-                toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: `${errorMsg}` });
-            }
-        } finally {
+            window.sessionStorage.removeItem('sports-hub-google-redirect-pending');
+            console.error('Google redirect error:', error);
+            toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Failed to start Google sign-in.' });
             setIsLinkingGoogle(false);
         }
     };
