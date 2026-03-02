@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 import { firebaseConfig } from '@/firebase/config';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -133,6 +134,38 @@ export default function AdminPage() {
                 if (typeof window !== 'undefined') {
                     window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
                 }
+
+                // Ensure the Google email doc exists with email as document ID
+                // (fixes cases where doc ID doesn't match the email)
+                try {
+                    await setDoc(doc(firestore, 'admin_emails', googleEmail.toLowerCase()), {
+                        email: googleEmail.toLowerCase(),
+                        name: googleEmail.split('@')[0],
+                        addedBy: 'self-verified',
+                        addedAt: serverTimestamp(),
+                    }, { merge: true });
+                } catch (e) {
+                    console.warn('Could not ensure Google email doc:', e);
+                }
+
+                // Also create an admin_emails doc for the College ID email
+                // so Firestore security rules (which check request.auth.token.email)
+                // grant write access for match/team management
+                const collegeEmail = auth.currentUser?.email;
+                if (collegeEmail && collegeEmail.toLowerCase() !== googleEmail.toLowerCase()) {
+                    try {
+                        await setDoc(doc(firestore, 'admin_emails', collegeEmail.toLowerCase()), {
+                            email: collegeEmail.toLowerCase(),
+                            name: googleEmail.split('@')[0],
+                            linkedGoogleEmail: googleEmail.toLowerCase(),
+                            addedBy: 'google-verified',
+                            addedAt: serverTimestamp(),
+                        }, { merge: true });
+                    } catch (e) {
+                        console.warn('Could not create college email admin doc:', e);
+                    }
+                }
+
                 setIsAuthorized(true);
                 toast({ title: 'Admin Verified', description: `Welcome, Admin! Verified as ${googleEmail}` });
             } else {
