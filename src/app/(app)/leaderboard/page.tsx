@@ -134,7 +134,7 @@ export default function LeaderboardPage() {
       <Tabs value={selectedSport} onValueChange={(value) => setSelectedSport(value as SportName)}>
         {/* Premium Sport Tabs */}
         <motion.div variants={contentVariants}>
-          <TabsList className="inline-flex h-auto flex-wrap gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md border border-white/10 p-1.5 sm:p-2 w-full justify-start rounded-xl overflow-x-auto">
+          <TabsList className="inline-flex h-auto flex-nowrap sm:flex-wrap gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md border border-white/10 p-1.5 sm:p-2 w-full justify-start rounded-xl overflow-x-auto sm:overflow-x-visible">
             {sports.map(sport => {
               const sportAccent = (sportAccents[sport] || sportAccents['Football'])!;
               const isActive = selectedSport === sport;

@@ -193,7 +193,7 @@ export default function OverviewPage() {
       {/* Sport Filters */}
       <motion.div variants={itemVariants}>
         <Tabs defaultValue="All" onValueChange={(value) => setFilter(value as SportName | 'All')}>
-          <TabsList className="inline-flex h-auto flex-wrap gap-2 bg-transparent border border-white/10 p-2 w-full justify-start rounded-xl overflow-x-auto">
+          <TabsList className="inline-flex h-auto flex-nowrap sm:flex-wrap gap-2 bg-transparent border border-white/10 p-2 w-full justify-start rounded-xl overflow-x-auto sm:overflow-x-visible">
             <TabsTrigger 
               value="All" 
               className="px-3 sm:px-5 py-2 sm:py-2.5 data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/50 border-0 data-[state=active]:border-white/20 rounded-lg transition-all duration-300 font-medium text-sm whitespace-nowrap"

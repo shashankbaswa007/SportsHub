@@ -58,7 +58,90 @@ export function TournamentBracket({ matches, teamsById, sport }: TournamentBrack
   }
 
   return (
-    <div className="overflow-x-auto pb-4">
+    <div>
+      {/* Mobile: vertical stacked layout */}
+      <div className="block sm:hidden space-y-4">
+        {rounds.map((round, roundIdx) => (
+          <div key={roundIdx} className="space-y-3">
+            {/* Round label */}
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[10px] border-white/10 text-white/40 px-3">
+                {roundIdx === rounds.length - 1 && rounds.length > 1
+                  ? 'Final'
+                  : roundIdx === rounds.length - 2 && rounds.length > 2
+                  ? 'Semi-Final'
+                  : `Round ${roundIdx + 1}`}
+              </Badge>
+              <div className="flex-1 h-px bg-white/5" />
+            </div>
+
+            {/* Matches */}
+            <div className="space-y-3">
+              {round.map((bm) => (
+                <Link key={bm.match.id} href={`/match/${bm.match.id}`}>
+                  <Card className="glass border-white/10 hover:border-white/20 transition-all cursor-pointer overflow-hidden">
+                    <div className={`h-[2px] ${
+                      bm.match.status === 'LIVE' ? 'bg-red-500' :
+                      bm.match.status === 'COMPLETED' ? 'bg-green-500' :
+                      'bg-blue-500/40'
+                    }`} />
+                    <div className="p-3 space-y-2">
+                      <div className={`flex items-center gap-2 p-2 rounded-lg ${
+                        bm.winner === 'A' ? 'bg-green-500/10' : 'bg-white/[0.02]'
+                      }`}>
+                        <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                          <span className="text-[10px] font-bold text-white/70">{bm.teamA?.name?.charAt(0) || '?'}</span>
+                        </div>
+                        <span className={`text-xs font-semibold flex-1 truncate ${bm.winner === 'A' ? 'text-green-400' : 'text-white/80'}`}>
+                          {bm.teamA?.name || 'TBD'}
+                        </span>
+                        <span className={`text-xs font-bold tabular-nums ${bm.winner === 'A' ? 'text-green-400' : 'text-white/50'}`}>
+                          {bm.match.status !== 'UPCOMING' ? bm.match.teamAScore : '-'}
+                        </span>
+                        {bm.winner === 'A' && <Trophy className="h-3 w-3 text-amber-400" />}
+                      </div>
+                      <div className={`flex items-center gap-2 p-2 rounded-lg ${
+                        bm.winner === 'B' ? 'bg-green-500/10' : 'bg-white/[0.02]'
+                      }`}>
+                        <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                          <span className="text-[10px] font-bold text-white/70">{bm.teamB?.name?.charAt(0) || '?'}</span>
+                        </div>
+                        <span className={`text-xs font-semibold flex-1 truncate ${bm.winner === 'B' ? 'text-green-400' : 'text-white/80'}`}>
+                          {bm.teamB?.name || 'TBD'}
+                        </span>
+                        <span className={`text-xs font-bold tabular-nums ${bm.winner === 'B' ? 'text-green-400' : 'text-white/50'}`}>
+                          {bm.match.status !== 'UPCOMING' ? bm.match.teamBScore : '-'}
+                        </span>
+                        {bm.winner === 'B' && <Trophy className="h-3 w-3 text-amber-400" />}
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-white/30 pt-1">
+                        <span>{bm.match.venue}</span>
+                        <Badge className={`text-[9px] px-1.5 py-0 ${
+                          bm.match.status === 'LIVE' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                          bm.match.status === 'COMPLETED' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                          'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                        }`}>
+                          {bm.match.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+
+            {/* Connector arrow (except last round) */}
+            {roundIdx < rounds.length - 1 && (
+              <div className="flex items-center justify-center">
+                <ChevronRight className="h-4 w-4 text-white/10 rotate-90" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: horizontal bracket layout */}
+      <div className="hidden sm:block overflow-x-auto pb-4">
       <div className="flex gap-6 min-w-fit items-start">
         {rounds.map((round, roundIdx) => (
           <div key={roundIdx} className="flex flex-col gap-4 min-w-[260px]">
@@ -155,6 +238,7 @@ export function TournamentBracket({ matches, teamsById, sport }: TournamentBrack
             )}
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

@@ -484,11 +484,11 @@ export default function AdminPage() {
                 {/* ── Matches Tab ── */}
                 <TabsContent value="matches" className="mt-5 space-y-4" data-tour="manage-matches">
                     {/* Sport filter + selection controls */}
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap">
                         <span className="text-xs text-white/50 font-medium shrink-0">Filter:</span>
                         <button
                             onClick={() => startTransition(() => setMatchFilter('All'))}
-                            className={`px-3 py-1 rounded-md text-xs transition-all border ${
+                            className={`px-3 py-1 rounded-md text-xs transition-all border shrink-0 ${
                                 matchFilter === 'All'
                                     ? 'bg-white/10 text-white border-white/10'
                                     : 'bg-white/[0.03] text-white/70 border-white/[0.06]'
@@ -500,7 +500,7 @@ export default function AdminPage() {
                             <button
                                 key={s}
                                 onClick={() => startTransition(() => setMatchFilter(s))}
-                                className={`px-3 py-1 rounded-md text-xs transition-all border whitespace-nowrap ${
+                                className={`px-3 py-1 rounded-md text-xs transition-all border whitespace-nowrap shrink-0 ${
                                     matchFilter === s
                                         ? 'bg-white/10 text-white border-white/10'
                                         : 'bg-white/[0.03] text-white/70 border-white/[0.06]'

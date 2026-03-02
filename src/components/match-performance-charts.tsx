@@ -196,7 +196,7 @@ export function MatchPerformanceCharts({ match, teamA, teamB, teamAPlayers, team
       {/* Match Result Summary */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-yellow-500" />
@@ -204,8 +204,8 @@ export function MatchPerformanceCharts({ match, teamA, teamB, teamAPlayers, team
               </CardTitle>
               <CardDescription>Final score and winner</CardDescription>
             </div>
-            <div className="text-right">
-              <div className="text-4xl font-bold font-mono">
+            <div className="text-left sm:text-right">
+              <div className="text-2xl sm:text-4xl font-bold font-mono">
                 {match.teamAScore} - {match.teamBScore}
               </div>
               <div className="text-sm text-muted-foreground mt-1">
@@ -232,11 +232,11 @@ export function MatchPerformanceCharts({ match, teamA, teamB, teamAPlayers, team
           <CardDescription>Leading players by performance</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topPerformers}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
+                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="value" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]} />
@@ -256,7 +256,7 @@ export function MatchPerformanceCharts({ match, teamA, teamB, teamAPlayers, team
           <CardDescription>Comprehensive statistical analysis</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[400px] w-full">
+          <ChartContainer config={chartConfig} className="h-[300px] sm:h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
                 <PolarGrid />

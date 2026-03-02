@@ -637,7 +637,7 @@ export default function MatchPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 sm:p-5 pt-2 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="rounded-lg bg-white/[0.02] p-3 border border-white/[0.04]">
                         <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Date</p>
                         <p className="text-sm font-semibold text-white/70">{new Date(match.startTime).toLocaleDateString()}</p>

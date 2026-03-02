@@ -86,16 +86,16 @@ export const PlayerProfileDialog = memo(function PlayerProfileDialog({
 
         <div className="space-y-4 mt-2">
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-2">
-            <Card className="bg-green-500/5 border-green-500/20 p-3 text-center">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+            <Card className="bg-green-500/5 border-green-500/20 p-2 sm:p-3 text-center">
               <div className="text-lg font-black text-green-400 tabular-nums">{teamRecord.wins}</div>
               <div className="text-[10px] text-white/40 font-medium">Team Wins</div>
             </Card>
-            <Card className="bg-red-500/5 border-red-500/20 p-3 text-center">
+            <Card className="bg-red-500/5 border-red-500/20 p-2 sm:p-3 text-center">
               <div className="text-lg font-black text-red-400 tabular-nums">{teamRecord.losses}</div>
               <div className="text-[10px] text-white/40 font-medium">Team Losses</div>
             </Card>
-            <Card className="bg-blue-500/5 border-blue-500/20 p-3 text-center">
+            <Card className="bg-blue-500/5 border-blue-500/20 p-2 sm:p-3 text-center">
               <div className="text-lg font-black text-blue-400 tabular-nums">{teamMatches.length}</div>
               <div className="text-[10px] text-white/40 font-medium">Matches</div>
             </Card>

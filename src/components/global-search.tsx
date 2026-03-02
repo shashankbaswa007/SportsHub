@@ -148,7 +148,7 @@ export function GlobalSearch() {
           </div>
 
           {/* Results */}
-          <div className="max-h-[400px] overflow-y-auto p-2">
+          <div className="max-h-[60vh] sm:max-h-[400px] overflow-y-auto p-2">
             {query.trim().length < 2 ? (
               <div className="flex flex-col items-center justify-center py-12 text-white/30">
                 <Search className="h-10 w-10 mb-3 opacity-20" />
