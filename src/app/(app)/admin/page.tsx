@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut as firebaseSignOut, getAuth } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 import { firebaseConfig } from '@/firebase/config';
 import { Button } from '@/components/ui/button';
@@ -105,57 +105,6 @@ export default function AdminPage() {
         verifyAdmin();
     }, [router, toast, auth.currentUser, firestore, linkedGoogleEmail]);
 
-    // Handle redirect result when page loads after Google sign-in redirect
-    useEffect(() => {
-        const pending = typeof window !== 'undefined' && window.sessionStorage.getItem('sports-hub-google-verify-pending');
-        if (!pending || !firestore) return;
-
-        const handleRedirectResult = async () => {
-            try {
-                const secondaryApp = getApps().find(a => a.name === 'google-verify')
-                    || initializeApp(firebaseConfig, 'google-verify');
-                const secondaryAuth = getAuth(secondaryApp);
-
-                const result = await getRedirectResult(secondaryAuth);
-                if (!result) {
-                    // No redirect result — user may have cancelled or hasn't redirected yet
-                    window.sessionStorage.removeItem('sports-hub-google-verify-pending');
-                    return;
-                }
-
-                const googleEmail = result.user.email;
-                await firebaseSignOut(secondaryAuth);
-                window.sessionStorage.removeItem('sports-hub-google-verify-pending');
-
-                if (!googleEmail) {
-                    toast({ variant: 'destructive', title: 'Error', description: 'Could not get email from Google account.' });
-                    return;
-                }
-
-                clearAdminCache();
-                const adminVerified = await checkIsAdmin(firestore, googleEmail);
-
-                if (adminVerified) {
-                    window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
-                    setIsAuthorized(true);
-                    toast({ title: 'Admin Verified', description: `Welcome, Admin! Verified as ${googleEmail}` });
-                } else {
-                    toast({
-                        variant: 'destructive',
-                        title: 'Not Authorized',
-                        description: `${googleEmail} is not in the admin allowlist. Contact an existing admin to get invited.`,
-                    });
-                }
-            } catch (error: any) {
-                console.error('Google verify redirect error:', error);
-                window.sessionStorage.removeItem('sports-hub-google-verify-pending');
-                toast({ variant: 'destructive', title: 'Error', description: 'Failed to verify Google account. Please try again.' });
-            }
-        };
-
-        handleRedirectResult();
-    }, [firestore, toast]);
-
     const handleLinkGoogle = async () => {
         if (!auth.currentUser) return;
         setIsLinkingGoogle(true);
@@ -167,18 +116,38 @@ export default function AdminPage() {
 
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
+            const googleResult = await signInWithPopup(secondaryAuth, provider);
+            const googleEmail = googleResult.user.email;
 
-            // Store pending state before redirect
-            if (typeof window !== 'undefined') {
-                window.sessionStorage.setItem('sports-hub-google-verify-pending', 'true');
+            await firebaseSignOut(secondaryAuth);
+
+            if (!googleEmail) {
+                toast({ variant: 'destructive', title: 'Error', description: 'Could not get email from Google account.' });
+                return;
             }
 
-            await signInWithRedirect(secondaryAuth, provider);
-            // Page will redirect — execution stops here
+            clearAdminCache();
+            const adminVerified = await checkIsAdmin(firestore, googleEmail);
+
+            if (adminVerified) {
+                if (typeof window !== 'undefined') {
+                    window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
+                }
+                setIsAuthorized(true);
+                toast({ title: 'Admin Verified', description: `Welcome, Admin! Verified as ${googleEmail}` });
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Not Authorized',
+                    description: `${googleEmail} is not in the admin allowlist. Contact an existing admin to get invited.`,
+                });
+            }
         } catch (error: any) {
-            window.sessionStorage.removeItem('sports-hub-google-verify-pending');
-            console.error('Google verify error:', error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to start Google verification. Please try again.' });
+            if (error.code !== 'auth/popup-closed-by-user') {
+                console.error('Google verify error:', error);
+                toast({ variant: 'destructive', title: 'Error', description: 'Failed to verify Google account. Please try again.' });
+            }
+        } finally {
             setIsLinkingGoogle(false);
         }
     };
