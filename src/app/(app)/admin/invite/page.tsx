@@ -6,7 +6,7 @@ import {
   collection, query, where, getDocs, doc, updateDoc, setDoc,
   serverTimestamp,
 } from 'firebase/firestore';
-import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 import { firebaseConfig } from '@/firebase/config';
 import { useFirebase, useFirestore } from '@/firebase';
@@ -105,6 +105,73 @@ export default function InviteAcceptPage() {
     lookupInvite();
   }, [token, firestore]);
 
+  // Handle redirect result after Google sign-in redirect
+  useEffect(() => {
+    const pendingToken = typeof window !== 'undefined' && window.sessionStorage.getItem('sports-hub-invite-accept-pending');
+    if (!pendingToken || !firestore || !invite) return;
+
+    const handleRedirectResult = async () => {
+      try {
+        const secondaryApp = getApps().find(a => a.name === 'invite-verify')
+          || initializeApp(firebaseConfig, 'invite-verify');
+        const secondaryAuth = getAuth(secondaryApp);
+
+        const result = await getRedirectResult(secondaryAuth);
+        if (!result) {
+          window.sessionStorage.removeItem('sports-hub-invite-accept-pending');
+          return;
+        }
+
+        const googleEmail = result.user.email?.toLowerCase();
+        await secondaryAuth.signOut();
+        window.sessionStorage.removeItem('sports-hub-invite-accept-pending');
+
+        if (!googleEmail) {
+          toast({ variant: 'destructive', title: 'Error', description: 'Could not get email from Google account.' });
+          return;
+        }
+
+        // Verify the Google email matches the invited email
+        if (googleEmail !== invite.email.toLowerCase()) {
+          toast({
+            variant: 'destructive',
+            title: 'Email Mismatch',
+            description: `This invite is for ${invite.email}, but you signed in with ${googleEmail}. Please use the correct Google account.`,
+          });
+          return;
+        }
+
+        // Accept the invite: add to admin_emails with email as document ID
+        await setDoc(doc(firestore, 'admin_emails', googleEmail), {
+          email: googleEmail,
+          name: invite.name || googleEmail.split('@')[0],
+          addedBy: invite.invitedBy,
+          addedAt: serverTimestamp(),
+        });
+
+        // Mark the invite as accepted
+        await updateDoc(doc(firestore, 'admin_invites', invite.id), {
+          status: 'accepted',
+          acceptedAt: serverTimestamp(),
+        });
+
+        // Store verified admin email in session
+        window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
+        setAccepted(true);
+        toast({
+          title: 'Welcome, Admin!',
+          description: `You now have admin access as ${googleEmail}.`,
+        });
+      } catch (err: any) {
+        console.error('Invite redirect error:', err);
+        window.sessionStorage.removeItem('sports-hub-invite-accept-pending');
+        toast({ variant: 'destructive', title: 'Error', description: 'Failed to accept invite. Please try again.' });
+      }
+    };
+
+    handleRedirectResult();
+  }, [firestore, invite, toast]);
+
   const handleAccept = async () => {
     if (!invite || !firestore || !auth.currentUser) {
       // If not logged in, redirect to login
@@ -131,61 +198,18 @@ export default function InviteAcceptPage() {
 
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await signInWithPopup(secondaryAuth, provider);
-      const googleEmail = result.user.email?.toLowerCase();
 
-      // Sign out of secondary instance immediately
-      await secondaryAuth.signOut();
-
-      if (!googleEmail) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Could not get email from Google account.' });
-        setAccepting(false);
-        return;
-      }
-
-      // Verify the Google email matches the invited email
-      if (googleEmail !== invite.email.toLowerCase()) {
-        toast({
-          variant: 'destructive',
-          title: 'Email Mismatch',
-          description: `This invite is for ${invite.email}, but you signed in with ${googleEmail}. Please use the correct Google account.`,
-        });
-        setAccepting(false);
-        return;
-      }
-
-      // Accept the invite: add to admin_emails with email as document ID
-      await setDoc(doc(firestore, 'admin_emails', googleEmail), {
-        email: googleEmail,
-        name: invite.name || googleEmail.split('@')[0],
-        addedBy: invite.invitedBy,
-        addedAt: serverTimestamp(),
-      });
-
-      // Mark the invite as accepted
-      await updateDoc(doc(firestore, 'admin_invites', invite.id), {
-        status: 'accepted',
-        acceptedAt: serverTimestamp(),
-      });
-
-      // Store verified admin email in session
+      // Store invite token before redirect so we can resume after
       if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem('sports-hub-verified-admin', googleEmail);
+        window.sessionStorage.setItem('sports-hub-invite-accept-pending', token || '');
       }
 
-      setAccepted(true);
-      toast({
-        title: 'Welcome, Admin!',
-        description: `You now have admin access as ${googleEmail}.`,
-      });
+      await signInWithRedirect(secondaryAuth, provider);
+      // Page will redirect — execution stops here
     } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
-        // User closed popup, do nothing
-      } else {
-        console.error('Accept invite error:', err);
-        toast({ variant: 'destructive', title: 'Error', description: 'Failed to accept invite. Please try again.' });
-      }
-    } finally {
+      window.sessionStorage.removeItem('sports-hub-invite-accept-pending');
+      console.error('Accept invite error:', err);
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to start Google verification. Please try again.' });
       setAccepting(false);
     }
   };
