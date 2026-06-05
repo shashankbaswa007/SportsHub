@@ -62,7 +62,7 @@ export default function MatchPage() {
 
   useEffect(() => {
     const user = localStorage.getItem('sports-hub-user');
-    setIsAdmin(user === '160123771030');
+    setIsAdmin(!!process.env.NEXT_PUBLIC_ADMIN_ID && user === process.env.NEXT_PUBLIC_ADMIN_ID);
   }, []);
 
   useEffect(() => {
@@ -71,21 +71,10 @@ export default function MatchPage() {
         return;
     };
 
-    const unsubMatch = onSnapshot(doc(firestore, "matches", id), async (doc) => {
-        if (doc.exists()) {
-            const matchData = { id: doc.id, ...doc.data() } as Match;
+    const unsubMatch = onSnapshot(doc(firestore, "matches", id), (matchSnap) => {
+        if (matchSnap.exists()) {
+            const matchData = { id: matchSnap.id, ...matchSnap.data() } as Match;
             setMatch(matchData);
-
-            if (matchData.teamAId) {
-                onSnapshot(doc(firestore, "teams", matchData.teamAId), (teamDoc) => {
-                    if(teamDoc.exists()) setTeamA({ id: teamDoc.id, ...teamDoc.data() } as Team);
-                });
-            }
-            if (matchData.teamBId) {
-                onSnapshot(doc(firestore, "teams", matchData.teamBId), (teamDoc) => {
-                    if(teamDoc.exists()) setTeamB({ id: teamDoc.id, ...teamDoc.data() } as Team);
-                });
-            }
         } else {
             setMatch(null);
             setTeamA(null);
@@ -96,6 +85,32 @@ export default function MatchPage() {
     
     return () => unsubMatch();
   }, [id, firestore]);
+
+  // Separate effect for team A subscription — avoids nested onSnapshot memory leak
+  useEffect(() => {
+    if (!match?.teamAId) {
+        setTeamA(null);
+        return;
+    }
+    const unsubTeamA = onSnapshot(doc(firestore, "teams", match.teamAId), (teamSnap) => {
+        if (teamSnap.exists()) setTeamA({ id: teamSnap.id, ...teamSnap.data() } as Team);
+        else setTeamA(null);
+    });
+    return () => unsubTeamA();
+  }, [match?.teamAId, firestore]);
+
+  // Separate effect for team B subscription
+  useEffect(() => {
+    if (!match?.teamBId) {
+        setTeamB(null);
+        return;
+    }
+    const unsubTeamB = onSnapshot(doc(firestore, "teams", match.teamBId), (teamSnap) => {
+        if (teamSnap.exists()) setTeamB({ id: teamSnap.id, ...teamSnap.data() } as Team);
+        else setTeamB(null);
+    });
+    return () => unsubTeamB();
+  }, [match?.teamBId, firestore]);
 
   useEffect(() => {
     if (!match?.teamAId) {
@@ -330,9 +345,9 @@ export default function MatchPage() {
                                         </div>
                                          {editingSet?.set === set.set ? (
                                              <div className="flex items-center gap-2 mt-2">
-                                                <Input type="number" value={editingSet.teamAScore} onChange={e => setEditingSet({...editingSet, teamAScore: Number(e.target.value)})} className="w-full h-8"/>
+                                                <Input type="number" value={editingSet?.teamAScore || 0} onChange={e => setEditingSet({...editingSet!, teamAScore: Number(e.target.value)})} className="w-full h-8"/>
                                                 <span>-</span>
-                                                <Input type="number" value={editingSet.teamBScore} onChange={e => setEditingSet({...editingSet, teamBScore: Number(e.target.value)})} className="w-full h-8"/>
+                                                <Input type="number" value={editingSet?.teamBScore || 0} onChange={e => setEditingSet({...editingSet!, teamBScore: Number(e.target.value)})} className="w-full h-8"/>
                                              </div>
                                          ) : (
                                              <p className="font-mono text-2xl font-bold mt-1">{set.teamAScore} - {set.teamBScore}</p>

@@ -60,7 +60,7 @@ export default function AdminPage() {
     useEffect(() => {
         if (!firestore) return;
         const user = localStorage.getItem('sports-hub-user');
-        if (user !== '160123771030') {
+        if (!process.env.NEXT_PUBLIC_ADMIN_ID || user !== process.env.NEXT_PUBLIC_ADMIN_ID) {
             toast({
                 variant: 'destructive',
                 title: 'Access Denied',
@@ -422,7 +422,4 @@ export default function AdminPage() {
         </div>
     );
 
-    
 }
-
-    

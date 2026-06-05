@@ -87,10 +87,10 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({ children, color = '#522
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const vars: React.CSSProperties = {
-    ['--electric-border-color']: color,
-    ['--eb-border-width']: `${thickness}px`
-  };
+  const vars = {
+    '--electric-border-color': color,
+    '--eb-border-width': `${thickness}px`
+  } as React.CSSProperties;
 
   return (
     <div ref={rootRef} className={`electric-border ${className ?? ''}`} style={{ ...vars, ...style }}>

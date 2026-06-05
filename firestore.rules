@@ -12,6 +12,10 @@ service cloud.firestore {
       return isAuth() && request.auth.uid == userId;
     }
 
+    // NOTE: For production, add custom claims (e.g., request.auth.token.admin == true)
+    // to restrict write access to admin users only.
+    // See: https://firebase.google.com/docs/auth/admin/custom-claims
+
     match /{path=**}/players/{playerId} {
       allow read: if true;
       allow write: if isAuth();

@@ -27,7 +27,7 @@ const signupSchema = z.object({
   username: usernameSchema,
 });
 
-const ADMIN_ID = '160123771030';
+const ADMIN_ID = process.env.NEXT_PUBLIC_ADMIN_ID || '';
 
 export function AuthForm() {
   const router = useRouter();
@@ -48,8 +48,8 @@ export function AuthForm() {
   const onLoginSubmit = (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     setTimeout(() => {
-      const isAdmin = values.username === ADMIN_ID && values.password === ADMIN_ID;
-      const isUser = values.password === 'password123' || values.password === values.username;
+      const isAdmin = ADMIN_ID && values.username === ADMIN_ID && values.password === ADMIN_ID;
+      const isUser = values.password === values.username;
 
       if (isAdmin || isUser) {
         toast({

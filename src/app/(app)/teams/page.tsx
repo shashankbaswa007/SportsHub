@@ -19,6 +19,7 @@ export default function TeamsPage() {
     const firestore = useFirestore();
 
     useEffect(() => {
+        if (!firestore) return;
         const unsubTeams = onSnapshot(collection(firestore, "teams"), (snap) => {
             setTeams(snap.docs.map(doc => ({id: doc.id, ...doc.data() as Omit<Team, 'id'>})));
             setLoading(false);

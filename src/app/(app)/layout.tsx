@@ -14,12 +14,28 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarInset,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Home, Settings, LogOut, Flame, PanelLeft, ShieldCheck, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { motion } from "framer-motion"
+
+function AppHeader() {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+        <Button size="icon" variant="outline" className="sm:hidden" onClick={toggleSidebar}>
+            <PanelLeft className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+        </Button>
+        <div className='ml-auto'>
+          <ThemeToggle />
+        </div>
+    </header>
+  );
+}
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -33,7 +49,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     if (!user) {
       router.replace('/');
     } else {
-        if (user === '160123771030') {
+        if (process.env.NEXT_PUBLIC_ADMIN_ID && user === process.env.NEXT_PUBLIC_ADMIN_ID) {
             setIsAdmin(true);
         }
     }
@@ -125,15 +141,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
-            <Button size="icon" variant="outline" className="sm:hidden">
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-            </Button>
-            <div className='ml-auto'>
-              <ThemeToggle />
-            </div>
-        </header>
+        <AppHeader />
         <motion.main 
           key={pathname}
           initial={{ opacity: 0, y: 20 }}

@@ -28,7 +28,9 @@ export function MatchPrediction({ match, teamA, teamB }: MatchPredictionProps) {
     try {
       const result = await predictMatchWinner({
         teamA: teamA.name,
+        teamAId: teamA.id,
         teamB: teamB.name,
+        teamBId: teamB.id,
         sport: match.sport,
         matchStatus: match.status,
         teamAScore: match.teamAScore,

@@ -13,7 +13,9 @@ import {z} from 'genkit';
 
 const MatchPredictionInputSchema = z.object({
   teamA: z.string().describe('The name of team A.'),
+  teamAId: z.string().optional().describe('The ID of team A for database lookups.'),
   teamB: z.string().describe('The name of team B.'),
+  teamBId: z.string().optional().describe('The ID of team B for database lookups.'),
   sport: z.string().describe('The sport the teams are playing.'),
   matchStatus: z
     .enum(['LIVE', 'UPCOMING', 'COMPLETED'])
@@ -24,6 +26,10 @@ const MatchPredictionInputSchema = z.object({
     .string()
     .optional()
     .describe('Any additional details about the match.'),
+  historicalContext: z
+    .string()
+    .optional()
+    .describe('Historical context about past matches between these teams or their overall performance, retrieved from the database.'),
 });
 export type MatchPredictionInput = z.infer<typeof MatchPredictionInputSchema>;
 
@@ -65,6 +71,13 @@ const matchPredictionPrompt = ai.definePrompt({
   {{/if}}
   {{#if matchDetails}}
   Match Details: {{{matchDetails}}}
+  {{/if}}
+  
+  {{#if historicalContext}}
+  === HISTORICAL CONTEXT ===
+  The following historical data was retrieved from the database regarding these teams. Use this data heavily to inform your prediction and reasoning:
+  {{{historicalContext}}}
+  ==========================
   {{/if}}
   `,
 });

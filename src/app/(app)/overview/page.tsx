@@ -120,7 +120,12 @@ export default function OverviewPage() {
 
           <AnimatePresence>
             {completedMatches.length > 0 && (
-               <motion.section>
+               <motion.section
+                key="completed-matches"
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: -20 }}
+              >
                 <h2 className="font-headline text-2xl font-bold">Completed Matches</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {completedMatches.map(match => (

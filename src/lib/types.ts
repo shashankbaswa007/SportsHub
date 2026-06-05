@@ -64,6 +64,3 @@ export type PointsTableItem = {
     points: number;
     rank: number;
 };
-
-
-    

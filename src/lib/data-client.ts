@@ -135,13 +135,24 @@ export const recalculateMatchScores = async (db: Firestore, matchId: string): Pr
         newTeamBScore = await calculateTeamScore(teamBPlayers);
 
     } else if (match.sport === 'Cricket') {
+        // Team A batting stats (runs from A, wickets/overs from B's bowling)
         const teamARuns = teamAPlayers.reduce((sum, p) => sum + Number(p.stats['Runs'] || 0), 0);
         const teamAWickets = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Wickets'] || 0), 0);
         const teamABalls = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Balls Bowled'] || 0), 0);
         const teamAOvers = Math.floor(teamABalls / 6) + (teamABalls % 6) / 10;
+
+        // Team B batting stats (runs from B, wickets/overs from A's bowling)
+        const teamBRuns = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Runs'] || 0), 0);
+        const teamBWickets = teamAPlayers.reduce((sum, p) => sum + Number(p.stats['Wickets'] || 0), 0);
+        const teamBBalls = teamAPlayers.reduce((sum, p) => sum + Number(p.stats['Balls Bowled'] || 0), 0);
+        const teamBOvers = Math.floor(teamBBalls / 6) + (teamBBalls % 6) / 10;
         
-        newScoreDetails = { runs: teamARuns, wickets: teamAWickets, overs: teamAOvers };
-        newTeamAScore = teamARuns; 
+        newScoreDetails = {
+            teamAInnings: { runs: teamARuns, wickets: teamAWickets, overs: teamAOvers },
+            teamBInnings: { runs: teamBRuns, wickets: teamBWickets, overs: teamBOvers },
+        };
+        newTeamAScore = teamARuns;
+        newTeamBScore = teamBRuns; 
     } else if (Array.isArray(match.scoreDetails)) { // Set-based sports
         let teamASetsWon = 0;
         let teamBSetsWon = 0;
@@ -216,9 +227,10 @@ export const calculatePointsTable = async (db: Firestore, sport: SportName): Pro
                 table[match.teamBId].lost++;
             } else {
                 table[match.teamBId].won++;
-                table[match.teamBId].lost++;
-                table[match.teamAId].points += 0;
+                table[match.teamBId].points += 2;
+                table[match.teamAId].lost++;
             }
+
         }
     });
 
@@ -354,5 +366,3 @@ export const createMatch = async (db: Firestore, data: {
         return { success: false, error: error.message || "An error occurred while creating the match." };
     }
 };
-
-    

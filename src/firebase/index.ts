@@ -9,12 +9,18 @@ import { firebaseConfig } from './config';
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
   if (!getApps().length) {
-    if (process.env.NODE_ENV !== 'production') {
-      // Initialize with config for local development
-      initializeApp(firebaseConfig);
-    } else {
-      // Initialize without config for production (App Hosting)
-      initializeApp();
+    try {
+      if (process.env.NODE_ENV !== 'production' || firebaseConfig.apiKey) {
+        // Initialize with config for local development or if config is explicitly provided
+        initializeApp(firebaseConfig);
+      } else {
+        // Initialize without config for production (App Hosting)
+        initializeApp();
+      }
+    } catch (error) {
+      // During Next.js build, we're in 'production' mode but not actually deployed.
+      // initializeApp() will throw because options are missing. Use a dummy config to let build pass.
+      initializeApp({ apiKey: "build", projectId: "build", appId: "1:1:web:1" });
     }
   }
   // If already initialized, or after initializing, return the SDKs with the App

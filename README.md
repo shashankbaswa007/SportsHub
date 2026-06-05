@@ -19,11 +19,4 @@ Built with Next.js, Firebase, and Google's Generative AI, SportsHub Central offe
 -   **Styling**: Tailwind CSS, ShadCN UI
 -   **Backend & Database**: Firebase (Firestore, Authentication)
 -   **Generative AI**: Google AI (Gemini) via Genkit
--   **Deployment**: Firebase App Hosting# SportsHub
-# SportsHub
-# SportsHub
-# SportsHub
-# SportsHub
-# SportsHub
-# SportsHub
-# SportsHub
+-   **Deployment**: Firebase App Hosting
