@@ -35,8 +35,7 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
     }
 
     // Cricket
-    if (match.sport === 'Cricket' && match.scoreDetails && typeof (match.scoreDetails as CricketScore).runs === 'number') {
-      const cs = match.scoreDetails as CricketScore;
+    if (match.sport === 'Cricket' && match.scoreDetails && typeof (match.scoreDetails as CricketScore).teamA?.runs === 'number') {
       return [
         {
           label: 'Innings',

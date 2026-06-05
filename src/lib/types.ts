@@ -48,9 +48,8 @@ export type SetScore = {
 };
 
 export type CricketScore = {
-  runs: number;
-  wickets: number;
-  overs: number;
+  teamA: { runs: number; wickets: number; overs: number };
+  teamB: { runs: number; wickets: number; overs: number };
 };
 
 export type MatchScore = SetScore[] | CricketScore | object;

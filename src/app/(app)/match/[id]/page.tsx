@@ -457,10 +457,15 @@ export default function MatchPage() {
                 </motion.span>
               </div>
 
-              {cricketScore && cricketScore.runs != null && (
-                <p className="font-mono text-xs sm:text-sm text-white/40 mt-1">
-                  {cricketScore.runs}/{cricketScore.wickets ?? 0} ({cricketScore.overs ?? 0} ov)
-                </p>
+              {cricketScore && cricketScore.teamA && (
+                <div className="flex flex-col items-center gap-1 mt-1 font-mono text-xs sm:text-sm text-white/40">
+                  <p>
+                    <span className="text-blue-400">{cricketScore.teamA.runs}/{cricketScore.teamA.wickets ?? 0}</span> <span className="text-white/20">({cricketScore.teamA.overs ?? 0}v)</span>
+                  </p>
+                  <p>
+                    <span className="text-rose-400">{cricketScore.teamB.runs}/{cricketScore.teamB.wickets ?? 0}</span> <span className="text-white/20">({cricketScore.teamB.overs ?? 0}v)</span>
+                  </p>
+                </div>
               )}
 
               {match.status === 'UPCOMING' && (

@@ -172,13 +172,23 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     if (match.sport === 'Cricket' && match.scoreDetails) {
         const score = match.scoreDetails as CricketScore;
         return (
-             <div className="flex flex-col items-center gap-1">
-                <div className="font-headline text-2xl sm:text-3xl font-black tabular-nums text-white/95">
-                  {score.runs}/{score.wickets}
-                </div>
-                <div className="text-xs font-medium text-white/40 tracking-wide">
-                  ({score.overs} OV)
-                </div>
+             <div className="flex flex-col items-center gap-1.5 w-full">
+                {score.teamA && (
+                  <div className="flex flex-col items-center leading-tight">
+                    <span className="font-headline text-lg sm:text-xl font-black text-blue-400 tabular-nums">
+                      {score.teamA.runs}/{score.teamA.wickets}
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-medium text-white/40">({score.teamA.overs} ov)</span>
+                  </div>
+                )}
+                {score.teamB && (
+                  <div className="flex flex-col items-center leading-tight">
+                    <span className="font-headline text-lg sm:text-xl font-black text-rose-400 tabular-nums">
+                      {score.teamB.runs}/{score.teamB.wickets}
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-medium text-white/40">({score.teamB.overs} ov)</span>
+                  </div>
+                )}
             </div>
         )
     }

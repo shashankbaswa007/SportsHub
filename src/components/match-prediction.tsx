@@ -1,12 +1,14 @@
 
 "use client";
 
-import { useMemo } from 'react';
-import { Card } from '@/components/ui/card';
-import { Lightbulb } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Loader2, AlertCircle, Sparkles, BrainCircuit } from 'lucide-react';
 import type { Match, Team } from '@/lib/types';
-import { useAppData } from '@/lib/data-context';
-import { generateMatchInsights } from '@/lib/match-insights-engine';
+import { predictMatchWinner } from '@/app/actions';
+import type { MatchPredictionOutput } from '@/ai/flows/match-prediction-tool';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MatchPredictionProps {
   match: Match;
@@ -15,36 +17,119 @@ interface MatchPredictionProps {
 }
 
 export function MatchPrediction({ match, teamA, teamB }: MatchPredictionProps) {
-  const { matches, teamsById } = useAppData();
+  const [prediction, setPrediction] = useState<MatchPredictionOutput | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const insights = useMemo(
-    () => generateMatchInsights({ match, teamA, teamB, allMatches: matches, teamsById }),
-    [match, teamA, teamB, matches, teamsById]
-  );
+  const getPrediction = async () => {
+    setLoading(true);
+    setError(null);
+    setPrediction(null);
+    try {
+      const result = await predictMatchWinner({
+        teamA: teamA.name,
+        teamAId: teamA.id,
+        teamB: teamB.name,
+        teamBId: teamB.id,
+        sport: match.sport,
+        matchStatus: match.status,
+        teamAScore: match.teamAScore,
+        teamBScore: match.teamBScore,
+        matchDetails: match.details,
+      });
 
-  if (insights.length === 0) return null;
+      if (result.success && result.data) {
+        setPrediction(result.data);
+      } else {
+        setError(result.error || "An unknown error occurred.");
+      }
+    } catch (e: any) {
+      setError(e.message || "Failed to fetch prediction.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const predictedWinnerName = prediction?.predictedWinner === 'Team A' ? teamA.name : teamB.name;
 
   return (
-    <Card className="glass p-4 bg-gradient-to-br from-amber-500/5 to-orange-500/5 border-white/10 overflow-hidden">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="p-1.5 rounded-lg bg-amber-500/15">
-          <Lightbulb className="h-4 w-4 text-amber-400" />
+    <Card className="overflow-hidden">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+            <BrainCircuit className="h-6 w-6 text-primary"/>
+            <CardTitle className="font-headline">AI Match Prediction</CardTitle>
         </div>
-        <h3 className="text-sm font-bold text-white/80">Match Insights</h3>
-      </div>
+        <CardDescription>Get an AI-powered prediction for the match outcome.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        
+        <AnimatePresence mode="wait">
+            {!prediction && !loading && !error && (
+                 <motion.div
+                    key="initial"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-center p-4 bg-muted/50 rounded-lg"
+                >
+                    <p className="text-sm text-muted-foreground">Click the button to generate an AI prediction based on the current match data.</p>
+                </motion.div>
+            )}
 
-      <div className="space-y-2">
-        {insights.map((insight, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-2.5 p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-          >
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/10 text-[10px] font-bold text-amber-400 shrink-0 mt-0.5">
-              {i + 1}
-            </span>
-            <p className="text-xs text-white/60 leading-relaxed">{insight}</p>
-          </div>
-        ))}
+            {loading && (
+                 <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center justify-center space-y-2 p-4"
+                >
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">Analyzing match data...</p>
+                </motion.div>
+            )}
+
+            {error && (
+                <motion.div
+                    key="error"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center justify-center space-y-2 p-4 bg-destructive/10 rounded-lg text-destructive"
+                >
+                    <AlertCircle className="h-8 w-8" />
+                    <p className="text-sm font-medium text-center">Error fetching prediction</p>
+                    <p className="text-xs text-center">{error}</p>
+                </motion.div>
+            )}
+
+            {prediction && (
+                <motion.div
+                    key="prediction"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="space-y-4"
+                >
+                   <div className="text-center bg-primary/10 p-4 rounded-lg">
+                     <p className="text-sm text-primary font-semibold">Predicted Winner</p>
+                     <p className="text-2xl font-bold font-headline text-primary">{predictedWinnerName}</p>
+                     <p className="text-xs text-primary/80">Confidence: {(prediction.confidenceLevel * 100).toFixed(0)}%</p>
+                   </div>
+                   <div className="space-y-2">
+                        <h4 className="font-semibold text-sm">AI Reasoning:</h4>
+                        <p className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md border">{prediction.reasoning}</p>
+                   </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+
+      </CardContent>
+      <div className="border-t bg-muted/30 p-4">
+         <Button onClick={getPrediction} disabled={loading} className="w-full">
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+          {prediction ? 'Regenerate Prediction' : 'Generate Prediction'}
+        </Button>
       </div>
     </Card>
   );

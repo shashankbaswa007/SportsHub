@@ -56,7 +56,10 @@ export const getDefaultScoreDetails = (sport: SportName) => {
         case 'Kabaddi':
             return {}; 
         case 'Cricket':
-            return { runs: 0, wickets: 0, overs: 0 };
+            return {
+                teamA: { runs: 0, wickets: 0, overs: 0 },
+                teamB: { runs: 0, wickets: 0, overs: 0 }
+            };
         case 'Volleyball':
         case 'Throwball':
              return Array.from({ length: 3 }, (_, i) => ({ set: i + 1, teamAScore: 0, teamBScore: 0 }));
@@ -149,8 +152,14 @@ export const recalculateMatchScores = async (db: Firestore, matchId: string): Pr
         const teamAOvers = Math.floor(teamABalls / 6) + (teamABalls % 6) / 10;
         
         const teamBRuns = teamBPlayers.reduce((sum, p) => sum + Number(p.stats['Runs'] || 0), 0);
+        const teamBWickets = teamAPlayers.reduce((sum, p) => sum + Number(p.stats['Wickets'] || 0), 0);
+        const teamBBalls = teamAPlayers.reduce((sum, p) => sum + Number(p.stats['Balls Bowled'] || 0), 0);
+        const teamBOvers = Math.floor(teamBBalls / 6) + (teamBBalls % 6) / 10;
         
-        newScoreDetails = { runs: teamARuns, wickets: teamAWickets, overs: teamAOvers };
+        newScoreDetails = { 
+            teamA: { runs: teamARuns, wickets: teamAWickets, overs: teamAOvers },
+            teamB: { runs: teamBRuns, wickets: teamBWickets, overs: teamBOvers }
+        };
         newTeamAScore = teamARuns;
         newTeamBScore = teamBRuns;
     } else if (Array.isArray(match.scoreDetails)) { // Set-based sports
