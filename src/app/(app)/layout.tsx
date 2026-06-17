@@ -61,7 +61,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-foreground/5 bg-[#0D0D0D]">
+      <Sidebar className="border-r border-foreground/5 bg-background">
         <SidebarHeader className="p-6 border-b border-foreground/5">
           <Link href="/overview" className="flex items-center gap-3 group">
             <div className="relative">
@@ -195,7 +195,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SidebarInset className="bg-background">
         <ConnectionBanner />
         <DataProvider>
-        <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center gap-4 border-b border-foreground/5 bg-[#0D0D0D]/80 backdrop-blur-xl px-3 sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center gap-4 border-b border-foreground/5 bg-background/80 backdrop-blur-xl px-3 sm:px-6">
             <SidebarTrigger className="lg:hidden border-foreground/10 hover:bg-foreground/5 text-foreground/80 hover:text-foreground" />
             <div className="flex-1 flex items-center justify-center lg:justify-start gap-3">
               <span className="font-headline text-lg font-bold text-foreground/90 lg:hidden">SportsHub</span>
@@ -211,7 +211,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </DataProvider>
         
         {/* Mobile Bottom Navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-foreground/10 bg-[#0D0D0D]/95 backdrop-blur-xl">
+        <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-foreground/10 bg-background/95 backdrop-blur-xl">
           <div className="flex items-center justify-around px-2 py-3">
             <Link
               href="/overview"
