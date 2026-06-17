@@ -46,8 +46,31 @@ const MatchPredictionOutputSchema = z.object({
 });
 export type MatchPredictionOutput = z.infer<typeof MatchPredictionOutputSchema>;
 
+// Simple in-memory cache to prevent redundant API calls for the same match state
+// (Lasts for the lifetime of the server instance or serverless function)
+const predictionCache = new Map<string, { data: MatchPredictionOutput, timestamp: number }>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 export async function getMatchPrediction(input: MatchPredictionInput): Promise<MatchPredictionOutput> {
-  return matchPredictionFlow(input);
+  const cacheKey = JSON.stringify(input);
+  const cached = predictionCache.get(cacheKey);
+  
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    console.log("Returning cached prediction for match.");
+    return cached.data;
+  }
+
+  const result = await matchPredictionFlow(input);
+  
+  predictionCache.set(cacheKey, { data: result, timestamp: Date.now() });
+  
+  // Keep cache size manageable
+  if (predictionCache.size > 100) {
+    const firstKey = predictionCache.keys().next().value;
+    if (firstKey) predictionCache.delete(firstKey);
+  }
+  
+  return result;
 }
 
 const matchPredictionPrompt = ai.definePrompt({
@@ -89,7 +112,34 @@ const matchPredictionFlow = ai.defineFlow(
     outputSchema: MatchPredictionOutputSchema,
   },
   async input => {
-    const {output} = await matchPredictionPrompt(input);
-    return output!;
+    const maxRetries = 3;
+    let delay = 1500; // Start with 1.5s delay
+    let lastError: unknown;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const {output} = await matchPredictionPrompt(input);
+        return output!;
+      } catch (error: any) {
+        lastError = error;
+        
+        // Don't retry if it's definitively a bad input error, but retry on network/503/429 errors
+        const isTransient = error?.message?.includes('503') || 
+                            error?.message?.includes('429') || 
+                            error?.message?.includes('fetch failed') ||
+                            error?.message?.includes('high demand') ||
+                            error?.message?.includes('temporarily');
+                            
+        if (attempt === maxRetries || !isTransient) {
+          break; // Stop retrying if max attempts reached or error is not transient
+        }
+        
+        console.warn(`[Genkit] Prediction failed (attempt ${attempt}/${maxRetries}). Retrying in ${delay}ms...`, error?.message || "Unknown error");
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2; // Exponential backoff (1.5s -> 3s -> 6s)
+      }
+    }
+    
+    throw lastError;
   }
 );
