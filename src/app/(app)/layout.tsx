@@ -2,6 +2,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { signOut } from 'firebase/auth';
@@ -56,17 +57,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       window.localStorage.removeItem('sports-hub-role');
       window.sessionStorage.removeItem('sports-hub-verified-admin');
     }
-    router.replace('/');
   };
 
   return (
     <SidebarProvider>
       <Sidebar className="border-r border-foreground/5 bg-background">
+
         <SidebarHeader className="p-6 border-b border-foreground/5">
           <Link href="/overview" className="flex items-center gap-3 group">
-            <div className="relative">
-              <Flame className="h-9 w-9 text-foreground/90 group-hover:text-foreground transition-colors" />
-              <div className="absolute inset-0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity bg-orange-500/30" />
+            <div className="relative h-10 w-10 flex-shrink-0">
+              <Image 
+                src="/logo.png" 
+                alt="SportsHub Logo" 
+                fill 
+                className="object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity bg-emerald-500/20" />
             </div>
             <span className="font-headline text-2xl font-black group-data-[collapsible=icon]:hidden text-foreground/90 group-hover:text-foreground transition-colors">
               SportsHub

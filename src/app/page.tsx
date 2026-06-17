@@ -1,6 +1,7 @@
 
 "use client";
 
+import Image from 'next/image';
 import { AuthForm } from "@/components/auth-form";
 import { Flame } from "lucide-react";
 import { motion } from "framer-motion";
@@ -138,9 +139,14 @@ export default function AuthenticationPage() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="relative">
-                <Flame className="h-10 sm:h-14 w-10 sm:w-14 text-foreground" />
-                <div className="absolute inset-0 blur-lg bg-foreground/30" />
+              <div className="relative h-10 sm:h-14 w-10 sm:w-14 flex-shrink-0">
+                <Image 
+                  src="/logo.png" 
+                  alt="SportsHub Logo" 
+                  fill 
+                  className="object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-transform group-hover:scale-105"
+                />
+                <div className="absolute inset-0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity bg-emerald-500/20" />
               </div>
               <div>
                 <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-gradient">
