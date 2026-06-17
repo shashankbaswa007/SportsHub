@@ -53,19 +53,19 @@ function StatBar({ label, valueA, valueB }: { label: string; valueA: number; val
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between text-xs text-white/50">
-        <span className={`font-mono font-bold text-sm ${aWins ? 'text-blue-400' : 'text-white/70'}`}>{valueA}</span>
-        <span className="uppercase tracking-wider text-[10px] font-semibold text-white/40">{label}</span>
-        <span className={`font-mono font-bold text-sm ${bWins ? 'text-rose-400' : 'text-white/70'}`}>{valueB}</span>
+      <div className="flex items-center justify-between text-xs text-foreground/50">
+        <span className={`font-mono font-bold text-sm ${aWins ? 'text-blue-400' : 'text-foreground/70'}`}>{valueA}</span>
+        <span className="uppercase tracking-wider text-[10px] font-semibold text-foreground/40">{label}</span>
+        <span className={`font-mono font-bold text-sm ${bWins ? 'text-rose-400' : 'text-foreground/70'}`}>{valueB}</span>
       </div>
-      <div className="flex h-1.5 rounded-full overflow-hidden bg-white/[0.06]">
+      <div className="flex h-1.5 rounded-full overflow-hidden bg-foreground/[0.06]">
         <motion.div
           className="h-full rounded-l-full bg-gradient-to-r from-blue-500 to-blue-400"
           initial={{ width: 0 }}
           animate={{ width: `${pctA}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         />
-        <div className="w-px bg-white/10" />
+        <div className="w-px bg-foreground/10" />
         <motion.div
           className="h-full rounded-r-full bg-gradient-to-l from-rose-500 to-rose-400"
           initial={{ width: 0 }}
@@ -268,8 +268,8 @@ export default function MatchPage() {
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-3">
-        <div className="h-12 w-12 rounded-full border-2 border-white/10 border-t-blue-500 animate-spin" />
-        <p className="text-xs text-white/30 uppercase tracking-widest">Loading match</p>
+        <div className="h-12 w-12 rounded-full border-2 border-foreground/10 border-t-blue-500 animate-spin" />
+        <p className="text-xs text-foreground/30 uppercase tracking-widest">Loading match</p>
       </div>
     );
   }
@@ -277,11 +277,11 @@ export default function MatchPage() {
   if (!match || !teamA || !teamB) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-4">
-        <div className="p-4 rounded-full bg-white/[0.03] border border-white/10">
-          <Trophy className="h-8 w-8 text-white/20" />
+        <div className="p-4 rounded-full bg-foreground/[0.03] border border-foreground/10">
+          <Trophy className="h-8 w-8 text-foreground/20" />
         </div>
-        <h1 className="text-xl font-bold text-white/60">Match Not Found</h1>
-        <Button variant="outline" onClick={() => router.push('/overview')} className="border-white/10 text-white/60">
+        <h1 className="text-xl font-bold text-foreground/60">Match Not Found</h1>
+        <Button variant="outline" onClick={() => router.push('/overview')} className="border-foreground/10 text-foreground/60">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Overview
         </Button>
       </div>
@@ -303,12 +303,12 @@ export default function MatchPage() {
         layout
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`rounded-xl border bg-white/[0.02] p-3 sm:p-4 transition-all ${
+        className={`rounded-xl border bg-foreground/[0.02] p-3 sm:p-4 transition-all ${
           isEditing
             ? isBlue
               ? 'border-blue-500/30 ring-1 ring-blue-500/20'
               : 'border-rose-500/30 ring-1 ring-rose-500/20'
-            : 'border-white/[0.06]'
+            : 'border-foreground/[0.06]'
         }`}
       >
         <div className="flex items-center justify-between mb-2">
@@ -320,10 +320,10 @@ export default function MatchPage() {
                 {(player.name || '?').charAt(0).toUpperCase()}
               </span>
             </div>
-            <span className="text-sm font-semibold text-white/80">{player.name}</span>
+            <span className="text-sm font-semibold text-foreground/80">{player.name}</span>
           </div>
           {isAdmin && !isEditing && (
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-white/30 hover:text-white/60" onClick={() => handleEditPlayer(player)}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-foreground/30 hover:text-foreground/60" onClick={() => handleEditPlayer(player)}>
               <Edit className="h-3.5 w-3.5" />
             </Button>
           )}
@@ -333,26 +333,26 @@ export default function MatchPage() {
           <div className="space-y-2 mt-3">
             {Object.keys(player.stats ?? {}).map((key) => (
               <div key={key} className="flex items-center justify-between gap-2">
-                <span className="text-[10px] sm:text-xs text-white/40 capitalize min-w-[60px]">
+                <span className="text-[10px] sm:text-xs text-foreground/40 capitalize min-w-[60px]">
                   {key.replace(/([A-Z])/g, ' $1')}
                 </span>
                 <div className="flex items-center gap-1">
-                  <Button size="icon" variant="ghost" className="h-6 w-6 text-white/40" onClick={() => handlePlayerStatDecrement(key)}>
+                  <Button size="icon" variant="ghost" className="h-6 w-6 text-foreground/40" onClick={() => handlePlayerStatDecrement(key)}>
                     <Minus className="h-2.5 w-2.5" />
                   </Button>
                   <Input
                     type="number"
-                    className="w-12 h-7 text-center text-xs bg-white/[0.04] border-white/10"
+                    className="w-12 h-7 text-center text-xs bg-foreground/[0.04] border-foreground/10"
                     value={editingPlayerStats[key]}
                     onChange={(e) => handlePlayerStatChange(key, e.target.value)}
                   />
-                  <Button size="icon" variant="ghost" className="h-6 w-6 text-white/40" onClick={() => handlePlayerStatIncrement(key)}>
+                  <Button size="icon" variant="ghost" className="h-6 w-6 text-foreground/40" onClick={() => handlePlayerStatIncrement(key)}>
                     <Plus className="h-2.5 w-2.5" />
                   </Button>
                 </div>
               </div>
             ))}
-            <div className="flex justify-end gap-2 mt-3 pt-2 border-t border-white/[0.06]">
+            <div className="flex justify-end gap-2 mt-3 pt-2 border-t border-foreground/[0.06]">
               <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={handleCancelEditPlayer}>
                 <X className="mr-1 h-3 w-3" /> Cancel
               </Button>
@@ -365,8 +365,8 @@ export default function MatchPage() {
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-1">
             {Object.entries(player.stats ?? {}).map(([key, value]) => (
               <div key={key} className="flex items-center justify-between">
-                <span className="text-[10px] text-white/30 capitalize truncate">{key.replace(/([A-Z])/g, ' $1')}</span>
-                <span className={`text-xs font-mono font-semibold ${Number(value) > 0 ? 'text-white/80' : 'text-white/20'}`}>{value}</span>
+                <span className="text-[10px] text-foreground/30 capitalize truncate">{key.replace(/([A-Z])/g, ' $1')}</span>
+                <span className={`text-xs font-mono font-semibold ${Number(value) > 0 ? 'text-foreground/80' : 'text-foreground/20'}`}>{value}</span>
               </div>
             ))}
           </div>
@@ -380,7 +380,7 @@ export default function MatchPage() {
     <div className="relative min-h-full pb-8">
       {/* ─── Back Button + Share ─── */}
       <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-4 flex items-center justify-between">
-        <Button variant="ghost" className="h-9 text-sm text-white/50 hover:text-white/80 -ml-2" onClick={handleBackNavigation}>
+        <Button variant="ghost" className="h-9 text-sm text-foreground/50 hover:text-foreground/80 -ml-2" onClick={handleBackNavigation}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Back to Overview</span>
           <span className="sm:hidden">Back</span>
@@ -404,7 +404,7 @@ export default function MatchPage() {
         <div className="relative z-10 p-5 sm:p-8">
           {/* Sport label + Status */}
           <div className="flex items-center justify-between mb-5 sm:mb-6">
-            <div className="flex items-center gap-2 text-white/40">
+            <div className="flex items-center gap-2 text-foreground/40">
               <SportIcon sport={match.sport} className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="text-xs sm:text-sm font-medium">{match.sport}</span>
             </div>
@@ -420,12 +420,12 @@ export default function MatchPage() {
             {/* Team A */}
             <div className="flex flex-col items-center gap-2">
               <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl font-black transition-all duration-500 ${
-                teamAWinning ? 'bg-blue-500/15 text-blue-400 ring-2 ring-blue-500/20' : 'bg-white/[0.04] text-white/50'
+                teamAWinning ? 'bg-blue-500/15 text-blue-400 ring-2 ring-blue-500/20' : 'bg-foreground/[0.04] text-foreground/50'
               }`}>
                 {teamA.name.charAt(0)}
               </div>
               <h2 className={`font-headline text-sm sm:text-lg md:text-xl font-bold text-center leading-tight transition-colors ${
-                teamAWinning && match.status !== 'UPCOMING' ? 'text-blue-400' : 'text-white/80'
+                teamAWinning && match.status !== 'UPCOMING' ? 'text-blue-400' : 'text-foreground/80'
               }`}>
                 {teamA.name}
               </h2>
@@ -439,18 +439,18 @@ export default function MatchPage() {
                   initial={{ scale: 1.3, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className={`match-score font-headline text-4xl sm:text-5xl lg:text-6xl font-black tabular-nums ${
-                    teamAWinning && match.status !== 'UPCOMING' ? 'text-blue-400' : 'text-white'
+                    teamAWinning && match.status !== 'UPCOMING' ? 'text-blue-400' : 'text-foreground'
                   }`}
                 >
                   {match.teamAScore}
                 </motion.span>
-                <span className="text-xl sm:text-2xl text-white/15 font-light select-none">:</span>
+                <span className="text-xl sm:text-2xl text-foreground/15 font-light select-none">:</span>
                 <motion.span
                   key={`b-${match.teamBScore}`}
                   initial={{ scale: 1.3, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className={`match-score font-headline text-4xl sm:text-5xl lg:text-6xl font-black tabular-nums ${
-                    teamBWinning && match.status !== 'UPCOMING' ? 'text-rose-400' : 'text-white'
+                    teamBWinning && match.status !== 'UPCOMING' ? 'text-rose-400' : 'text-foreground'
                   }`}
                 >
                   {match.teamBScore}
@@ -458,12 +458,12 @@ export default function MatchPage() {
               </div>
 
               {cricketScore && cricketScore.teamA && (
-                <div className="flex flex-col items-center gap-1 mt-1 font-mono text-xs sm:text-sm text-white/40">
+                <div className="flex flex-col items-center gap-1 mt-1 font-mono text-xs sm:text-sm text-foreground/40">
                   <p>
-                    <span className="text-blue-400">{cricketScore.teamA.runs}/{cricketScore.teamA.wickets ?? 0}</span> <span className="text-white/20">({cricketScore.teamA.overs ?? 0}v)</span>
+                    <span className="text-blue-400">{cricketScore.teamA.runs}/{cricketScore.teamA.wickets ?? 0}</span> <span className="text-foreground/20">({cricketScore.teamA.overs ?? 0}v)</span>
                   </p>
                   <p>
-                    <span className="text-rose-400">{cricketScore.teamB.runs}/{cricketScore.teamB.wickets ?? 0}</span> <span className="text-white/20">({cricketScore.teamB.overs ?? 0}v)</span>
+                    <span className="text-rose-400">{cricketScore.teamB.runs}/{cricketScore.teamB.wickets ?? 0}</span> <span className="text-foreground/20">({cricketScore.teamB.overs ?? 0}v)</span>
                   </p>
                 </div>
               )}
@@ -478,12 +478,12 @@ export default function MatchPage() {
             {/* Team B */}
             <div className="flex flex-col items-center gap-2">
               <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl font-black transition-all duration-500 ${
-                teamBWinning ? 'bg-rose-500/15 text-rose-400 ring-2 ring-rose-500/20' : 'bg-white/[0.04] text-white/50'
+                teamBWinning ? 'bg-rose-500/15 text-rose-400 ring-2 ring-rose-500/20' : 'bg-foreground/[0.04] text-foreground/50'
               }`}>
                 {teamB.name.charAt(0)}
               </div>
               <h2 className={`font-headline text-sm sm:text-lg md:text-xl font-bold text-center leading-tight transition-colors ${
-                teamBWinning && match.status !== 'UPCOMING' ? 'text-rose-400' : 'text-white/80'
+                teamBWinning && match.status !== 'UPCOMING' ? 'text-rose-400' : 'text-foreground/80'
               }`}>
                 {teamB.name}
               </h2>
@@ -491,7 +491,7 @@ export default function MatchPage() {
           </div>
 
           {/* ── Match meta row ── */}
-          <div className="flex items-center justify-center gap-3 sm:gap-5 mt-5 sm:mt-6 text-xs text-white/30 flex-wrap">
+          <div className="flex items-center justify-center gap-3 sm:gap-5 mt-5 sm:mt-6 text-xs text-foreground/30 flex-wrap">
             {match.venue && (
               <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {match.venue}</span>
             )}
@@ -506,7 +506,7 @@ export default function MatchPage() {
           {/* Admin recalc */}
           {isAdmin && (
             <div className="flex justify-center mt-4">
-              <Button onClick={handleRecalculate} size="sm" variant="outline" className="text-xs border-white/10 text-white/50 hover:text-white h-8">
+              <Button onClick={handleRecalculate} size="sm" variant="outline" className="text-xs border-foreground/10 text-foreground/50 hover:text-foreground h-8">
                 <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Recalculate
               </Button>
             </div>
@@ -515,22 +515,22 @@ export default function MatchPage() {
       </motion.div>
 
       {/* ═══════════════════════ TAB NAVIGATION ═══════════════════════ */}
-      <div className="match-tab-bar flex items-center gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-6 overflow-x-auto">
+      <div className="match-tab-bar flex items-center gap-1 p-1 rounded-xl bg-foreground/[0.03] border border-foreground/[0.06] mb-6 overflow-x-auto">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`match-tab relative flex-1 min-w-[80px] px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
               activeTab === tab
-                ? 'match-tab-active text-white bg-white/[0.08]'
-                : 'text-white/40 hover:text-white/60 hover:bg-white/[0.03]'
+                ? 'match-tab-active text-foreground bg-foreground/[0.08]'
+                : 'text-foreground/40 hover:text-foreground/60 hover:bg-foreground/[0.03]'
             }`}
           >
             {tab}
             {activeTab === tab && (
               <motion.div
                 layoutId="tab-indicator"
-                className="absolute inset-0 rounded-lg bg-white/[0.06] -z-10"
+                className="absolute inset-0 rounded-lg bg-foreground/[0.06] -z-10"
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
             )}
@@ -552,11 +552,11 @@ export default function MatchPage() {
             <div className="space-y-6">
               {/* Team Stat Comparison */}
               {statBars.length > 0 && (
-                <Card className="glass border-white/[0.06] overflow-hidden">
+                <Card className="glass border-foreground/[0.06] overflow-hidden">
                   <CardHeader className="p-4 sm:p-5 pb-2">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="h-4 w-4 text-emerald-400" />
-                      <CardTitle className="text-sm font-bold text-white/70">Head to Head</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground/70">Head to Head</CardTitle>
                     </div>
                     <div className="flex items-center justify-between mt-2 text-xs font-semibold">
                       <span className="text-blue-400">{teamA.name}</span>
@@ -573,11 +573,11 @@ export default function MatchPage() {
 
               {/* Set Scores */}
               {Array.isArray(match.scoreDetails) && match.scoreDetails.length > 0 && (
-                <Card className="glass border-white/[0.06] overflow-hidden">
+                <Card className="glass border-foreground/[0.06] overflow-hidden">
                   <CardHeader className="p-4 sm:p-5 pb-2">
                     <div className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-amber-400" />
-                      <CardTitle className="text-sm font-bold text-white/70">Set Scores</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground/70">Set Scores</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 sm:p-5 pt-2">
@@ -594,34 +594,34 @@ export default function MatchPage() {
                             className={`relative rounded-xl p-3 sm:p-4 border transition-all ${
                               aWins ? 'border-blue-500/20 bg-blue-500/[0.04]'
                               : bWins ? 'border-rose-500/20 bg-rose-500/[0.04]'
-                              : 'border-white/[0.06] bg-white/[0.02]'
+                              : 'border-foreground/[0.06] bg-foreground/[0.02]'
                             }`}
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-[10px] uppercase tracking-wider text-white/30 font-semibold">Set {set.set}</span>
+                              <span className="text-[10px] uppercase tracking-wider text-foreground/30 font-semibold">Set {set.set}</span>
                               {isAdmin && (
                                 isEditingThis ? (
                                   <div className="flex gap-1">
-                                    <Button size="icon" variant="ghost" className="h-5 w-5 text-white/30" onClick={handleCancelEditSet}><X className="h-3 w-3" /></Button>
+                                    <Button size="icon" variant="ghost" className="h-5 w-5 text-foreground/30" onClick={handleCancelEditSet}><X className="h-3 w-3" /></Button>
                                     <Button size="icon" variant="ghost" className="h-5 w-5 text-emerald-400" onClick={handleSaveSet}><Save className="h-3 w-3" /></Button>
                                   </div>
                                 ) : (
-                                  <Button size="icon" variant="ghost" className="h-5 w-5 text-white/20" onClick={() => handleEditSet(set)}><Edit className="h-3 w-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-5 w-5 text-foreground/20" onClick={() => handleEditSet(set)}><Edit className="h-3 w-3" /></Button>
                                 )
                               )}
                             </div>
 
                             {isEditingThis && editingSet ? (
                               <div className="flex items-center gap-1.5">
-                                <Input type="number" value={editingSet.teamAScore} onChange={(e) => setEditingSet({ ...editingSet, teamAScore: Number(e.target.value) })} className="w-full h-8 text-sm text-center bg-white/[0.04] border-white/10" />
-                                <span className="text-white/20 text-xs">-</span>
-                                <Input type="number" value={editingSet.teamBScore} onChange={(e) => setEditingSet({ ...editingSet, teamBScore: Number(e.target.value) })} className="w-full h-8 text-sm text-center bg-white/[0.04] border-white/10" />
+                                <Input type="number" value={editingSet.teamAScore} onChange={(e) => setEditingSet({ ...editingSet, teamAScore: Number(e.target.value) })} className="w-full h-8 text-sm text-center bg-foreground/[0.04] border-foreground/10" />
+                                <span className="text-foreground/20 text-xs">-</span>
+                                <Input type="number" value={editingSet.teamBScore} onChange={(e) => setEditingSet({ ...editingSet, teamBScore: Number(e.target.value) })} className="w-full h-8 text-sm text-center bg-foreground/[0.04] border-foreground/10" />
                               </div>
                             ) : (
                               <div className="flex items-baseline justify-center gap-2">
-                                <span className={`font-mono text-2xl sm:text-3xl font-black ${aWins ? 'text-blue-400' : 'text-white/50'}`}>{set.teamAScore}</span>
-                                <span className="text-white/10 text-lg">-</span>
-                                <span className={`font-mono text-2xl sm:text-3xl font-black ${bWins ? 'text-rose-400' : 'text-white/50'}`}>{set.teamBScore}</span>
+                                <span className={`font-mono text-2xl sm:text-3xl font-black ${aWins ? 'text-blue-400' : 'text-foreground/50'}`}>{set.teamAScore}</span>
+                                <span className="text-foreground/10 text-lg">-</span>
+                                <span className={`font-mono text-2xl sm:text-3xl font-black ${bWins ? 'text-rose-400' : 'text-foreground/50'}`}>{set.teamBScore}</span>
                               </div>
                             )}
                           </motion.div>
@@ -634,34 +634,34 @@ export default function MatchPage() {
 
               {/* Match Details + Insights */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                <Card className="glass border-white/[0.06]">
+                <Card className="glass border-foreground/[0.06]">
                   <CardHeader className="p-4 sm:p-5 pb-2">
                     <div className="flex items-center gap-2">
-                      <Info className="h-4 w-4 text-white/40" />
-                      <CardTitle className="text-sm font-bold text-white/70">Match Details</CardTitle>
+                      <Info className="h-4 w-4 text-foreground/40" />
+                      <CardTitle className="text-sm font-bold text-foreground/70">Match Details</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 sm:p-5 pt-2 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="rounded-lg bg-white/[0.02] p-3 border border-white/[0.04]">
-                        <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Date</p>
-                        <p className="text-sm font-semibold text-white/70">{new Date(match.startTime).toLocaleDateString()}</p>
+                      <div className="rounded-lg bg-foreground/[0.02] p-3 border border-foreground/[0.04]">
+                        <p className="text-[10px] uppercase tracking-wider text-foreground/30 mb-1">Date</p>
+                        <p className="text-sm font-semibold text-foreground/70">{new Date(match.startTime).toLocaleDateString()}</p>
                       </div>
-                      <div className="rounded-lg bg-white/[0.02] p-3 border border-white/[0.04]">
-                        <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Time</p>
-                        <p className="text-sm font-semibold text-white/70">{new Date(match.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      <div className="rounded-lg bg-foreground/[0.02] p-3 border border-foreground/[0.04]">
+                        <p className="text-[10px] uppercase tracking-wider text-foreground/30 mb-1">Time</p>
+                        <p className="text-sm font-semibold text-foreground/70">{new Date(match.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </div>
                     </div>
                     {match.venue && (
-                      <div className="rounded-lg bg-white/[0.02] p-3 border border-white/[0.04]">
-                        <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Venue</p>
-                        <p className="text-sm font-semibold text-white/70">{match.venue}</p>
+                      <div className="rounded-lg bg-foreground/[0.02] p-3 border border-foreground/[0.04]">
+                        <p className="text-[10px] uppercase tracking-wider text-foreground/30 mb-1">Venue</p>
+                        <p className="text-sm font-semibold text-foreground/70">{match.venue}</p>
                       </div>
                     )}
                     {match.details && (
-                      <div className="rounded-lg bg-white/[0.02] p-3 border border-white/[0.04]">
-                        <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Details</p>
-                        <p className="text-sm text-white/60">{match.details}</p>
+                      <div className="rounded-lg bg-foreground/[0.02] p-3 border border-foreground/[0.04]">
+                        <p className="text-[10px] uppercase tracking-wider text-foreground/30 mb-1">Details</p>
+                        <p className="text-sm text-foreground/60">{match.details}</p>
                       </div>
                     )}
                   </CardContent>
@@ -680,30 +680,30 @@ export default function MatchPage() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-3 h-3 rounded-full bg-blue-500" />
-                  <h3 className="text-sm font-bold text-white/70">{teamA.name}</h3>
-                  <Badge variant="outline" className="text-[10px] border-white/10 text-white/30">{teamAPlayers.length} players</Badge>
+                  <h3 className="text-sm font-bold text-foreground/70">{teamA.name}</h3>
+                  <Badge variant="outline" className="text-[10px] border-foreground/10 text-foreground/30">{teamAPlayers.length} players</Badge>
                 </div>
                 {teamAPlayers.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {teamAPlayers.map((p) => renderPlayerCard(p, 'A'))}
                   </div>
                 ) : (
-                  <p className="text-xs text-white/20 py-6 text-center">No player data available</p>
+                  <p className="text-xs text-foreground/20 py-6 text-center">No player data available</p>
                 )}
               </div>
 
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-3 h-3 rounded-full bg-rose-500" />
-                  <h3 className="text-sm font-bold text-white/70">{teamB.name}</h3>
-                  <Badge variant="outline" className="text-[10px] border-white/10 text-white/30">{teamBPlayers.length} players</Badge>
+                  <h3 className="text-sm font-bold text-foreground/70">{teamB.name}</h3>
+                  <Badge variant="outline" className="text-[10px] border-foreground/10 text-foreground/30">{teamBPlayers.length} players</Badge>
                 </div>
                 {teamBPlayers.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {teamBPlayers.map((p) => renderPlayerCard(p, 'B'))}
                   </div>
                 ) : (
-                  <p className="text-xs text-white/20 py-6 text-center">No player data available</p>
+                  <p className="text-xs text-foreground/20 py-6 text-center">No player data available</p>
                 )}
               </div>
 

@@ -255,7 +255,7 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
       onClick={startTour}
       variant="outline"
       size="sm"
-      className="gap-2 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all"
+      className="gap-2 border-foreground/10 hover:bg-foreground/10 hover:border-foreground/20 text-foreground/70 hover:text-foreground transition-all"
     >
       <Compass className="h-4 w-4" />
       <span>Take a Tour</span>
@@ -328,9 +328,9 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                 style={getTooltipStyle()}
                 onClick={e => e.stopPropagation()}
               >
-                <div className="rounded-xl border border-white/15 bg-[#1a1a1a]/95 backdrop-blur-xl shadow-2xl shadow-black/50 overflow-hidden">
+                <div className="rounded-xl border border-foreground/15 bg-[#1a1a1a]/95 backdrop-blur-xl shadow-2xl shadow-black/50 overflow-hidden">
                   {/* Progress bar */}
-                  <div className="h-1 bg-white/5">
+                  <div className="h-1 bg-foreground/5">
                     <motion.div
                       className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
                       initial={{ width: 0 }}
@@ -346,13 +346,13 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         {step.icon}
-                        <span className="text-xs font-semibold tracking-widest text-white/40 uppercase">
+                        <span className="text-xs font-semibold tracking-widest text-foreground/40 uppercase">
                           Step {currentStep + 1} of {TOUR_STEPS.length}
                         </span>
                       </div>
                       <button
                         onClick={() => endTour(false)}
-                        className="p-1 rounded-md hover:bg-white/10 text-white/40 hover:text-white/70 transition-colors"
+                        className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground/70 transition-colors"
                         aria-label="Close tour"
                       >
                         <X className="h-4 w-4" />
@@ -360,12 +360,12 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-lg font-bold text-white/90 mb-2 font-headline">
+                    <h3 className="text-lg font-bold text-foreground/90 mb-2 font-headline">
                       {step.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-sm text-white/60 leading-relaxed mb-5">
+                    <p className="text-sm text-foreground/60 leading-relaxed mb-5">
                       {step.description}
                     </p>
 
@@ -373,7 +373,7 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                     <div className="flex items-center justify-between">
                       <button
                         onClick={() => endTour(false)}
-                        className="text-xs text-white/30 hover:text-white/60 transition-colors font-medium"
+                        className="text-xs text-foreground/30 hover:text-foreground/60 transition-colors font-medium"
                       >
                         Skip Tour
                       </button>
@@ -388,8 +388,8 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                                 i === currentStep
                                   ? 'w-4 bg-purple-400'
                                   : i < currentStep
-                                  ? 'w-1.5 bg-white/30'
-                                  : 'w-1.5 bg-white/10'
+                                  ? 'w-1.5 bg-foreground/30'
+                                  : 'w-1.5 bg-foreground/10'
                               }`}
                             />
                           ))}
@@ -400,7 +400,7 @@ export function AdminTour({ autoStart = true, onComplete }: AdminTourProps) {
                             variant="ghost"
                             size="sm"
                             onClick={prevStep}
-                            className="h-8 px-3 text-white/60 hover:text-white hover:bg-white/10"
+                            className="h-8 px-3 text-foreground/60 hover:text-foreground hover:bg-foreground/10"
                           >
                             <ChevronLeft className="h-4 w-4 mr-1" />
                             Back

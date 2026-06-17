@@ -220,19 +220,19 @@ export const AdminManagement = memo(function AdminManagement() {
   const pendingInvites = invites.filter((i) => i.status === 'pending');
 
   return (
-    <Card className="glass-strong border-white/10 hover:border-white/20 transition-all overflow-hidden">
+    <Card className="glass-strong border-foreground/10 hover:border-foreground/20 transition-all overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-500/50 via-orange-500/50 to-red-500/50" />
       <CardHeader className="pb-4 space-y-2 p-4 sm:p-6">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="p-2 sm:p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
             <Shield className="h-4 sm:h-5 w-4 sm:w-5 text-amber-400" />
           </div>
-          <CardTitle className="font-headline text-xl sm:text-2xl font-bold text-white/95">Admin Management</CardTitle>
-          <Badge variant="secondary" className="text-[10px] ml-auto bg-white/5 text-white/50">
+          <CardTitle className="font-headline text-xl sm:text-2xl font-bold text-foreground/95">Admin Management</CardTitle>
+          <Badge variant="secondary" className="text-[10px] ml-auto bg-foreground/5 text-foreground/50">
             {admins.length} admin{admins.length !== 1 ? 's' : ''}
           </Badge>
         </div>
-        <CardDescription className="text-white/50 text-xs sm:text-sm">
+        <CardDescription className="text-foreground/50 text-xs sm:text-sm">
           Send email invitations to grant admin access. Invitees will receive a Gmail with an accept link.
         </CardDescription>
       </CardHeader>
@@ -244,7 +244,7 @@ export const AdminManagement = memo(function AdminManagement() {
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
-            className="bg-white/5 border-white/10 text-white placeholder:text-white/20 flex-1"
+            className="bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 flex-1"
             type="email"
           />
           <Input
@@ -252,7 +252,7 @@ export const AdminManagement = memo(function AdminManagement() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
-            className="bg-white/5 border-white/10 text-white placeholder:text-white/20 sm:w-40"
+            className="bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 sm:w-40"
           />
           <Button
             onClick={handleInvite}
@@ -266,14 +266,14 @@ export const AdminManagement = memo(function AdminManagement() {
 
         {/* Tabs: Current Admins & Pending Invites */}
         <Tabs defaultValue="admins" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
-            <TabsTrigger value="admins" className="data-[state=active]:bg-white/10 text-xs sm:text-sm">
+          <TabsList className="grid w-full grid-cols-2 bg-foreground/5 border border-foreground/10">
+            <TabsTrigger value="admins" className="data-[state=active]:bg-foreground/10 text-xs sm:text-sm">
               Active Admins ({admins.length})
             </TabsTrigger>
-            <TabsTrigger value="invites" className="data-[state=active]:bg-white/10 text-xs sm:text-sm relative">
+            <TabsTrigger value="invites" className="data-[state=active]:bg-foreground/10 text-xs sm:text-sm relative">
               Invitations ({invites.length})
               {pendingInvites.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-amber-500 text-[9px] text-black font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-amber-500 text-[9px] text-background font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {pendingInvites.length}
                 </span>
               )}
@@ -283,7 +283,7 @@ export const AdminManagement = memo(function AdminManagement() {
           {/* Active Admins Tab */}
           <TabsContent value="admins" className="mt-3 space-y-2">
             {admins.length === 0 ? (
-              <div className="text-center py-8 text-white/20 text-sm">
+              <div className="text-center py-8 text-foreground/20 text-sm">
                 <Shield className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 No admins configured yet. Send an invite above.
               </div>
@@ -291,7 +291,7 @@ export const AdminManagement = memo(function AdminManagement() {
               admins.map((admin) => (
                 <div
                   key={admin.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all ${
+                  className={`flex items-center gap-3 p-3 rounded-lg bg-foreground/[0.03] border border-foreground/5 hover:border-foreground/10 transition-all ${
                     deletingId === admin.id ? 'opacity-50' : ''
                   }`}
                 >
@@ -299,10 +299,10 @@ export const AdminManagement = memo(function AdminManagement() {
                     <Mail className="h-4 w-4 text-amber-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white/80 truncate">
+                    <p className="text-sm font-medium text-foreground/80 truncate">
                       {admin.name || admin.email.split('@')[0]}
                     </p>
-                    <p className="text-xs text-white/30 truncate">{admin.email}</p>
+                    <p className="text-xs text-foreground/30 truncate">{admin.email}</p>
                   </div>
 
                   {admin.email === currentGoogleEmail?.toLowerCase() ? (
@@ -316,7 +316,7 @@ export const AdminManagement = memo(function AdminManagement() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 hover:bg-red-500/10 text-white/30 hover:text-red-400 shrink-0"
+                          className="h-8 w-8 hover:bg-red-500/10 text-foreground/30 hover:text-red-400 shrink-0"
                           disabled={deletingId === admin.id}
                         >
                           {deletingId === admin.id ? (
@@ -326,15 +326,15 @@ export const AdminManagement = memo(function AdminManagement() {
                           )}
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent className="glass-strong border-white/10">
+                      <AlertDialogContent className="glass-strong border-foreground/10">
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="text-white/90">Remove Admin?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-white/60">
+                          <AlertDialogTitle className="text-foreground/90">Remove Admin?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-foreground/60">
                             <strong>{admin.email}</strong> will lose all admin access immediately.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel className="border-white/10 hover:bg-white/10">Cancel</AlertDialogCancel>
+                          <AlertDialogCancel className="border-foreground/10 hover:bg-foreground/10">Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-600 hover:bg-red-500"
                             onClick={() => handleRevoke(admin.id, admin.email)}
@@ -353,7 +353,7 @@ export const AdminManagement = memo(function AdminManagement() {
           {/* Invitations Tab */}
           <TabsContent value="invites" className="mt-3 space-y-2">
             {invites.length === 0 ? (
-              <div className="text-center py-8 text-white/20 text-sm">
+              <div className="text-center py-8 text-foreground/20 text-sm">
                 <Send className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 No invitations sent yet. Use the form above to invite admins.
               </div>
@@ -361,7 +361,7 @@ export const AdminManagement = memo(function AdminManagement() {
               invites.map((invite) => (
                 <div
                   key={invite.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all ${
+                  className={`flex items-center gap-3 p-3 rounded-lg bg-foreground/[0.03] border border-foreground/5 hover:border-foreground/10 transition-all ${
                     cancellingId === invite.id ? 'opacity-50' : ''
                   }`}
                 >
@@ -378,11 +378,11 @@ export const AdminManagement = memo(function AdminManagement() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white/80 truncate">
+                    <p className="text-sm font-medium text-foreground/80 truncate">
                       {invite.name || invite.email.split('@')[0]}
                     </p>
-                    <p className="text-xs text-white/30 truncate">{invite.email}</p>
-                    <p className="text-[10px] text-white/20 mt-0.5">
+                    <p className="text-xs text-foreground/30 truncate">{invite.email}</p>
+                    <p className="text-[10px] text-foreground/20 mt-0.5">
                       Invited by {invite.invitedByName || invite.invitedBy}
                     </p>
                   </div>
@@ -407,7 +407,7 @@ export const AdminManagement = memo(function AdminManagement() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 hover:bg-red-500/10 text-white/30 hover:text-red-400 shrink-0"
+                          className="h-8 w-8 hover:bg-red-500/10 text-foreground/30 hover:text-red-400 shrink-0"
                           disabled={cancellingId === invite.id}
                         >
                           {cancellingId === invite.id ? (
@@ -417,15 +417,15 @@ export const AdminManagement = memo(function AdminManagement() {
                           )}
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent className="glass-strong border-white/10">
+                      <AlertDialogContent className="glass-strong border-foreground/10">
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="text-white/90">Cancel Invite?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-white/60">
+                          <AlertDialogTitle className="text-foreground/90">Cancel Invite?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-foreground/60">
                             The invitation for <strong>{invite.email}</strong> will be revoked.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel className="border-white/10 hover:bg-white/10">Keep</AlertDialogCancel>
+                          <AlertDialogCancel className="border-foreground/10 hover:bg-foreground/10">Keep</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-600 hover:bg-red-500"
                             onClick={() => handleCancelInvite(invite.id, invite.email)}
@@ -442,7 +442,7 @@ export const AdminManagement = memo(function AdminManagement() {
           </TabsContent>
         </Tabs>
 
-        <p className="text-[11px] text-white/15 mt-2">
+        <p className="text-[11px] text-foreground/15 mt-2">
           Invited users will receive a Gmail with an accept link. Once they accept, they&apos;ll gain admin access.
         </p>
       </CardContent>
