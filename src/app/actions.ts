@@ -41,24 +41,38 @@ export async function predictMatchWinner(input: MatchPredictionInput): Promise<{
            const { firestore } = firebaseServices;
            const matchesRef = collection(firestore, 'matches');
            
-           // We fetch all completed matches involving either team A or team B
-           const q = query(
-             matchesRef, 
-             and(
-               where('status', '==', 'COMPLETED'),
-               or(
-                  where('teamAId', 'in', [parsedInput.data.teamAId, parsedInput.data.teamBId]),
-                  where('teamBId', 'in', [parsedInput.data.teamAId, parsedInput.data.teamBId])
-               )
-             )
+           // Fetch matches where Team A or Team B is the primary team
+           const qA = query(matchesRef, 
+              where('status', '==', 'COMPLETED'),
+              where('teamAId', 'in', [parsedInput.data.teamAId, parsedInput.data.teamBId])
+           );
+           
+           // Fetch matches where Team A or Team B is the secondary team
+           const qB = query(matchesRef, 
+              where('status', '==', 'COMPLETED'),
+              where('teamBId', 'in', [parsedInput.data.teamAId, parsedInput.data.teamBId])
            );
 
-           const snapshot = await getDocs(q);
-           const pastMatches: Match[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Match));
+           const [snapA, snapB] = await Promise.all([getDocs(qA), getDocs(qB)]);
+           
+           const pastMatchesMap = new Map<string, Match>();
+           snapA.docs.forEach(doc => pastMatchesMap.set(doc.id, { id: doc.id, ...doc.data() } as Match));
+           snapB.docs.forEach(doc => pastMatchesMap.set(doc.id, { id: doc.id, ...doc.data() } as Match));
+           
+           const pastMatches = Array.from(pastMatchesMap.values());
 
            if (pastMatches.length > 0) {
               const formattedMatches = pastMatches.map(m => {
-                 return `- ${m.sport} Match: ${m.teamAScore} to ${m.teamBScore} (Date: ${new Date(m.startTime).toLocaleDateString()})`;
+                 let scoreA = m.teamAScore;
+                 let scoreB = m.teamBScore;
+                 
+                 // Handle Cricket dual-innings
+                 if (m.sport === 'Cricket' && m.scoreDetails && typeof (m.scoreDetails as any).teamA?.runs === 'number') {
+                     scoreA = (m.scoreDetails as any).teamA.runs;
+                     scoreB = (m.scoreDetails as any).teamB.runs;
+                 }
+                 
+                 return `- ${m.sport} Match: ${scoreA} to ${scoreB} (Date: ${new Date(m.startTime).toLocaleDateString()})`;
               }).join('\n');
               
               historicalContext = `Recent past completed matches involving these teams:\n${formattedMatches}`;
