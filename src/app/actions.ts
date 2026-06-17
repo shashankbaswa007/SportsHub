@@ -36,12 +36,17 @@ export async function predictMatchWinner(input: MatchPredictionInput): Promise<{
 
     // Retrieval Step: Fetch past completed matches for these teams
     if (parsedInput.data.teamAId && parsedInput.data.teamBId) {
-       const firebaseServices = initializeFirebase();
-       if (firebaseServices) {
-           const { firestore } = firebaseServices;
-           const matchesRef = collection(firestore, 'matches');
-           
-           // Fetch matches where Team A or Team B is the primary team
+       // Initialize Firebase directly on the server to avoid "use client" errors
+       const { initializeApp, getApps, getApp } = await import("firebase/app");
+       const { getFirestore } = await import("firebase/firestore");
+       const { firebaseConfig } = await import("@/firebase/config");
+       
+       const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+       const firestore = getFirestore(app);
+       
+       const matchesRef = collection(firestore, 'matches');
+       
+       // Fetch matches where Team A or Team B is the primary team
            const qA = query(matchesRef, 
               where('status', '==', 'COMPLETED'),
               where('teamAId', 'in', [parsedInput.data.teamAId, parsedInput.data.teamBId])
@@ -77,7 +82,6 @@ export async function predictMatchWinner(input: MatchPredictionInput): Promise<{
               
               historicalContext = `Recent past completed matches involving these teams:\n${formattedMatches}`;
            }
-       }
     }
 
     // Augmentation Step: Pass the context into the Genkit flow

@@ -38,8 +38,8 @@ const cardVariants = {
 export default function AuthenticationPage() {
   return (
     <motion.main 
-      className="relative flex min-h-screen items-center justify-center p-3 sm:p-6 overflow-hidden" 
-      style={{ background: '#0C0C0C' }}
+      className="min-h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-6" 
+      style={{ background: 'var(--background-hex)' }}
       variants={pageVariants}
       initial="hidden"
       animate="visible"

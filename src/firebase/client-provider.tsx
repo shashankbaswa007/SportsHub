@@ -20,7 +20,7 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
   // Before Firebase is ready (SSR + first client render), show a loading shell
   if (!services) {
     return (
-      <div className="min-h-screen bg-[var(--background-hex,#0C0C0C)]" />
+      <div className="min-h-screen bg-background" />
     );
   }
 
