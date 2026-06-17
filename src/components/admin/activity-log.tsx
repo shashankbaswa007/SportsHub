@@ -81,10 +81,10 @@ export const ActivityLog = memo(function ActivityLog({ matches, teamsById }: Act
   };
 
   return (
-    <Card className="glass p-4 sm:p-5 bg-foreground/[0.02] border-foreground/10">
+    <Card className="glass p-4 sm:p-5 bg-white/[0.02] border-white/10">
       <div className="flex items-center gap-2 mb-4">
-        <Clock className="h-4 w-4 text-foreground/40" />
-        <h3 className="font-bold text-foreground/80 text-sm">Recent Activity</h3>
+        <Clock className="h-4 w-4 text-white/40" />
+        <h3 className="font-bold text-white/80 text-sm">Recent Activity</h3>
         <Badge variant="secondary" className="text-[10px] ml-auto">{activities.length}</Badge>
       </div>
 
@@ -93,25 +93,25 @@ export const ActivityLog = memo(function ActivityLog({ matches, teamsById }: Act
           {activities.map((activity, i) => (
             <div
               key={activity.id}
-              className="flex items-start gap-3 p-2 rounded-lg hover:bg-foreground/[0.03] transition-colors group"
+              className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/[0.03] transition-colors group"
             >
               <div className="flex flex-col items-center mt-1">
-                <div className={`p-1 rounded-md bg-foreground/5 ${activity.color}`}>
+                <div className={`p-1 rounded-md bg-white/5 ${activity.color}`}>
                   <activity.icon className="h-3 w-3" />
                 </div>
                 {i < activities.length - 1 && (
-                  <div className="w-px h-6 bg-foreground/5 mt-1" />
+                  <div className="w-px h-6 bg-white/5 mt-1" />
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-foreground/70 group-hover:text-foreground/90 transition-colors">
+                <p className="text-xs font-semibold text-white/70 group-hover:text-white/90 transition-colors">
                   {activity.title}
                 </p>
-                <p className="text-[11px] text-foreground/35 truncate">{activity.subtitle}</p>
+                <p className="text-[11px] text-white/35 truncate">{activity.subtitle}</p>
               </div>
 
-              <span className="text-[10px] text-foreground/20 shrink-0 tabular-nums">
+              <span className="text-[10px] text-white/20 shrink-0 tabular-nums">
                 {formatTime(activity.timestamp)}
               </span>
             </div>

@@ -61,7 +61,7 @@ export const ShareMatchButton = memo(function ShareMatchButton({ match, teamA, t
     <Button
       variant="ghost"
       size="sm"
-      className="h-9 text-foreground/50 hover:text-foreground/80 gap-1.5"
+      className="h-9 text-white/50 hover:text-white/80 gap-1.5"
       onClick={handleShare}
     >
       {copied ? <Check className="h-4 w-4 text-green-400" /> : <Share2 className="h-4 w-4" />}

@@ -12,8 +12,8 @@ export function ConnectionBanner() {
     <div
       className={`fixed top-0 left-0 right-0 z-[100] flex items-center justify-center gap-2 py-2 text-xs font-medium transition-all duration-300 ${
         isOnline
-          ? 'bg-emerald-600/90 text-foreground'
-          : 'bg-red-600/90 text-foreground'
+          ? 'bg-emerald-600/90 text-white'
+          : 'bg-red-600/90 text-white'
       }`}
     >
       {isOnline ? (

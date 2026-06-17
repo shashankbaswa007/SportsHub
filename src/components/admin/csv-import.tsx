@@ -154,10 +154,10 @@ export const CSVImport = memo(function CSVImport() {
     : 0;
 
   return (
-    <Card className="glass p-4 sm:p-5 bg-foreground/[0.02] border-foreground/10">
+    <Card className="glass p-4 sm:p-5 bg-white/[0.02] border-white/10">
       <div className="flex items-center gap-2 mb-4">
-        <Upload className="h-4 w-4 text-foreground/40" />
-        <h3 className="font-bold text-foreground/80 text-sm">Import from CSV</h3>
+        <Upload className="h-4 w-4 text-white/40" />
+        <h3 className="font-bold text-white/80 text-sm">Import from CSV</h3>
       </div>
 
       <div className="space-y-4">
@@ -174,7 +174,7 @@ export const CSVImport = memo(function CSVImport() {
             />
             <Button
               variant="outline"
-              className="w-full border-foreground/10 hover:bg-foreground/10 text-foreground/70 h-10"
+              className="w-full border-white/10 hover:bg-white/10 text-white/70 h-10"
               onClick={() => fileInputRef.current?.click()}
               disabled={importing}
             >
@@ -185,7 +185,7 @@ export const CSVImport = memo(function CSVImport() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-foreground/40 hover:text-foreground/60 text-xs h-10"
+            className="text-white/40 hover:text-white/60 text-xs h-10"
             onClick={handleDownloadTemplate}
           >
             <Download className="h-3.5 w-3.5 mr-1.5" />
@@ -220,17 +220,17 @@ export const CSVImport = memo(function CSVImport() {
               </Badge>
             </div>
 
-            <div className="max-h-48 overflow-y-auto rounded-lg border border-foreground/10 divide-y divide-white/5">
+            <div className="max-h-48 overflow-y-auto rounded-lg border border-white/10 divide-y divide-white/5">
               {preview.slice(0, 20).map((row, i) => (
                 <div key={i} className="flex items-center gap-3 px-3 py-2 text-xs">
-                  <span className="text-foreground/30 w-5 tabular-nums">{i + 1}</span>
-                  <span className="text-foreground/70 flex-1 truncate">{row.playerName}</span>
-                  <span className="text-foreground/50 truncate">{row.teamName}</span>
-                  <Badge variant="outline" className="text-[10px] border-foreground/10 text-foreground/40">{row.sport}</Badge>
+                  <span className="text-white/30 w-5 tabular-nums">{i + 1}</span>
+                  <span className="text-white/70 flex-1 truncate">{row.playerName}</span>
+                  <span className="text-white/50 truncate">{row.teamName}</span>
+                  <Badge variant="outline" className="text-[10px] border-white/10 text-white/40">{row.sport}</Badge>
                 </div>
               ))}
               {preview.length > 20 && (
-                <div className="px-3 py-2 text-xs text-foreground/30 text-center">
+                <div className="px-3 py-2 text-xs text-white/30 text-center">
                   ... {preview.length - 20} more rows
                 </div>
               )}
@@ -238,7 +238,7 @@ export const CSVImport = memo(function CSVImport() {
 
             <div className="flex gap-2">
               <Button
-                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-foreground font-bold h-10"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10"
                 onClick={handleImport}
                 disabled={importing}
               >
@@ -256,7 +256,7 @@ export const CSVImport = memo(function CSVImport() {
               </Button>
               <Button
                 variant="outline"
-                className="border-foreground/10 hover:bg-foreground/10 text-foreground/60 h-10"
+                className="border-white/10 hover:bg-white/10 text-white/60 h-10"
                 onClick={handleCancel}
                 disabled={importing}
               >
@@ -277,8 +277,8 @@ export const CSVImport = memo(function CSVImport() {
         )}
 
         {/* Help text */}
-        <p className="text-[11px] text-foreground/25 leading-relaxed">
-          CSV format: <code className="text-foreground/35">Team,Sport,Player</code> — one player per row.
+        <p className="text-[11px] text-white/25 leading-relaxed">
+          CSV format: <code className="text-white/35">Team,Sport,Player</code> — one player per row.
           Duplicate team names in the same sport will be merged.
         </p>
       </div>

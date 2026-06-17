@@ -64,12 +64,12 @@ export const MatchCountdown = memo(function MatchCountdown({ startTime, compact 
     <div className="flex items-center gap-1.5">
       {units.map(unit => (
         <div key={unit.label} className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-lg bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
             <span className="text-sm font-mono font-bold text-amber-400 tabular-nums">
               {String(unit.value).padStart(2, '0')}
             </span>
           </div>
-          <span className="text-[8px] text-foreground/30 mt-0.5 uppercase tracking-wider">{unit.label}</span>
+          <span className="text-[8px] text-white/30 mt-0.5 uppercase tracking-wider">{unit.label}</span>
         </div>
       ))}
     </div>

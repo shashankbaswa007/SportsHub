@@ -19,16 +19,16 @@ export const QuickActions = memo(function QuickActions({
   liveCount,
 }: QuickActionsProps) {
   return (
-    <Card className="glass p-3 bg-foreground/[0.02] border-foreground/10">
+    <Card className="glass p-3 bg-white/[0.02] border-white/10">
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5 mr-auto">
           <Zap className="h-3.5 w-3.5 text-amber-400" />
-          <span className="text-xs font-semibold text-foreground/50">Quick Actions</span>
+          <span className="text-xs font-semibold text-white/50">Quick Actions</span>
         </div>
 
         <Button
           size="sm"
-          className="h-8 text-xs gap-1.5 bg-foreground/10 hover:bg-foreground/15 text-foreground/80"
+          className="h-8 text-xs gap-1.5 bg-white/10 hover:bg-white/15 text-white/80"
           onClick={onScrollToCreate}
         >
           <Plus className="h-3.5 w-3.5" />
@@ -38,7 +38,7 @@ export const QuickActions = memo(function QuickActions({
         <Button
           size="sm"
           variant="outline"
-          className="h-8 text-xs gap-1.5 border-foreground/10 hover:bg-foreground/10 text-foreground/60"
+          className="h-8 text-xs gap-1.5 border-white/10 hover:bg-white/10 text-white/60"
           onClick={onExport}
         >
           <Download className="h-3.5 w-3.5" />
@@ -55,7 +55,7 @@ export const QuickActions = memo(function QuickActions({
           </div>
         )}
 
-        <div className="text-[11px] text-foreground/25 tabular-nums">
+        <div className="text-[11px] text-white/25 tabular-nums">
           {matchCount} total matches
         </div>
       </div>

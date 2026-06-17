@@ -44,10 +44,10 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="p-4 rounded-full bg-red-500/10">
             <AlertTriangle className="h-8 w-8 text-red-400" />
           </div>
-          <h2 className="text-lg font-bold text-foreground/80">
+          <h2 className="text-lg font-bold text-white/80">
             {this.props.fallbackTitle || 'Something went wrong'}
           </h2>
-          <p className="text-sm text-foreground/40 text-center max-w-md">
+          <p className="text-sm text-white/40 text-center max-w-md">
             {this.state.error?.message || 'An unexpected error occurred. Please try again.'}
           </p>
           <Button
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
               this.handleReset();
               window.location.reload();
             }}
-            className="border-foreground/10 hover:bg-foreground/10 gap-2"
+            className="border-white/10 hover:bg-white/10 gap-2"
           >
             <RefreshCw className="h-4 w-4" />
             Reload Page

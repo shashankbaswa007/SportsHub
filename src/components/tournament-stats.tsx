@@ -77,14 +77,14 @@ function MiniBarChart({
     <div className="space-y-1.5 w-full">
       {data.map(d => (
         <div key={d.label} className="flex items-center gap-2">
-          <span className="text-[10px] text-foreground/40 w-20 truncate text-right shrink-0">{d.label}</span>
-          <div className="flex-1 h-2 bg-foreground/5 rounded-full overflow-hidden">
+          <span className="text-[10px] text-white/40 w-20 truncate text-right shrink-0">{d.label}</span>
+          <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{ width: `${(d.value / max) * 100}%`, background: d.color }}
             />
           </div>
-          <span className="text-[10px] tabular-nums text-foreground/50 w-4 text-right">{d.value}</span>
+          <span className="text-[10px] tabular-nums text-white/50 w-4 text-right">{d.value}</span>
         </div>
       ))}
     </div>
@@ -230,12 +230,12 @@ export function TournamentStats({ className }: TournamentStatsProps) {
   if (stats.totalMatches === 0) {
     return (
       <div className={className}>
-        <div className="rounded-2xl border border-foreground/[0.06] bg-foreground/[0.02] p-10 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-foreground/5 mb-4 animate-pulse">
-            <Trophy className="h-7 w-7 text-foreground/15" />
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/5 mb-4 animate-pulse">
+            <Trophy className="h-7 w-7 text-white/15" />
           </div>
-          <p className="text-foreground/35 font-medium">No tournament data yet</p>
-          <p className="text-foreground/20 text-sm mt-1">Insights will appear once matches are created</p>
+          <p className="text-white/35 font-medium">No tournament data yet</p>
+          <p className="text-white/20 text-sm mt-1">Insights will appear once matches are created</p>
         </div>
       </div>
     );
@@ -251,7 +251,7 @@ export function TournamentStats({ className }: TournamentStatsProps) {
             {/* Gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-600/20 via-orange-600/10 to-transparent" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(251,191,36,0.08),transparent_60%)]" />
-            <div className="relative border border-foreground/[0.08] rounded-2xl p-5 sm:p-6 flex items-center gap-5 backdrop-blur-sm">
+            <div className="relative border border-white/[0.08] rounded-2xl p-5 sm:p-6 flex items-center gap-5 backdrop-blur-sm">
               {/* Donut ring */}
               <div className="relative shrink-0">
                 <DonutRing
@@ -268,25 +268,25 @@ export function TournamentStats({ className }: TournamentStatsProps) {
                 <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px] mb-2">
                   Top Performer
                 </Badge>
-                <p className="text-xl sm:text-2xl font-black text-foreground/90 truncate leading-tight">
+                <p className="text-xl sm:text-2xl font-black text-white/90 truncate leading-tight">
                   {stats.topTeam.name}
                 </p>
                 <div className="flex items-center gap-4 mt-2">
                   <div>
                     <p className="text-2xl font-black tabular-nums text-amber-400">{stats.topTeam.wins}</p>
-                    <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium">Wins</p>
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium">Wins</p>
                   </div>
-                  <div className="h-6 w-px bg-foreground/10" />
+                  <div className="h-6 w-px bg-white/10" />
                   <div>
-                    <p className="text-2xl font-black tabular-nums text-foreground/70">{stats.topTeam.played}</p>
-                    <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium">Played</p>
+                    <p className="text-2xl font-black tabular-nums text-white/70">{stats.topTeam.played}</p>
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium">Played</p>
                   </div>
-                  <div className="h-6 w-px bg-foreground/10" />
+                  <div className="h-6 w-px bg-white/10" />
                   <div>
-                    <p className="text-2xl font-black tabular-nums text-foreground/70">
+                    <p className="text-2xl font-black tabular-nums text-white/70">
                       {stats.topTeam.played > 0 ? Math.round((stats.topTeam.wins / stats.topTeam.played) * 100) : 0}%
                     </p>
-                    <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium">Win Rate</p>
+                    <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium">Win Rate</p>
                   </div>
                 </div>
               </div>
@@ -296,7 +296,7 @@ export function TournamentStats({ className }: TournamentStatsProps) {
           /* Fallback if no wins yet — total matches card spans 2 */
           <div className="sm:col-span-2 relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.01]">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-violet-600/10 to-transparent" />
-            <div className="relative border border-foreground/[0.08] rounded-2xl p-5 sm:p-6 flex items-center gap-5 backdrop-blur-sm">
+            <div className="relative border border-white/[0.08] rounded-2xl p-5 sm:p-6 flex items-center gap-5 backdrop-blur-sm">
               <div className="relative shrink-0">
                 <DonutRing percent={stats.completionRate} size={80} strokeWidth={7} />
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -307,10 +307,10 @@ export function TournamentStats({ className }: TournamentStatsProps) {
                 <Badge className="bg-violet-500/10 text-violet-400 border-violet-500/20 text-[10px] mb-2">
                   Tournament
                 </Badge>
-                <p className="text-xl sm:text-2xl font-black text-foreground/90 leading-tight">
+                <p className="text-xl sm:text-2xl font-black text-white/90 leading-tight">
                   {stats.totalMatches} Matches Scheduled
                 </p>
-                <p className="text-sm text-foreground/40 mt-1">{stats.completionRate}% completed so far</p>
+                <p className="text-sm text-white/40 mt-1">{stats.completionRate}% completed so far</p>
               </div>
             </div>
           </div>
@@ -319,22 +319,22 @@ export function TournamentStats({ className }: TournamentStatsProps) {
         {/* ──────── 2 · Completion Progress ──────── */}
         <div className="relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-transparent" />
-          <div className="relative border border-foreground/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
+          <div className="relative border border-white/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
             <div className="flex items-center justify-between mb-3">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
               <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">Progress</Badge>
             </div>
             <div className="flex items-end gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground/90">{stats.completionRate}%</p>
-                <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium mt-1">Complete</p>
+                <p className="text-3xl sm:text-4xl font-black tabular-nums text-white/90">{stats.completionRate}%</p>
+                <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium mt-1">Complete</p>
               </div>
               <div className="shrink-0">
                 <DonutRing percent={stats.completionRate} size={48} strokeWidth={5} color="#34d399" />
               </div>
             </div>
             {/* Segmented bar */}
-            <div className="mt-3 flex gap-0.5 h-1.5 rounded-full overflow-hidden bg-foreground/5">
+            <div className="mt-3 flex gap-0.5 h-1.5 rounded-full overflow-hidden bg-white/5">
               <div
                 className="bg-emerald-500 transition-all duration-700 rounded-l-full"
                 style={{ width: `${stats.totalMatches > 0 ? (stats.completedCount / stats.totalMatches) * 100 : 0}%` }}
@@ -347,10 +347,10 @@ export function TournamentStats({ className }: TournamentStatsProps) {
               />
             </div>
             <div className="flex items-center gap-3 mt-1.5">
-              <span className="flex items-center gap-1 text-[10px] text-foreground/30">
+              <span className="flex items-center gap-1 text-[10px] text-white/30">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Done
               </span>
-              <span className="flex items-center gap-1 text-[10px] text-foreground/30">
+              <span className="flex items-center gap-1 text-[10px] text-white/30">
                 <span className="h-1.5 w-1.5 rounded-full bg-red-500/60" /> Live
               </span>
             </div>
@@ -360,23 +360,23 @@ export function TournamentStats({ className }: TournamentStatsProps) {
         {/* ──────── 3 · Total Points Scored ──────── */}
         <div className="relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 to-transparent" />
-          <div className="relative border border-foreground/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
+          <div className="relative border border-white/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
             <div className="flex items-center justify-between mb-3">
               <Target className="h-4 w-4 text-rose-400" />
               <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/20 text-[10px]">Scoring</Badge>
             </div>
-            <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground/90">{stats.totalGoals}</p>
-            <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium mt-0.5">Total Points</p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-foreground/40">
+            <p className="text-3xl sm:text-4xl font-black tabular-nums text-white/90">{stats.totalGoals}</p>
+            <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium mt-0.5">Total Points</p>
+            <div className="mt-3 flex items-center gap-2 text-xs text-white/40">
               <Zap className="h-3 w-3 text-rose-400/60" />
               <span className="tabular-nums">{stats.avgPerMatch} avg per match</span>
             </div>
             {stats.highestMatch && (
-              <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-foreground/[0.03] border border-foreground/[0.06]">
-                <p className="text-[10px] text-foreground/25 uppercase tracking-wider mb-0.5">Highest Scoring</p>
+              <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-[10px] text-white/25 uppercase tracking-wider mb-0.5">Highest Scoring</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-foreground/50 font-medium truncate">{stats.highestMatch.sport}</span>
-                  <span className="text-xs tabular-nums font-bold text-foreground/70">
+                  <span className="text-xs text-white/50 font-medium truncate">{stats.highestMatch.sport}</span>
+                  <span className="text-xs tabular-nums font-bold text-white/70">
                     {stats.highestMatch.teamAScore} - {stats.highestMatch.teamBScore}
                   </span>
                 </div>
@@ -389,11 +389,11 @@ export function TournamentStats({ className }: TournamentStatsProps) {
         {stats.sportDistribution.length > 0 && (
           <div className="sm:col-span-2 relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.01]">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-600/10 to-transparent" />
-            <div className="relative border border-foreground/[0.08] rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
+            <div className="relative border border-white/[0.08] rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Swords className="h-4 w-4 text-violet-400" />
-                  <span className="text-xs font-semibold text-foreground/60">Sport Distribution</span>
+                  <span className="text-xs font-semibold text-white/60">Sport Distribution</span>
                 </div>
                 <Badge className="bg-violet-500/10 text-violet-400 border-violet-500/20 text-[10px]">
                   {stats.sportDistribution.length} Sports
@@ -407,20 +407,20 @@ export function TournamentStats({ className }: TournamentStatsProps) {
         {/* ──────── 5 · Players & Teams ──────── */}
         <div className="relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 to-transparent" />
-          <div className="relative border border-foreground/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
+          <div className="relative border border-white/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
             <div className="flex items-center justify-between mb-3">
               <Users className="h-4 w-4 text-cyan-400" />
               <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 text-[10px]">Athletes</Badge>
             </div>
             <div className="flex items-end gap-4">
               <div>
-                <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground/90">{stats.totalPlayers}</p>
-                <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium mt-0.5">Players</p>
+                <p className="text-3xl sm:text-4xl font-black tabular-nums text-white/90">{stats.totalPlayers}</p>
+                <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium mt-0.5">Players</p>
               </div>
-              <div className="h-6 w-px bg-foreground/10" />
+              <div className="h-6 w-px bg-white/10" />
               <div>
-                <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground/60">{stats.totalTeams}</p>
-                <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium mt-0.5">Teams</p>
+                <p className="text-3xl sm:text-4xl font-black tabular-nums text-white/60">{stats.totalTeams}</p>
+                <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium mt-0.5">Teams</p>
               </div>
             </div>
           </div>
@@ -430,17 +430,17 @@ export function TournamentStats({ className }: TournamentStatsProps) {
         {stats.mostActiveSport && (
           <div className="relative rounded-2xl overflow-hidden group transition-transform duration-300 hover:scale-[1.02]">
             <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 to-transparent" />
-            <div className="relative border border-foreground/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
+            <div className="relative border border-white/[0.08] rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-between backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
                 <Flame className="h-4 w-4 text-pink-400" />
                 <Badge className="bg-pink-500/10 text-pink-400 border-pink-500/20 text-[10px]">Popular</Badge>
               </div>
-              <p className="text-lg sm:text-xl font-black text-foreground/90 truncate leading-tight">{stats.mostActiveSport[0]}</p>
-              <p className="text-[10px] text-foreground/35 uppercase tracking-wider font-medium mt-0.5">
+              <p className="text-lg sm:text-xl font-black text-white/90 truncate leading-tight">{stats.mostActiveSport[0]}</p>
+              <p className="text-[10px] text-white/35 uppercase tracking-wider font-medium mt-0.5">
                 {stats.mostActiveSport[1]} matches
               </p>
               {/* Inline sparkle bar relative to total */}
-              <div className="mt-3 h-1.5 rounded-full overflow-hidden bg-foreground/5">
+              <div className="mt-3 h-1.5 rounded-full overflow-hidden bg-white/5">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-400 transition-all duration-700"
                   style={{
@@ -456,11 +456,11 @@ export function TournamentStats({ className }: TournamentStatsProps) {
       {/* ──────── Smart Insight Pills ──────── */}
       {stats.insights.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-foreground/20 mt-1 shrink-0" />
+          <Sparkles className="h-3.5 w-3.5 text-white/20 mt-1 shrink-0" />
           {stats.insights.map((insight, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground/[0.03] border border-foreground/[0.06] text-xs text-foreground/50 transition-colors hover:bg-foreground/[0.06] hover:text-foreground/70"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs text-white/50 transition-colors hover:bg-white/[0.06] hover:text-white/70"
             >
               <span className={insight.color}>{insight.icon}</span>
               {insight.text}

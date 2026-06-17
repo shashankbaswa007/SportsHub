@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
       case 3:
         return <Award className="h-6 w-6 text-amber-600" />;
       default:
-        return <span className="h-6 w-6 flex items-center justify-center font-bold text-foreground/40">{rank}</span>;
+        return <span className="h-6 w-6 flex items-center justify-center font-bold text-white/40">{rank}</span>;
     }
   };
 
@@ -83,7 +83,7 @@ export default function LeaderboardPage() {
   if (loading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-foreground/20" />
+        <Loader2 className="h-10 w-10 animate-spin text-white/20" />
       </div>
     );
   }
@@ -125,7 +125,7 @@ export default function LeaderboardPage() {
               teamNames={teamNameMap}
             />
           </div>
-          <p className="text-foreground/60 text-sm sm:text-base lg:text-lg">
+          <p className="text-white/60 text-sm sm:text-base lg:text-lg">
             Team rankings and standings across all sports competitions
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function LeaderboardPage() {
       <Tabs value={selectedSport} onValueChange={(value) => setSelectedSport(value as SportName)}>
         {/* Premium Sport Tabs */}
         <motion.div variants={contentVariants}>
-          <TabsList className="inline-flex h-auto flex-nowrap sm:flex-wrap gap-1.5 sm:gap-2 bg-foreground/5 backdrop-blur-md border border-foreground/10 p-1.5 sm:p-2 w-full justify-start rounded-xl overflow-x-auto sm:overflow-x-visible">
+          <TabsList className="inline-flex h-auto flex-nowrap sm:flex-wrap gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md border border-white/10 p-1.5 sm:p-2 w-full justify-start rounded-xl overflow-x-auto sm:overflow-x-visible">
             {sports.map(sport => {
               const sportAccent = (sportAccents[sport] || sportAccents['Football'])!;
               const isActive = selectedSport === sport;
@@ -146,7 +146,7 @@ export default function LeaderboardPage() {
                   className={`
                     flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg whitespace-nowrap
                     transition-all duration-300
-                    hover:bg-foreground/10
+                    hover:bg-white/10
                     text-xs sm:text-sm
                     ${isActive ? `${sportAccent.bg} border-2 ${sportAccent.border} ${sportAccent.color}` : ''}
                   `}
@@ -187,30 +187,30 @@ export default function LeaderboardPage() {
                         <CardTitle className={`font-headline text-xl sm:text-2xl lg:text-3xl font-black ${accent.color}`}>
                           {sport} Standings
                         </CardTitle>
-                        <p className="text-foreground/50 text-xs sm:text-sm mt-1">Current season rankings</p>
+                        <p className="text-white/50 text-xs sm:text-sm mt-1">Current season rankings</p>
                       </div>
                     </div>
                   </CardHeader>
                   
                   <CardContent className="p-4 sm:p-6 pt-0">
                     {currentLeaderboard.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-foreground/40">
+                      <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-white/40">
                         <Trophy className="h-16 sm:h-20 w-16 sm:w-20 mb-3 sm:mb-4 opacity-10" />
                         <p className="text-base sm:text-lg font-semibold">No completed matches yet</p>
                         <p className="text-xs sm:text-sm">Leaderboard will appear once matches are completed</p>
                       </div>
                     ) : (
-                      <div className="responsive-table rounded-xl border border-foreground/10">
+                      <div className="responsive-table rounded-xl border border-white/10">
                         <Table>
                           <TableHeader>
-                            <TableRow className="hover:bg-transparent border-foreground/10 bg-foreground/5">
-                              <TableHead className="font-bold text-foreground/90 text-xs sm:text-sm">Rank</TableHead>
-                              <TableHead className="font-bold text-foreground/90 text-xs sm:text-sm">Team</TableHead>
-                              <TableHead className="text-center font-bold text-foreground/90 text-xs sm:text-sm">P</TableHead>
-                              <TableHead className="text-center font-bold text-foreground/90 text-xs sm:text-sm">W</TableHead>
-                              <TableHead className="text-center font-bold text-foreground/90 text-xs sm:text-sm">L</TableHead>
-                              <TableHead className="text-center font-bold text-foreground/90 text-xs sm:text-sm">D</TableHead>
-                              <TableHead className="text-center font-bold text-foreground/90 text-xs sm:text-sm">PTS</TableHead>
+                            <TableRow className="hover:bg-transparent border-white/10 bg-white/5">
+                              <TableHead className="font-bold text-white/90 text-xs sm:text-sm">Rank</TableHead>
+                              <TableHead className="font-bold text-white/90 text-xs sm:text-sm">Team</TableHead>
+                              <TableHead className="text-center font-bold text-white/90 text-xs sm:text-sm">P</TableHead>
+                              <TableHead className="text-center font-bold text-white/90 text-xs sm:text-sm">W</TableHead>
+                              <TableHead className="text-center font-bold text-white/90 text-xs sm:text-sm">L</TableHead>
+                              <TableHead className="text-center font-bold text-white/90 text-xs sm:text-sm">D</TableHead>
+                              <TableHead className="text-center font-bold text-white/90 text-xs sm:text-sm">PTS</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -221,7 +221,7 @@ export default function LeaderboardPage() {
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.1, delay: Math.min(index * 0.02, 0.1) }}
                                 className={`
-                                  border-foreground/10 hover:bg-foreground/5 transition-all
+                                  border-white/10 hover:bg-white/5 transition-all
                                   ${item.rank === 1 ? 'bg-yellow-500/10 hover:bg-yellow-500/15' : 
                                     item.rank === 2 ? 'bg-gray-400/5 hover:bg-gray-400/10' : 
                                     item.rank === 3 ? 'bg-amber-600/5 hover:bg-amber-600/10' : ''}
@@ -234,7 +234,7 @@ export default function LeaderboardPage() {
                                 </TableCell>
                                 <TableCell className="text-xs sm:text-sm">
                                   <div className="flex items-center gap-2 sm:gap-3">
-                                    <span className="font-bold text-foreground/95">{item.teamName}</span>
+                                    <span className="font-bold text-white/95">{item.teamName}</span>
                                     {item.rank <= 3 && (
                                       <Badge variant={getRankBadge(item.rank)} className="ml-1 sm:ml-2 text-xs">
                                         {item.rank === 1 ? '👑' : item.rank === 2 ? '🥈' : '🥉'}
@@ -242,7 +242,7 @@ export default function LeaderboardPage() {
                                     )}
                                   </div>
                                 </TableCell>
-                                <TableCell className="text-center text-foreground/70 font-medium text-xs sm:text-sm">
+                                <TableCell className="text-center text-white/70 font-medium text-xs sm:text-sm">
                                   {item.played}
                                 </TableCell>
                                 <TableCell className="text-center">
@@ -255,13 +255,13 @@ export default function LeaderboardPage() {
                                     <span className="font-bold text-red-400 text-xs sm:text-sm">{item.lost}</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className="text-center text-foreground/50 font-medium text-xs sm:text-sm">
+                                <TableCell className="text-center text-white/50 font-medium text-xs sm:text-sm">
                                   {item.drawn}
                                 </TableCell>
                                 <TableCell className="text-center">
                                   <Badge 
                                     variant={item.rank === 1 ? "default" : "outline"} 
-                                    className={`font-black text-sm sm:text-base ${item.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 'border-foreground/20 text-foreground/90'}`}
+                                    className={`font-black text-sm sm:text-base ${item.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 'border-white/20 text-white/90'}`}
                                   >
                                     {item.points}
                                   </Badge>
@@ -276,14 +276,14 @@ export default function LeaderboardPage() {
                 </Card>
 
                 {/* Tournament Bracket */}
-                <Card className="glass-strong border-foreground/10 mt-6 overflow-hidden">
+                <Card className="glass-strong border-white/10 mt-6 overflow-hidden">
                   <div className="h-[2px] bg-gradient-to-r from-white/10 via-white/20 to-white/10" />
                   <CardHeader className="p-4 sm:p-6 pb-3">
-                    <CardTitle className="font-headline text-lg sm:text-xl font-bold text-foreground/90 flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-foreground/40" />
+                    <CardTitle className="font-headline text-lg sm:text-xl font-bold text-white/90 flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-white/40" />
                       Match Bracket
                     </CardTitle>
-                    <p className="text-xs text-foreground/40">All {sport} matches visualized as a bracket</p>
+                    <p className="text-xs text-white/40">All {sport} matches visualized as a bracket</p>
                   </CardHeader>
                   <CardContent className="p-4 sm:p-6 pt-0">
                     <TournamentBracket matches={matches} teamsById={teamsById} sport={sport} />

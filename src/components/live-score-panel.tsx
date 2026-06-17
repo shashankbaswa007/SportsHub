@@ -74,16 +74,16 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
         {/* Header */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-between p-3 hover:bg-foreground/5 transition-colors"
+          className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
         >
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-amber-400" />
-            <span className="text-sm font-bold text-foreground/90">Live Score Panel</span>
+            <span className="text-sm font-bold text-white/90">Live Score Panel</span>
             <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-[10px]">
               ADMIN
             </Badge>
           </div>
-          {collapsed ? <ChevronUp className="h-4 w-4 text-foreground/40" /> : <ChevronDown className="h-4 w-4 text-foreground/40" />}
+          {collapsed ? <ChevronUp className="h-4 w-4 text-white/40" /> : <ChevronDown className="h-4 w-4 text-white/40" />}
         </button>
 
         <AnimatePresence>
@@ -98,7 +98,7 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
               <div className="p-4 pt-0 space-y-4">
                 {/* Status Quick Toggle */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-foreground/40 shrink-0">Status:</span>
+                  <span className="text-xs text-white/40 shrink-0">Status:</span>
                   <div className="flex gap-1.5 flex-1">
                     {(['UPCOMING', 'LIVE', 'COMPLETED'] as MatchStatus[]).map((s) => (
                       <button
@@ -112,7 +112,7 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
                               : s === 'COMPLETED'
                               ? 'bg-green-500/20 text-green-400 border-green-500/40'
                               : 'bg-blue-500/20 text-blue-400 border-blue-500/40'
-                            : 'bg-foreground/5 text-foreground/50 border-foreground/10 hover:bg-foreground/10'
+                            : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'
                         }`}
                       >
                         {s}
@@ -131,19 +131,19 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-9 w-9 border-foreground/10 hover:bg-red-500/20 hover:border-red-500/40"
+                          className="h-9 w-9 border-white/10 hover:bg-red-500/20 hover:border-red-500/40"
                           onClick={() => handleQuickScore('A', -1)}
                           disabled={saving || match.teamAScore <= 0}
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </Button>
                         <div className="flex-1 text-center">
-                          <span className="text-2xl font-black text-foreground tabular-nums">{match.teamAScore}</span>
+                          <span className="text-2xl font-black text-white tabular-nums">{match.teamAScore}</span>
                         </div>
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-9 w-9 border-foreground/10 hover:bg-green-500/20 hover:border-green-500/40"
+                          className="h-9 w-9 border-white/10 hover:bg-green-500/20 hover:border-green-500/40"
                           onClick={() => handleQuickScore('A', 1)}
                           disabled={saving}
                         >
@@ -159,19 +159,19 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-9 w-9 border-foreground/10 hover:bg-red-500/20 hover:border-red-500/40"
+                          className="h-9 w-9 border-white/10 hover:bg-red-500/20 hover:border-red-500/40"
                           onClick={() => handleQuickScore('B', -1)}
                           disabled={saving || match.teamBScore <= 0}
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </Button>
                         <div className="flex-1 text-center">
-                          <span className="text-2xl font-black text-foreground tabular-nums">{match.teamBScore}</span>
+                          <span className="text-2xl font-black text-white tabular-nums">{match.teamBScore}</span>
                         </div>
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-9 w-9 border-foreground/10 hover:bg-green-500/20 hover:border-green-500/40"
+                          className="h-9 w-9 border-white/10 hover:bg-green-500/20 hover:border-green-500/40"
                           onClick={() => handleQuickScore('B', 1)}
                           disabled={saving}
                         >
@@ -186,7 +186,7 @@ export const LiveScorePanel = memo(function LiveScorePanel({ match, teamA, teamB
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full border-foreground/10 hover:bg-foreground/10 text-foreground/70 text-xs"
+                  className="w-full border-white/10 hover:bg-white/10 text-white/70 text-xs"
                   onClick={handleRecalculate}
                   disabled={saving}
                 >

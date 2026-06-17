@@ -158,7 +158,7 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     if (match.status === 'UPCOMING') {
         return (
             <div className="flex flex-col items-center gap-2">
-                <span className="text-3xl sm:text-4xl font-bold text-foreground/20">VS</span>
+                <span className="text-3xl sm:text-4xl font-bold text-white/20">VS</span>
                 <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
                   <Clock className="h-3 w-3 text-blue-400" />
                   <span className="text-xs font-medium text-blue-400">
@@ -178,7 +178,7 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
                     <span className="font-headline text-lg sm:text-xl font-black text-blue-400 tabular-nums">
                       {score.teamA.runs}/{score.teamA.wickets}
                     </span>
-                    <span className="text-[10px] sm:text-xs font-medium text-foreground/40">({score.teamA.overs} ov)</span>
+                    <span className="text-[10px] sm:text-xs font-medium text-white/40">({score.teamA.overs} ov)</span>
                   </div>
                 )}
                 {score.teamB && (
@@ -186,7 +186,7 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
                     <span className="font-headline text-lg sm:text-xl font-black text-rose-400 tabular-nums">
                       {score.teamB.runs}/{score.teamB.wickets}
                     </span>
-                    <span className="text-[10px] sm:text-xs font-medium text-foreground/40">({score.teamB.overs} ov)</span>
+                    <span className="text-[10px] sm:text-xs font-medium text-white/40">({score.teamB.overs} ov)</span>
                   </div>
                 )}
             </div>
@@ -197,12 +197,12 @@ const ScoreDisplay = ({ match }: { match: Match }) => {
     return (
         <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2 sm:gap-3">
-                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-foreground/95">{match.teamAScore}</span>
-                <span className="text-xl sm:text-2xl text-foreground/20 font-light">:</span>
-                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-foreground/95">{match.teamBScore}</span>
+                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-white/95">{match.teamAScore}</span>
+                <span className="text-xl sm:text-2xl text-white/20 font-light">:</span>
+                <span className="font-headline text-3xl sm:text-4xl lg:text-5xl font-black tabular-nums text-white/95">{match.teamBScore}</span>
             </div>
             {Array.isArray(match.scoreDetails) && (
-              <span className="text-xs font-medium text-foreground/40 tracking-wide uppercase">Sets</span>
+              <span className="text-xs font-medium text-white/40 tracking-wide uppercase">Sets</span>
             )}
         </div>
     );
@@ -228,15 +228,15 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
       return (
           <Card className="relative flex flex-col overflow-hidden h-full glass border min-h-[240px] sm:min-h-[280px] group">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <CardHeader className="flex-row items-center space-y-0 p-4 sm:p-6 border-b border-foreground/5">
-                  <div className="h-4 w-32 bg-foreground/5 rounded animate-pulse"></div>
-                  <div className="ml-auto h-6 w-20 bg-foreground/5 rounded-full animate-pulse"></div>
+              <CardHeader className="flex-row items-center space-y-0 p-4 sm:p-6 border-b border-white/5">
+                  <div className="h-4 w-32 bg-white/5 rounded animate-pulse"></div>
+                  <div className="ml-auto h-6 w-20 bg-white/5 rounded-full animate-pulse"></div>
               </CardHeader>
               <CardContent className="flex-grow p-6 sm:p-8 flex flex-col justify-center items-center">
-                 <Loader2 className="h-8 sm:h-10 w-8 sm:w-10 animate-spin text-foreground/20" />
+                 <Loader2 className="h-8 sm:h-10 w-8 sm:w-10 animate-spin text-white/20" />
               </CardContent>
-              <div className="p-4 sm:p-6 border-t border-foreground/5">
-                 <div className="h-10 w-full bg-foreground/5 rounded-lg animate-pulse"></div>
+              <div className="p-4 sm:p-6 border-t border-white/5">
+                 <div className="h-10 w-full bg-white/5 rounded-lg animate-pulse"></div>
               </div>
           </Card>
       );
@@ -270,7 +270,7 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
                 </div>
                 <div>
                   <h3 className={`font-semibold text-xs sm:text-sm tracking-wide ${accent.text}`}>{match.sport}</h3>
-                  <p className="text-xs text-foreground/40 mt-0.5">Match</p>
+                  <p className="text-xs text-white/40 mt-0.5">Match</p>
                 </div>
             </div>
             <div className="flex items-center gap-2">
@@ -288,12 +288,12 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
             <div className="flex items-stretch justify-between gap-2 sm:gap-4 mb-4 sm:mb-6">
               {/* Team A */}
               <div className="flex-1 min-w-0 flex flex-col items-center justify-center text-center space-y-1.5">
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-foreground/5 flex items-center justify-center border border-foreground/10 mb-0.5 shrink-0">
-                  <span className="text-base sm:text-lg font-bold text-foreground/80">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-0.5 shrink-0">
+                  <span className="text-base sm:text-lg font-bold text-white/80">
                     {teamA?.name?.charAt(0) || 'A'}
                   </span>
                 </div>
-                <span className="font-headline text-xs sm:text-sm font-bold text-foreground/90 leading-snug line-clamp-2 w-full break-words">
+                <span className="font-headline text-xs sm:text-sm font-bold text-white/90 leading-snug line-clamp-2 w-full break-words">
                   {teamA?.name || 'Team A'}
                 </span>
               </div>
@@ -305,19 +305,19 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
               
               {/* Team B */}
               <div className="flex-1 min-w-0 flex flex-col items-center justify-center text-center space-y-1.5">
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-foreground/5 flex items-center justify-center border border-foreground/10 mb-0.5 shrink-0">
-                  <span className="text-base sm:text-lg font-bold text-foreground/80">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/5 flex items-center justify-center border border-white/10 mb-0.5 shrink-0">
+                  <span className="text-base sm:text-lg font-bold text-white/80">
                     {teamB?.name?.charAt(0) || 'B'}
                   </span>
                 </div>
-                <span className="font-headline text-xs sm:text-sm font-bold text-foreground/90 leading-snug line-clamp-2 w-full break-words">
+                <span className="font-headline text-xs sm:text-sm font-bold text-white/90 leading-snug line-clamp-2 w-full break-words">
                   {teamB?.name || 'Team B'}
                 </span>
               </div>
             </div>
             
             {/* Match info */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs text-foreground/40 pt-3 sm:pt-4 border-t border-foreground/5">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs text-white/40 pt-3 sm:pt-4 border-t border-white/5">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" />
                   <span className="truncate max-w-[200px]">{match.venue}</span>
@@ -332,22 +332,22 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
           </CardContent>
 
           {isSetBased && match.status !== 'UPCOMING' && (
-             <Accordion type="single" collapsible className="w-full border-t border-foreground/5">
+             <Accordion type="single" collapsible className="w-full border-t border-white/5">
                 <AccordionItem value="item-1" className="border-0">
-                    <AccordionTrigger className="text-xs font-medium hover:no-underline justify-center py-3 px-4 sm:px-6 text-foreground/60 hover:text-foreground/80 transition-colors">
+                    <AccordionTrigger className="text-xs font-medium hover:no-underline justify-center py-3 px-4 sm:px-6 text-white/60 hover:text-white/80 transition-colors">
                         View Set Details
                     </AccordionTrigger>
                     <AccordionContent className="px-4 sm:px-6 pb-4">
                         <div className="space-y-2.5">
                             {(match.scoreDetails as SetScore[]).map(set => (
-                                <div key={set.set} className="flex justify-between items-center px-3 py-2 rounded-lg bg-foreground/5 border border-foreground/5">
-                                    <span className="text-xs font-medium text-foreground/50">Set {set.set}</span>
+                                <div key={set.set} className="flex justify-between items-center px-3 py-2 rounded-lg bg-white/5 border border-white/5">
+                                    <span className="text-xs font-medium text-white/50">Set {set.set}</span>
                                     <div className="flex items-center gap-3">
-                                      <span className={`font-mono font-bold text-sm ${set.teamAScore > set.teamBScore ? accent.text : 'text-foreground/60'}`}>
+                                      <span className={`font-mono font-bold text-sm ${set.teamAScore > set.teamBScore ? accent.text : 'text-white/60'}`}>
                                         {set.teamAScore}
                                       </span>
-                                      <span className="text-foreground/30">-</span>
-                                      <span className={`font-mono font-bold text-sm ${set.teamBScore > set.teamAScore ? accent.text : 'text-foreground/60'}`}>
+                                      <span className="text-white/30">-</span>
+                                      <span className={`font-mono font-bold text-sm ${set.teamBScore > set.teamAScore ? accent.text : 'text-white/60'}`}>
                                         {set.teamBScore}
                                       </span>
                                     </div>
@@ -359,15 +359,15 @@ export const MatchCard = memo(function MatchCard({ match }: MatchCardProps) {
             </Accordion>
           )}
 
-          <div className="relative p-4 sm:p-6 border-t border-foreground/5">
+          <div className="relative p-4 sm:p-6 border-t border-white/5">
             <Link href={`/match/${match.id}`} className="group/btn block">
               <Button 
                 variant="ghost" 
                 className={`
                   w-full h-10 sm:h-11 
-                  bg-foreground/5 hover:bg-foreground/10 
-                  border border-foreground/10 hover:border-foreground/20
-                  text-foreground/80 hover:text-foreground
+                  bg-white/5 hover:bg-white/10 
+                  border border-white/10 hover:border-white/20
+                  text-white/80 hover:text-white
                   font-medium tracking-wide text-sm
                   transition-all duration-300
                   ${accent.hoverBtnBg}

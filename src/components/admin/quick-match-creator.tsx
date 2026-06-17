@@ -212,11 +212,11 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="text-lg font-bold text-foreground/90 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-white/90 flex items-center gap-2">
           <Zap className="h-5 w-5 text-amber-400" />
           Quick Match Creator
         </h3>
-        <p className="text-sm text-foreground/50 mt-1">Create a match in seconds by selecting existing teams.</p>
+        <p className="text-sm text-white/50 mt-1">Create a match in seconds by selecting existing teams.</p>
       </div>
 
       {/* Saved Templates */}
@@ -224,7 +224,7 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Bookmark className="h-3.5 w-3.5 text-purple-400" />
-            <span className="text-xs font-semibold text-foreground/50">Saved Templates</span>
+            <span className="text-xs font-semibold text-white/50">Saved Templates</span>
           </div>
           <div className="flex gap-2 flex-wrap">
             {templates.map((t) => (
@@ -238,7 +238,7 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                 <span className="text-[10px] text-purple-400/50 ml-1">{t.sport}</span>
                 <button
                   onClick={() => handleDeleteTemplate(t.id)}
-                  className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-foreground/30 hover:text-red-400"
+                  className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-white/30 hover:text-red-400"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
@@ -258,23 +258,23 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                   ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                   : step > s
                   ? 'bg-emerald-500/10 text-emerald-400/60'
-                  : 'bg-foreground/5 text-foreground/30'
+                  : 'bg-white/5 text-white/30'
               }`}
             >
               {step > s ? <Check className="h-3.5 w-3.5" /> : s}
             </div>
-            {s < 3 && <div className={`w-8 sm:w-12 h-px ${step > s ? 'bg-emerald-500/30' : 'bg-foreground/10'}`} />}
+            {s < 3 && <div className={`w-8 sm:w-12 h-px ${step > s ? 'bg-emerald-500/30' : 'bg-white/10'}`} />}
           </div>
         ))}
-        <span className="text-xs text-foreground/30 ml-2">
+        <span className="text-xs text-white/30 ml-2">
           {step === 1 ? 'Pick Sport' : step === 2 ? 'Select Teams' : 'Schedule'}
         </span>
       </div>
 
       {/* Step 1: Sport Selection */}
       {step === 1 && (
-        <Card className="glass p-5 bg-foreground/[0.02] border-foreground/10">
-          <label className="text-sm font-semibold text-foreground/70 block mb-3">Choose a Sport</label>
+        <Card className="glass p-5 bg-white/[0.02] border-white/10">
+          <label className="text-sm font-semibold text-white/70 block mb-3">Choose a Sport</label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
             {SPORTS.map((s) => {
               const count = teams.filter((t) => t.sport === s).length;
@@ -288,12 +288,12 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                   }}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     sport === s
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-foreground'
-                      : 'bg-foreground/[0.02] border-foreground/10 text-foreground/70 hover:bg-foreground/5'
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
+                      : 'bg-white/[0.02] border-white/10 text-white/70 hover:bg-white/5'
                   }`}
                 >
                   <div className="text-sm font-semibold truncate">{s}</div>
-                  <div className="text-[11px] text-foreground/30 mt-1">{count} team{count !== 1 ? 's' : ''}</div>
+                  <div className="text-[11px] text-white/30 mt-1">{count} team{count !== 1 ? 's' : ''}</div>
                 </button>
               );
             })}
@@ -302,7 +302,7 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
             <Button
               onClick={() => setStep(2)}
               disabled={!canProceed(1)}
-              className="bg-foreground/10 hover:bg-foreground/15 text-foreground"
+              className="bg-white/10 hover:bg-white/15 text-white"
             >
               Next
               <ChevronRight className="ml-1 h-4 w-4" />
@@ -313,13 +313,13 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
       {/* Step 2: Team Selection */}
       {step === 2 && (
-        <Card className="glass p-5 bg-foreground/[0.02] border-foreground/10">
+        <Card className="glass p-5 bg-white/[0.02] border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Team A */}
             <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/70">Team A</label>
+              <label className="text-sm font-semibold text-white/70">Team A</label>
               <Select value={teamAId} onValueChange={setTeamAId}>
-                <SelectTrigger className="h-11 bg-foreground/5 border-foreground/10">
+                <SelectTrigger className="h-11 bg-white/5 border-white/10">
                   <SelectValue placeholder="Select Team A" />
                 </SelectTrigger>
                 <SelectContent>
@@ -331,24 +331,24 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                       </SelectItem>
                     ))}
                   {sportTeams.filter((t) => t.id !== teamBId).length === 0 && (
-                    <div className="px-3 py-2 text-xs text-foreground/40">No teams available for {sport}</div>
+                    <div className="px-3 py-2 text-xs text-white/40">No teams available for {sport}</div>
                   )}
                 </SelectContent>
               </Select>
               {teamA && (
-                <div className="p-3 rounded-lg bg-foreground/5 border border-foreground/5">
+                <div className="p-3 rounded-lg bg-white/5 border border-white/5">
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-3.5 w-3.5 text-foreground/40" />
-                    <span className="text-xs font-semibold text-foreground/50">Roster</span>
+                    <Users className="h-3.5 w-3.5 text-white/40" />
+                    <span className="text-xs font-semibold text-white/50">Roster</span>
                   </div>
                   <div className="space-y-1">
                     {(playersByTeam.get(teamA.id) ?? []).map((p) => (
-                      <div key={p.id} className="text-xs text-foreground/60 pl-1">
+                      <div key={p.id} className="text-xs text-white/60 pl-1">
                         {p.name}
                       </div>
                     ))}
                     {(playersByTeam.get(teamA.id) ?? []).length === 0 && (
-                      <p className="text-xs text-foreground/30">No players</p>
+                      <p className="text-xs text-white/30">No players</p>
                     )}
                   </div>
                 </div>
@@ -357,9 +357,9 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
             {/* Team B */}
             <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/70">Team B</label>
+              <label className="text-sm font-semibold text-white/70">Team B</label>
               <Select value={teamBId} onValueChange={setTeamBId}>
-                <SelectTrigger className="h-11 bg-foreground/5 border-foreground/10">
+                <SelectTrigger className="h-11 bg-white/5 border-white/10">
                   <SelectValue placeholder="Select Team B" />
                 </SelectTrigger>
                 <SelectContent>
@@ -371,24 +371,24 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                       </SelectItem>
                     ))}
                   {sportTeams.filter((t) => t.id !== teamAId).length === 0 && (
-                    <div className="px-3 py-2 text-xs text-foreground/40">No teams available for {sport}</div>
+                    <div className="px-3 py-2 text-xs text-white/40">No teams available for {sport}</div>
                   )}
                 </SelectContent>
               </Select>
               {teamB && (
-                <div className="p-3 rounded-lg bg-foreground/5 border border-foreground/5">
+                <div className="p-3 rounded-lg bg-white/5 border border-white/5">
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-3.5 w-3.5 text-foreground/40" />
-                    <span className="text-xs font-semibold text-foreground/50">Roster</span>
+                    <Users className="h-3.5 w-3.5 text-white/40" />
+                    <span className="text-xs font-semibold text-white/50">Roster</span>
                   </div>
                   <div className="space-y-1">
                     {(playersByTeam.get(teamB.id) ?? []).map((p) => (
-                      <div key={p.id} className="text-xs text-foreground/60 pl-1">
+                      <div key={p.id} className="text-xs text-white/60 pl-1">
                         {p.name}
                       </div>
                     ))}
                     {(playersByTeam.get(teamB.id) ?? []).length === 0 && (
-                      <p className="text-xs text-foreground/30">No players</p>
+                      <p className="text-xs text-white/30">No players</p>
                     )}
                   </div>
                 </div>
@@ -401,14 +401,14 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
           )}
 
           <div className="flex justify-between mt-4">
-            <Button variant="ghost" onClick={() => setStep(1)} className="hover:bg-foreground/10 text-foreground/60">
+            <Button variant="ghost" onClick={() => setStep(1)} className="hover:bg-white/10 text-white/60">
               <ChevronLeft className="mr-1 h-4 w-4" />
               Back
             </Button>
             <Button
               onClick={() => setStep(3)}
               disabled={!canProceed(2)}
-              className="bg-foreground/10 hover:bg-foreground/15 text-foreground"
+              className="bg-white/10 hover:bg-white/15 text-white"
             >
               Next
               <ChevronRight className="ml-1 h-4 w-4" />
@@ -419,10 +419,10 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
       {/* Step 3: Schedule */}
       {step === 3 && (
-        <Card className="glass p-5 bg-foreground/[0.02] border-foreground/10">
+        <Card className="glass p-5 bg-white/[0.02] border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground/70 flex items-center gap-1.5">
+              <label className="text-sm font-semibold text-white/70 flex items-center gap-1.5">
                 <CalendarDays className="h-3.5 w-3.5" />
                 Date &amp; Time
               </label>
@@ -430,17 +430,17 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                 type="datetime-local"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="h-11 bg-foreground/5 border-foreground/10"
+                className="h-11 bg-white/5 border-white/10"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground/70 flex items-center gap-1.5">
+              <label className="text-sm font-semibold text-white/70 flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
                 Venue
               </label>
               <Select value={venue} onValueChange={setVenue}>
-                <SelectTrigger className="h-11 bg-foreground/5 border-foreground/10">
+                <SelectTrigger className="h-11 bg-white/5 border-white/10">
                   <SelectValue placeholder="Select venue" />
                 </SelectTrigger>
                 <SelectContent>
@@ -457,18 +457,18 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                   value={customVenue}
                   onChange={(e) => setCustomVenue(e.target.value)}
                   placeholder="Enter venue name"
-                  className="h-10 bg-foreground/5 border-foreground/10 mt-2"
+                  className="h-10 bg-white/5 border-white/10 mt-2"
                 />
               )}
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground/70 flex items-center gap-1.5">
+              <label className="text-sm font-semibold text-white/70 flex items-center gap-1.5">
                 <Trophy className="h-3.5 w-3.5" />
                 Round (optional)
               </label>
               <Select value={round} onValueChange={setRound}>
-                <SelectTrigger className="h-11 bg-foreground/5 border-foreground/10">
+                <SelectTrigger className="h-11 bg-white/5 border-white/10">
                   <SelectValue placeholder="Select round" />
                 </SelectTrigger>
                 <SelectContent>
@@ -484,24 +484,24 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
           {/* Match Preview */}
           {teamA && teamB && (
-            <div className="mt-5 p-4 rounded-lg bg-foreground/5 border border-foreground/5">
-              <div className="text-xs font-semibold text-foreground/40 mb-2">Match Preview</div>
+            <div className="mt-5 p-4 rounded-lg bg-white/5 border border-white/5">
+              <div className="text-xs font-semibold text-white/40 mb-2">Match Preview</div>
               <div className="flex items-center justify-center gap-4">
                 <div className="text-right">
-                  <div className="font-bold text-foreground/90">{teamA.name}</div>
-                  <div className="text-xs text-foreground/40">
+                  <div className="font-bold text-white/90">{teamA.name}</div>
+                  <div className="text-xs text-white/40">
                     {(playersByTeam.get(teamA.id) ?? []).length} players
                   </div>
                 </div>
-                <div className="text-lg font-bold text-foreground/30">VS</div>
+                <div className="text-lg font-bold text-white/30">VS</div>
                 <div className="text-left">
-                  <div className="font-bold text-foreground/90">{teamB.name}</div>
-                  <div className="text-xs text-foreground/40">
+                  <div className="font-bold text-white/90">{teamB.name}</div>
+                  <div className="text-xs text-white/40">
                     {(playersByTeam.get(teamB.id) ?? []).length} players
                   </div>
                 </div>
               </div>
-              <div className="mt-2 text-center text-xs text-foreground/30">
+              <div className="mt-2 text-center text-xs text-white/30">
                 {sport} {round ? `• ${round}` : ''} • {effectiveVenue || '—'} •{' '}
                 {date ? new Date(date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
               </div>
@@ -510,14 +510,14 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
 
           {/* Save as Template */}
           {sport && effectiveVenue.trim() && (
-            <div className="mt-4 pt-4 border-t border-foreground/5">
+            <div className="mt-4 pt-4 border-t border-white/5">
               {showSaveTemplate ? (
                 <div className="flex items-center gap-2">
                   <Input
                     value={templateName}
                     onChange={(e) => setTemplateName(e.target.value)}
                     placeholder="Template name (e.g. Football Finals)"
-                    className="h-9 bg-foreground/5 border-foreground/10 text-sm flex-1"
+                    className="h-9 bg-white/5 border-white/10 text-sm flex-1"
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveTemplate()}
                   />
                   <Button
@@ -532,7 +532,7 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
                     size="sm"
                     variant="ghost"
                     onClick={() => { setShowSaveTemplate(false); setTemplateName(''); }}
-                    className="h-9 text-xs text-foreground/40"
+                    className="h-9 text-xs text-white/40"
                   >
                     Cancel
                   </Button>
@@ -552,14 +552,14 @@ export const QuickMatchCreator = memo(function QuickMatchCreator() {
           )}
 
           <div className="flex justify-between mt-4">
-            <Button variant="ghost" onClick={() => setStep(2)} className="hover:bg-foreground/10 text-foreground/60">
+            <Button variant="ghost" onClick={() => setStep(2)} className="hover:bg-white/10 text-white/60">
               <ChevronLeft className="mr-1 h-4 w-4" />
               Back
             </Button>
             <Button
               onClick={handleCreate}
               disabled={!canProceed(3) || creating}
-              className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-foreground font-semibold"
+              className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold"
             >
               {creating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
               Create Match

@@ -162,17 +162,17 @@ export function ExportResults({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 border-foreground/10 hover:bg-foreground/10 text-foreground/70 hover:text-foreground">
+        <Button variant="outline" size="sm" className="gap-2 border-white/10 hover:bg-white/10 text-white/70 hover:text-white">
           <Download className="h-4 w-4" />
           <span className="hidden sm:inline">Export</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="glass border-foreground/10">
-        <DropdownMenuItem onClick={exportCSV} className="gap-2 cursor-pointer text-foreground/70 hover:text-foreground">
+      <DropdownMenuContent align="end" className="glass border-white/10">
+        <DropdownMenuItem onClick={exportCSV} className="gap-2 cursor-pointer text-white/70 hover:text-white">
           <TableIcon className="h-4 w-4" />
           Export as CSV
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={exportPDF} className="gap-2 cursor-pointer text-foreground/70 hover:text-foreground">
+        <DropdownMenuItem onClick={exportPDF} className="gap-2 cursor-pointer text-white/70 hover:text-white">
           <FileText className="h-4 w-4" />
           Export as PDF
         </DropdownMenuItem>

@@ -228,16 +228,16 @@ export function AuthForm() {
             {/* Tabs Navigation */}
             <Tabs defaultValue="login" className="w-full" onValueChange={setActiveTab}>
               <div className="px-6 pt-5 pb-3">
-                <TabsList className="grid w-full grid-cols-2 bg-foreground/5 backdrop-blur-sm p-1 h-auto rounded-lg border border-foreground/10">
+                <TabsList className="grid w-full grid-cols-2 bg-white/5 backdrop-blur-sm p-1 h-auto rounded-lg border border-white/10">
                   <TabsTrigger 
                     value="login" 
-                    className="rounded-md data-[state=active]:bg-foreground/15 data-[state=active]:text-foreground text-foreground/40 transition-all font-medium py-2 text-sm hover:text-foreground/60"
+                    className="rounded-md data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/40 transition-all font-medium py-2 text-sm hover:text-white/60"
                   >
                     Login
                   </TabsTrigger>
                   <TabsTrigger 
                     value="signup" 
-                    className="rounded-md data-[state=active]:bg-foreground/15 data-[state=active]:text-foreground text-foreground/40 transition-all font-medium py-2 text-sm hover:text-foreground/60"
+                    className="rounded-md data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/40 transition-all font-medium py-2 text-sm hover:text-white/60"
                   >
                     Sign Up
                   </TabsTrigger>
@@ -248,8 +248,8 @@ export function AuthForm() {
                 <TabsContent value="login" className="mt-0 px-6 pb-6 pt-2">
                   <div className="space-y-5">
                     <div className="text-center space-y-1">
-                      <h3 className="font-headline text-xl font-bold text-foreground">Welcome</h3>
-                      <p className="text-foreground/40 text-xs">Sign in to continue</p>
+                      <h3 className="font-headline text-xl font-bold text-white">Welcome</h3>
+                      <p className="text-white/40 text-xs">Sign in to continue</p>
                     </div>
                     
                     <Form {...loginForm}>
@@ -259,13 +259,13 @@ export function AuthForm() {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground/60 font-medium text-xs">Student ID</FormLabel>
+                              <FormLabel className="text-white/60 font-medium text-xs">Student ID</FormLabel>
                               <FormControl>
                                 <div className="relative group">
                                   <Input 
                                     placeholder="1601..." 
                                     {...field} 
-                                    className="bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/25 focus:border-foreground/30 focus:bg-foreground/8 h-11 rounded-lg transition-all group-hover:border-foreground/15 text-sm"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/25 focus:border-white/30 focus:bg-white/8 h-11 rounded-lg transition-all group-hover:border-white/15 text-sm"
                                   />
                                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/3 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 </div>
@@ -279,14 +279,14 @@ export function AuthForm() {
                           name="password"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground/60 font-medium text-xs">Password</FormLabel>
+                              <FormLabel className="text-white/60 font-medium text-xs">Password</FormLabel>
                               <FormControl>
                                 <div className="relative group">
                                   <Input 
                                     type="password" 
                                     placeholder="••••••••" 
                                     {...field} 
-                                    className="bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/25 focus:border-foreground/30 focus:bg-foreground/8 h-11 rounded-lg transition-all group-hover:border-foreground/15 text-sm"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/25 focus:border-white/30 focus:bg-white/8 h-11 rounded-lg transition-all group-hover:border-white/15 text-sm"
                                   />
                                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/3 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 </div>
@@ -298,7 +298,7 @@ export function AuthForm() {
                         <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap" className="pt-2">
                           <Button 
                             type="submit" 
-                            className="w-full h-11 text-foreground font-semibold rounded-lg transition-all relative overflow-hidden group border-0"
+                            className="w-full h-11 text-white font-semibold rounded-lg transition-all relative overflow-hidden group border-0"
                             style={{
                               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)',
                               boxShadow: '0 4px 24px rgba(255, 255, 255, 0.1)'
@@ -306,7 +306,7 @@ export function AuthForm() {
                             disabled={isLoading}
                           >
                             <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="absolute inset-0 bg-foreground/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-white/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <span className="relative z-10 text-sm">
                               {isLoading ? (
                                 <>
@@ -327,8 +327,8 @@ export function AuthForm() {
                 <TabsContent value="signup" className="mt-0 px-6 pb-6 pt-2">
                   <div className="space-y-5">
                     <div className="text-center space-y-1">
-                      <h3 className="font-headline text-xl font-bold text-foreground">Create Account</h3>
-                      <p className="text-foreground/40 text-xs">Enter your student ID</p>
+                      <h3 className="font-headline text-xl font-bold text-white">Create Account</h3>
+                      <p className="text-white/40 text-xs">Enter your student ID</p>
                     </div>
                     
                     <Form {...signupForm}>
@@ -338,13 +338,13 @@ export function AuthForm() {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground/60 font-medium text-xs">Student ID</FormLabel>
+                              <FormLabel className="text-white/60 font-medium text-xs">Student ID</FormLabel>
                               <FormControl>
                                 <div className="relative group">
                                   <Input 
                                     placeholder="1601..." 
                                     {...field} 
-                                    className="bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/25 focus:border-foreground/30 focus:bg-foreground/8 h-11 rounded-lg transition-all group-hover:border-foreground/15 text-sm"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/25 focus:border-white/30 focus:bg-white/8 h-11 rounded-lg transition-all group-hover:border-white/15 text-sm"
                                   />
                                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/3 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 </div>
@@ -353,13 +353,13 @@ export function AuthForm() {
                             </FormItem>
                           )}
                         />
-                        <div className="p-2.5 rounded-lg bg-foreground/5 border border-foreground/10">
-                          <p className="text-xs text-foreground/50">Password will be set to your Student ID</p>
+                        <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                          <p className="text-xs text-white/50">Password will be set to your Student ID</p>
                         </div>
                         <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap" className="pt-2">
                           <Button 
                             type="submit" 
-                            className="w-full h-11 text-foreground font-semibold rounded-lg transition-all relative overflow-hidden group border-0"
+                            className="w-full h-11 text-white font-semibold rounded-lg transition-all relative overflow-hidden group border-0"
                             style={{
                               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)',
                               boxShadow: '0 4px 24px rgba(255, 255, 255, 0.1)'
@@ -367,7 +367,7 @@ export function AuthForm() {
                             disabled={isLoading}
                           >
                             <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="absolute inset-0 bg-foreground/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-white/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <span className="relative z-10 text-sm">
                               {isLoading ? (
                                 <>
