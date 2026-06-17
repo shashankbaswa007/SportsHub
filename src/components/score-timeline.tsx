@@ -68,23 +68,23 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
   const maxScore = Math.max(...events.flatMap(e => [e.teamAScore, e.teamBScore]), 1);
 
   return (
-    <Card className="glass border-white/10 overflow-hidden">
+    <Card className="glass border-foreground/10 overflow-hidden">
       <CardHeader className="p-4 sm:p-6 pb-3">
         <div className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-white/50" />
-          <CardTitle className="font-headline text-lg sm:text-xl font-bold text-white/90">Score Timeline</CardTitle>
+          <Clock className="h-5 w-5 text-foreground/50" />
+          <CardTitle className="font-headline text-lg sm:text-xl font-bold text-foreground/90">Score Timeline</CardTitle>
         </div>
-        <CardDescription className="text-xs sm:text-sm text-white/40">Score progression throughout the match</CardDescription>
+        <CardDescription className="text-xs sm:text-sm text-foreground/40">Score progression throughout the match</CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6 pt-0">
         {/* Team labels */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-blue-500" />
-            <span className="text-xs sm:text-sm font-semibold text-white/70 truncate max-w-[120px] sm:max-w-none">{teamA.name}</span>
+            <span className="text-xs sm:text-sm font-semibold text-foreground/70 truncate max-w-[120px] sm:max-w-none">{teamA.name}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm font-semibold text-white/70 truncate max-w-[120px] sm:max-w-none">{teamB.name}</span>
+            <span className="text-xs sm:text-sm font-semibold text-foreground/70 truncate max-w-[120px] sm:max-w-none">{teamB.name}</span>
             <div className="w-3 h-3 rounded-full bg-rose-500" />
           </div>
         </div>
@@ -98,7 +98,7 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
             return (
               <div key={index} className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] sm:text-xs font-medium text-white/50">{event.label}</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-foreground/50">{event.label}</span>
                   {event.highlight === 'teamA' && (
                     <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[10px]">
                       <Zap className="h-2.5 w-2.5 mr-0.5" /> {teamA.name.split(' ')[0]}
@@ -110,7 +110,7 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
                     </Badge>
                   )}
                   {event.highlight === 'draw' && (
-                    <Badge className="bg-white/5 text-white/40 border-white/10 text-[10px]">
+                    <Badge className="bg-foreground/5 text-foreground/40 border-foreground/10 text-[10px]">
                       Draw
                     </Badge>
                   )}
@@ -125,7 +125,7 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
                         style={{ width: `${teamAWidth}%` }}
                       />
                     </div>
-                    <div className="w-px h-full bg-white/20" />
+                    <div className="w-px h-full bg-foreground/20" />
                     {/* Team B bar (grows right to left) */}
                     <div className="flex-1">
                       <div
@@ -143,15 +143,15 @@ export function ScoreTimeline({ match, teamA, teamB }: ScoreTimelineProps) {
 
         {/* Final score summary */}
         {match.status === 'COMPLETED' && events.length > 1 && (
-          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+          <div className="mt-4 pt-4 border-t border-foreground/10 flex items-center justify-between">
             <div className="text-center flex-1">
               <p className="text-xl sm:text-2xl font-black text-blue-400 tabular-nums">{match.teamAScore}</p>
-              <p className="text-[10px] text-white/40 mt-1">Final</p>
+              <p className="text-[10px] text-foreground/40 mt-1">Final</p>
             </div>
-            <div className="text-white/20 text-sm font-medium">vs</div>
+            <div className="text-foreground/20 text-sm font-medium">vs</div>
             <div className="text-center flex-1">
               <p className="text-xl sm:text-2xl font-black text-rose-400 tabular-nums">{match.teamBScore}</p>
-              <p className="text-[10px] text-white/40 mt-1">Final</p>
+              <p className="text-[10px] text-foreground/40 mt-1">Final</p>
             </div>
           </div>
         )}

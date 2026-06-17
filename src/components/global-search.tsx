@@ -119,30 +119,30 @@ export function GlobalSearch() {
       {/* Trigger button */}
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-white/50 hover:text-white/70 text-sm group"
+        className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-foreground/5 border border-foreground/10 hover:bg-foreground/10 hover:border-foreground/20 transition-all text-foreground/50 hover:text-foreground/70 text-sm group"
       >
         <Search className="h-4 w-4" />
         <span className="hidden sm:inline">Search...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/30 group-hover:text-white/50">
+        <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-foreground/5 border border-foreground/10 text-[10px] font-mono text-foreground/30 group-hover:text-foreground/50">
           ⌘K
         </kbd>
       </button>
 
       {/* Search Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[560px] p-0 gap-0 glass-strong border-white/10 overflow-hidden">
+        <DialogContent className="sm:max-w-[560px] p-0 gap-0 glass-strong border-foreground/10 overflow-hidden">
           <DialogTitle className="sr-only">Search</DialogTitle>
           {/* Search input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-            <Search className="h-5 w-5 text-white/40 shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-foreground/10">
+            <Search className="h-5 w-5 text-foreground/40 shrink-0" />
             <Input
               ref={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search matches, teams, sports..."
-              className="border-0 bg-transparent text-white placeholder:text-white/30 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 text-base"
+              className="border-0 bg-transparent text-foreground placeholder:text-foreground/30 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 text-base"
             />
-            <kbd className="hidden sm:inline-flex px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/30 shrink-0">
+            <kbd className="hidden sm:inline-flex px-2 py-0.5 rounded bg-foreground/5 border border-foreground/10 text-[10px] font-mono text-foreground/30 shrink-0">
               ESC
             </kbd>
           </div>
@@ -150,13 +150,13 @@ export function GlobalSearch() {
           {/* Results */}
           <div className="max-h-[60vh] sm:max-h-[400px] overflow-y-auto p-2">
             {query.trim().length < 2 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-white/30">
+              <div className="flex flex-col items-center justify-center py-12 text-foreground/30">
                 <Search className="h-10 w-10 mb-3 opacity-20" />
                 <p className="text-sm font-medium">Type to search</p>
                 <p className="text-xs mt-1">Search matches, teams, and sports</p>
               </div>
             ) : results.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-white/30">
+              <div className="flex flex-col items-center justify-center py-12 text-foreground/30">
                 <p className="text-sm font-medium">No results found</p>
                 <p className="text-xs mt-1">Try a different search term</p>
               </div>
@@ -166,27 +166,27 @@ export function GlobalSearch() {
                   <button
                     key={`${result.type}-${result.id}`}
                     onClick={() => handleSelect(result)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all text-left group"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-foreground/10 transition-all text-left group"
                   >
-                    <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/10 transition-all shrink-0">
+                    <div className="p-2 rounded-lg bg-foreground/5 border border-foreground/10 group-hover:bg-foreground/10 transition-all shrink-0">
                       {result.type === 'match' ? (
-                        <Zap className="h-4 w-4 text-white/50" />
+                        <Zap className="h-4 w-4 text-foreground/50" />
                       ) : (
-                        <Users className="h-4 w-4 text-white/50" />
+                        <Users className="h-4 w-4 text-foreground/50" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white/90 truncate group-hover:text-white transition-colors">
+                      <p className="text-sm font-medium text-foreground/90 truncate group-hover:text-foreground transition-colors">
                         {result.title}
                       </p>
-                      <p className="text-xs text-white/40 truncate">{result.subtitle}</p>
+                      <p className="text-xs text-foreground/40 truncate">{result.subtitle}</p>
                     </div>
                     {result.status && (
                       <Badge className={`text-[10px] shrink-0 ${statusColor(result.status)}`}>
                         {result.status}
                       </Badge>
                     )}
-                    <ArrowRight className="h-3.5 w-3.5 text-white/20 group-hover:text-white/50 shrink-0 transition-colors" />
+                    <ArrowRight className="h-3.5 w-3.5 text-foreground/20 group-hover:text-foreground/50 shrink-0 transition-colors" />
                   </button>
                 ))}
               </div>

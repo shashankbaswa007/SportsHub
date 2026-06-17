@@ -25,20 +25,20 @@ export default function GlobalError({
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Something went wrong</h2>
-          <p className="text-white/50">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Something went wrong</h2>
+          <p className="text-foreground/50">
             An unexpected error occurred. Please try again or return to the home page.
           </p>
           {error.digest && (
-            <p className="text-white/30 text-xs mt-2 font-mono">Error ID: {error.digest}</p>
+            <p className="text-foreground/30 text-xs mt-2 font-mono">Error ID: {error.digest}</p>
           )}
         </div>
         <div className="flex gap-3 justify-center">
-          <Button onClick={reset} variant="outline" className="border-white/20 hover:bg-white/10 text-white gap-2">
+          <Button onClick={reset} variant="outline" className="border-foreground/20 hover:bg-foreground/10 text-foreground gap-2">
             <RotateCcw className="h-4 w-4" />
             Try Again
           </Button>
-          <Button asChild variant="outline" className="border-white/20 hover:bg-white/10 text-white gap-2">
+          <Button asChild variant="outline" className="border-foreground/20 hover:bg-foreground/10 text-foreground gap-2">
             <Link href="/overview">
               <Home className="h-4 w-4" />
               Home

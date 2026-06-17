@@ -194,7 +194,7 @@ export default function InviteAcceptPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-amber-400 mx-auto" />
-          <p className="text-white/50 text-sm">Loading invite...</p>
+          <p className="text-foreground/50 text-sm">Loading invite...</p>
         </div>
       </div>
     );
@@ -215,9 +215,9 @@ export default function InviteAcceptPage() {
               <div className="p-4 rounded-full bg-red-500/10 w-fit mx-auto">
                 <XCircle className="h-10 w-10 text-red-400" />
               </div>
-              <h2 className="text-xl font-bold text-white/90">Invalid Invite</h2>
-              <p className="text-white/50 text-sm">{error}</p>
-              <Button asChild variant="outline" className="border-white/10 hover:bg-white/10 gap-2">
+              <h2 className="text-xl font-bold text-foreground/90">Invalid Invite</h2>
+              <p className="text-foreground/50 text-sm">{error}</p>
+              <Button asChild variant="outline" className="border-foreground/10 hover:bg-foreground/10 gap-2">
                 <Link href="/overview">
                   <ArrowLeft className="h-4 w-4" />
                   Back to Overview
@@ -246,8 +246,8 @@ export default function InviteAcceptPage() {
               <div className="p-4 rounded-full bg-green-500/10 w-fit mx-auto">
                 <PartyPopper className="h-10 w-10 text-green-400" />
               </div>
-              <h2 className="text-xl font-bold text-white/90">Invite Accepted!</h2>
-              <p className="text-white/50 text-sm">
+              <h2 className="text-xl font-bold text-foreground/90">Invite Accepted!</h2>
+              <p className="text-foreground/50 text-sm">
                 You now have admin access. Head to the admin panel to manage the tournament.
               </p>
               <div className="flex gap-3 justify-center">
@@ -279,26 +279,26 @@ export default function InviteAcceptPage() {
             <div className="p-4 rounded-full bg-amber-500/10 w-fit mx-auto">
               <Mail className="h-10 w-10 text-amber-400" />
             </div>
-            <CardTitle className="font-headline text-2xl font-bold text-white/95">
+            <CardTitle className="font-headline text-2xl font-bold text-foreground/95">
               Admin Invitation
             </CardTitle>
-            <CardDescription className="text-white/50 text-sm">
+            <CardDescription className="text-foreground/50 text-sm">
               {invite?.invitedByName || invite?.invitedBy} has invited you to become an admin on CBIT SportsHub
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 pt-2 space-y-6">
             {/* Invite details */}
-            <div className="bg-white/[0.03] rounded-lg p-4 space-y-3 border border-white/5">
+            <div className="bg-foreground/[0.03] rounded-lg p-4 space-y-3 border border-foreground/5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-white/40">Invited Email</span>
-                <span className="text-white/80 font-medium">{invite?.email}</span>
+                <span className="text-foreground/40">Invited Email</span>
+                <span className="text-foreground/80 font-medium">{invite?.email}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-white/40">Invited By</span>
-                <span className="text-white/60">{invite?.invitedByName || invite?.invitedBy}</span>
+                <span className="text-foreground/40">Invited By</span>
+                <span className="text-foreground/60">{invite?.invitedByName || invite?.invitedBy}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-white/40">Status</span>
+                <span className="text-foreground/40">Status</span>
                 <Badge variant="outline" className="text-[10px] border-yellow-500/30 text-yellow-400 gap-1">
                   <Clock className="h-3 w-3" />
                   Pending
@@ -308,7 +308,7 @@ export default function InviteAcceptPage() {
 
             {/* Accept instructions */}
             <div className="text-center space-y-2">
-              <p className="text-xs text-white/40">
+              <p className="text-xs text-foreground/40">
                 To accept, verify your identity by signing in with your Google account ({invite?.email}).
               </p>
             </div>
@@ -317,7 +317,7 @@ export default function InviteAcceptPage() {
             <Button
               onClick={handleAccept}
               disabled={accepting}
-              className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white gap-2 py-6 text-base"
+              className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-foreground gap-2 py-6 text-base"
             >
               {accepting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -327,7 +327,7 @@ export default function InviteAcceptPage() {
               {accepting ? 'Verifying...' : 'Accept with Google'}
             </Button>
 
-            <Button asChild variant="ghost" className="w-full text-white/30 hover:text-white/50">
+            <Button asChild variant="ghost" className="w-full text-foreground/30 hover:text-foreground/50">
               <Link href="/overview">
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back to overview
               </Link>
